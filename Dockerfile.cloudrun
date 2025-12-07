@@ -1,0 +1,41 @@
+FROM debian:bookworm-slim
+
+# Install minimal dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    tar \
+    gzip \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create LFS directory structure
+RUN mkdir -p /lfs
+
+# Copy the pre-built toolchain archive
+COPY lfs-toolchain-final.tar.gz /tmp/
+
+# Extract toolchain
+RUN cd /lfs && tar -xzf /tmp/lfs-toolchain-final.tar.gz \
+    && rm /tmp/lfs-toolchain-final.tar.gz
+
+# Set up environment
+ENV LFS=/lfs
+ENV LFS_TGT=x86_64-lfs-linux-gnu
+ENV PATH=/lfs/tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Verify installation (just check files exist, not run binaries due to glibc version)
+RUN echo "=== Verifying LFS Toolchain Files ===" \
+    && ls -lh /lfs/tools/bin/x86_64-lfs-linux-gnu-gcc \
+    && ls -lh /lfs/tools/bin/x86_64-lfs-linux-gnu-ld \
+    && ls -lh /lfs/usr/lib/libc.so.6 \
+    && ls -lh /lfs/usr/lib/libstdc++.so.6 \
+    && echo "=== All Files Present ===" \
+    && echo "Total toolchain size:" \
+    && du -sh /lfs/tools /lfs/usr
+
+# Create output directory
+RUN mkdir -p /output
+
+WORKDIR /lfs
+
+CMD ["bash", "-c", "echo 'LFS Toolchain Ready!' && tar -czf /output/lfs-toolchain-$(date +%Y%m%d-%H%M%S).tar.gz tools usr && echo 'Output created in /output/'"]

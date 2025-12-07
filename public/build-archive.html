@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LFS Build Archive - Completed Builds & Storage Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #718096;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .stat-card.success .value { color: #48bb78; }
+        .stat-card.failed .value { color: #f56565; }
+        .stat-card.storage .value { color: #ed8936; }
+
+        .controls {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .controls h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .builds-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .build-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .build-card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #cbd5e0;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .build-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .build-card.success { border-left-color: #48bb78; }
+        .build-card.failed { border-left-color: #f56565; }
+        .build-card.running { border-left-color: #4299e1; }
+
+        .build-info {
+            flex: 1;
+        }
+
+        .build-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .build-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-badge.success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-badge.failed {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-badge.running {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .build-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .action-btn.download {
+            background: #4299e1;
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: #f56565;
+            color: white;
+        }
+
+        .action-btn.view-logs {
+            background: #718096;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #2d3748;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .close-btn:hover {
+            color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📦 Build Archive Manager</h1>
+            <p>Manage completed builds, download outputs, and optimize cloud storage</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card success">
+                <h3>✅ Successful Builds</h3>
+                <div class="value" id="successCount">-</div>
+            </div>
+            <div class="stat-card failed">
+                <h3>❌ Failed Builds</h3>
+                <div class="value" id="failedCount">-</div>
+            </div>
+            <div class="stat-card storage">
+                <h3>💾 Storage Used</h3>
+                <div class="value" id="storageUsed">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>📊 Total Builds</h3>
+                <div class="value" id="totalCount">-</div>
+            </div>
+        </div>
+
+        <!-- Storage Controls -->
+        <div class="controls">
+            <h2>🧹 Storage Management</h2>
+            <div class="button-group">
+                <button class="btn btn-danger" id="cleanupFailedBtn" onclick="cleanupFailedBuilds()">
+                    🗑️ Delete All Failed Builds
+                </button>
+                <button class="btn btn-warning" id="cleanupOldBtn" onclick="cleanupOldBuilds()">
+                    🕐 Delete Builds Older Than 30 Days
+                </button>
+                <button class="btn btn-primary" onclick="refreshData()">
+                    🔄 Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Builds List -->
+        <div class="builds-section">
+            <h2 style="margin-bottom: 20px;">📋 Build History</h2>
+            
+            <!-- Filters -->
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all" onclick="filterBuilds('all')">All Builds</button>
+                <button class="filter-btn" data-filter="success" onclick="filterBuilds('success')">✅ Successful</button>
+                <button class="filter-btn" data-filter="failed" onclick="filterBuilds('failed')">❌ Failed</button>
+                <button class="filter-btn" data-filter="running" onclick="filterBuilds('running')">🔄 Running</button>
+            </div>
+
+            <!-- Builds List -->
+            <div id="buildsList" class="build-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading builds...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Logs -->
+    <div class="modal" id="logsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 Build Logs</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="logsContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading logs...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, query, where, orderBy, getDocs, doc, deleteDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getStorage, ref, deleteObject, listAll, getMetadata } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhtKRx4v7_Ql2LCqtDYVG-HoGV1yl1UaU",
+            authDomain: "alfs-bd1e0.firebaseapp.com",
+            projectId: "alfs-bd1e0",
+            storageBucket: "alfs-bd1e0.firebasestorage.app",
+            messagingSenderId: "92549920661",
+            appId: "1:92549920661:web:e04ee68c54a6c9d8b11e82"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let allBuilds = [];
+        let currentFilter = 'all';
+
+        // Load builds data
+        async function loadBuilds() {
+            try {
+                const buildsRef = collection(db, 'builds');
+                const q = query(buildsRef, orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                
+                allBuilds = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                updateStatistics();
+                renderBuilds();
+            } catch (error) {
+                console.error('Error loading builds:', error);
+                document.getElementById('buildsList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Error Loading Builds</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const successBuilds = allBuilds.filter(b => b.status === 'SUCCESS' || b.status === 'COMPLETED');
+            const failedBuilds = allBuilds.filter(b => b.status === 'FAILED' || b.status === 'ERROR');
+            
+            document.getElementById('successCount').textContent = successBuilds.length;
+            document.getElementById('failedCount').textContent = failedBuilds.length;
+            document.getElementById('totalCount').textContent = allBuilds.length;
+            
+            // Estimate storage (rough calculation)
+            const estimatedStorageGB = (successBuilds.length * 0.5).toFixed(2); // Assume 0.5GB per build
+            document.getElementById('storageUsed').textContent = `${estimatedStorageGB} GB`;
+        }
+
+        // Render builds list
+        function renderBuilds() {
+            const filtered = currentFilter === 'all' 
+                ? allBuilds 
+                : allBuilds.filter(b => {
+                    if (currentFilter === 'success') return b.status === 'SUCCESS' || b.status === 'COMPLETED';
+                    if (currentFilter === 'failed') return b.status === 'FAILED' || b.status === 'ERROR';
+                    if (currentFilter === 'running') return b.status === 'RUNNING' || b.status === 'QUEUED';
+                    return true;
+                });
+
+            if (filtered.length === 0) {
+                document.getElementById('buildsList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <h3>No builds found</h3>
+                        <p>No builds match the selected filter</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = filtered.map(build => {
+                const statusClass = (build.status === 'SUCCESS' || build.status === 'COMPLETED') ? 'success' 
+                    : (build.status === 'FAILED' || build.status === 'ERROR') ? 'failed' 
+                    : 'running';
+                
+                const date = build.createdAt?.toDate?.() || new Date(build.createdAt);
+                const formattedDate = date.toLocaleString();
+                
+                return `
+                    <div class="build-card ${statusClass}">
+                        <div class="build-info">
+                            <div class="build-name">${build.projectName || build.buildId || 'Unnamed Build'}</div>
+                            <div class="build-meta">
+                                <span><strong>ID:</strong> ${build.id.substring(0, 8)}...</span>
+                                <span><strong>Version:</strong> ${build.lfsVersion || 'N/A'}</span>
+                                <span><strong>Created:</strong> ${formattedDate}</span>
+                                <span class="status-badge ${statusClass}">${build.status || 'UNKNOWN'}</span>
+                            </div>
+                        </div>
+                        <div class="build-actions">
+                            ${statusClass === 'success' ? `
+                                <button class="action-btn download" onclick="window.downloadBuild('${build.id}', '${build.buildId}')">
+                                    ⬇️ Download
+                                </button>
+                            ` : ''}
+                            <button class="action-btn view-logs" onclick="window.viewLogs('${build.id}')">
+                                📝 Logs
+                            </button>
+                            <button class="action-btn delete" onclick="window.deleteBuild('${build.id}')">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('buildsList').innerHTML = html;
+        }
+
+        // Filter builds
+        window.filterBuilds = function(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderBuilds();
+        };
+
+        // Cleanup failed builds
+        window.cleanupFailedBuilds = async function() {
+            if (!confirm('Delete all failed builds? This cannot be undone.')) return;
+            
+            const failedBuilds = allBuilds.filter(b => b.status === 'FAILED' || b.status === 'ERROR');
+            
+            for (const build of failedBuilds) {
+                try {
+                    await deleteDoc(doc(db, 'builds', build.id));
+                    console.log(`Deleted failed build: ${build.id}`);
+                } catch (error) {
+                    console.error(`Error deleting build ${build.id}:`, error);
+                }
+            }
+            
+            alert(`Deleted ${failedBuilds.length} failed builds`);
+            loadBuilds();
+        };
+
+        // Cleanup old builds
+        window.cleanupOldBuilds = async function() {
+            if (!confirm('Delete all builds older than 30 days? This cannot be undone.')) return;
+            
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const oldBuilds = allBuilds.filter(b => {
+                const buildDate = b.createdAt?.toDate?.() || new Date(b.createdAt);
+                return buildDate < thirtyDaysAgo;
+            });
+            
+            for (const build of oldBuilds) {
+                try {
+                    await deleteDoc(doc(db, 'builds', build.id));
+                    console.log(`Deleted old build: ${build.id}`);
+                } catch (error) {
+                    console.error(`Error deleting build ${build.id}:`, error);
+                }
+            }
+            
+            alert(`Deleted ${oldBuilds.length} old builds`);
+            loadBuilds();
+        };
+
+        // Delete single build
+        window.deleteBuild = async function(buildId) {
+            if (!confirm('Delete this build? This cannot be undone.')) return;
+            
+            try {
+                await deleteDoc(doc(db, 'builds', buildId));
+                alert('Build deleted successfully');
+                loadBuilds();
+            } catch (error) {
+                console.error('Error deleting build:', error);
+                alert('Error deleting build: ' + error.message);
+            }
+        };
+
+        // Download build (placeholder - implement GCS download)
+        window.downloadBuild = function(docId, buildId) {
+            alert(`Download functionality for build ${buildId} will be implemented with GCS integration.`);
+            // TODO: Implement actual GCS download
+            const downloadUrl = `https://storage.googleapis.com/alfs-bd1e0-builds/${buildId}/output.tar.gz`;
+            window.open(downloadUrl, '_blank');
+        };
+
+        // View logs
+        window.viewLogs = async function(buildId) {
+            const build = allBuilds.find(b => b.id === buildId);
+            if (!build) return;
+            
+            document.getElementById('logsModal').classList.add('active');
+            document.getElementById('logsContent').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading logs...</p>
+                </div>
+            `;
+            
+            // Simulate log fetching (implement real log fetching from Cloud Run)
+            setTimeout(() => {
+                const logs = build.logs || build.buildLogs || 'No logs available';
+                document.getElementById('logsContent').innerHTML = `
+                    <pre style="background: #f7fafc; padding: 20px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap;">${logs}</pre>
+                `;
+            }, 1000);
+        };
+
+        window.closeModal = function() {
+            document.getElementById('logsModal').classList.remove('active');
+        };
+
+        // Refresh data
+        window.refreshData = function() {
+            loadBuilds();
+        };
+
+        // Initialize
+        loadBuilds();
+    </script>
+</body>
+</html>

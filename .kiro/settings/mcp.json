@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "node",
+      "args": [
+        "path/to/playwright-mcp/index.js"
+      ],
+      "disabled": true,
+      "autoApprove": [],
+      "env": {}
+    }
+  }
+}

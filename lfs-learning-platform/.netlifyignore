@@ -1,0 +1,18 @@
+# Ignore large download files to stay under Netlify's deployment limit
+public/downloads/*.iso
+public/downloads/*.tar.gz
+public/downloads/*.img
+public/downloads/lfs-12.0-latest.iso
+public/downloads/lfs-12.0-toolchain.tar.gz
+
+# Keep the markdown file
+!public/downloads/USAGE_INSTRUCTIONS.md
+
+# Exclude development files
+.git
+node_modules
+.cache
+.vscode
+*.log
+.env.local
+.DS_Store

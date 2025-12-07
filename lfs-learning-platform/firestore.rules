@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users collection - anyone can read, users can write their own data
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if true; // Open for demo purposes
+    }
+    
+    // User progress - anyone can read/write for demo purposes
+    match /userProgress/{userId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
+    // Modules/Courses - anyone can read, only admins can write
+    match /modules/{moduleId} {
+      allow read: if true;
+      allow write: if false; // Only admins via Firebase Console
+    }
+    
+    // Lessons - anyone can read
+    match /lessons/{lessonId} {
+      allow read: if true;
+      allow write: if false; // Only admins via Firebase Console
+    }
+    
+    // Comments - anyone can read and write for demo purposes
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+    
+    // Analytics - anyone can write for tracking purposes
+    match /analytics/{docId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+  }
+}

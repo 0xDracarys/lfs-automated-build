@@ -1,0 +1,29 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for LFS Automated Builder",
+  "version": "1.0.0",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "build": "npm run copy:files",
+    "copy:files": "echo Build complete"
+  },
+  "dependencies": {
+    "@google-cloud/pubsub": "^4.0.0",
+    "@google-cloud/run": "^1.0.0",
+    "@google-cloud/storage": "^7.0.0",
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^4.4.1",
+    "googleapis": "^139.0.0"
+  },
+  "devDependencies": {
+    "firebase-tools": "^12.9.0"
+  }
+}

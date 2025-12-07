@@ -1,0 +1,21 @@
+{
+  "name": "lfs-build-helpers",
+  "version": "1.0.0",
+  "description": "Helper scripts for LFS build process",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lfs",
+    "build",
+    "firebase",
+    "gcs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "firebase-admin": "^11.11.0",
+    "@google-cloud/storage": "^7.0.0"
+  }
+}

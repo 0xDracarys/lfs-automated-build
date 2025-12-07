@@ -1,0 +1,51 @@
+# Docker build
+*.log
+.DS_Store
+node_modules/
+.env
+.env.local
+*.swp
+*.swo
+*~
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-functions-debug.log
+.firebaserc
+
+# Build outputs
+/build/
+/dist/
+.next/
+out/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# LFS build artifacts
+/lfs/
+/tools/
+/sources/
+*.tar.*
+*.iso
+*.tar.gz
+*.tar.xz
+*.zip
+
+# Large binary files
+lfs-12.0-latest.iso
+lfs-linux.iso
+lfs-toolchain-*.tar.gz
+ngrok
+ngrok-*.tgz
+
+# Local Netlify folder
+.netlify

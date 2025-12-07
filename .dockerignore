@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+firebase-debug.log
+.git
+.gitignore
+.firebase/
+.firebaserc
+*.md
+.vscode
+.idea
+public/
+functions/node_modules/
+build.config
