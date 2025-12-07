@@ -24,11 +24,11 @@
 │  ├─ Streak Counter              ├─ API Docs                              │
 │  └─ Admin Panel                 └─ Troubleshooting                       │
 │                                                                            │
-│  Build System                    Authentication                           │
-│  ├─ Trigger Builds              ├─ Email/Password                        │
-│  ├─ Monitor Status              ├─ OAuth (Future)                        │
-│  ├─ View Logs                   ├─ Protected Routes                      │
-│  └─ Cancel/Restart              └─ User Profiles                         │
+│  Build System (Coming Soon)      Authentication                           │
+│  ├─ Trigger Builds (Planned)    ├─ Email/Password                        │
+│  ├─ Monitor Status (Planned)    ├─ Google OAuth                          │
+│  ├─ View Logs (Planned)         ├─ Protected Routes                      │
+│  └─ Cancel/Restart (Planned)    └─ User Profiles                         │
 │                                                                            │
 └───────────────────────────────────────────────────────────────────────────┘
                                     ↕
@@ -48,7 +48,7 @@
 │                                                                            │
 │  Firebase                        Google Cloud                             │
 │  ├─ Authentication              ├─ Vertex AI (Chat)                      │
-│  ├─ Firestore (Database)        ├─ Cloud Run (Builds)                    │
+│  ├─ Firestore (Database)        ├─ Cloud Run (Coming Soon)               │
 │  ├─ Analytics                   ├─ Cloud Functions                       │
 │  ├─ Functions                   └─ Monitoring                            │
 │  └─ Storage                                                               │
@@ -111,7 +111,7 @@
 | User Auth | ✅ Live | Firebase | Secure |
 | Progress Tracking | ✅ Live | Firestore | Real-time |
 | AI Assistant | ✅ Live | Vertex AI | Responsive |
-| Build System | ✅ Live | Cloud Run | Automated |
+| Build System | 🚧 Coming Soon | Cloud Run | Planned |
 | Dashboard | ✅ Live | React + Recharts | Interactive |
 | Documentation | ✅ Live | Markdown | Searchable |
 | Terminal | ✅ Live | Custom | Interactive |
@@ -206,10 +206,10 @@ Sam's LFS (/)
 │       ├── Lesson 3.1: Configuration
 │       └── Lesson 3.2: Compilation
 │
-├── Build (/build)
-│   ├── Start New Build
-│   ├── View Build Status
-│   └── Build History
+├── Build (/build) - Coming Soon
+│   ├── Start New Build (Planned)
+│   ├── View Build Status (Planned)
+│   └── Build History (Planned)
 │
 ├── Dashboard (/dashboard)
 │   ├── Overview
@@ -260,7 +260,7 @@ Sam's LFS (/)
 │                                                              │
 │  Authenticated Access (Login Required)                       │
 │  ├─ Dashboard                                               │
-│  ├─ Build System                                            │
+│  ├─ Build System (Coming Soon)                              │
 │  ├─ Progress Tracking                                       │
 │  └─ AI Chat                                                 │
 │                                                              │
@@ -402,10 +402,10 @@ http://localhost:3000
 
 ---
 
-**Last Updated:** December 5, 2024  
+**Last Updated:** December 7, 2024  
 **Version:** 1.0.0  
 **Status:** ✅ PRODUCTION READY  
-**Confidence:** HIGH
+**Note:** Cloud Build System integration planned for future release
 
 ---
 

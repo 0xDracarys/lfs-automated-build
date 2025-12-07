@@ -261,9 +261,10 @@ lfs-automated/
 
 ## Tech Stack
 
-- **Frontend:** Next.js 16, React, Tailwind CSS, Framer Motion
-- **Backend:** Firebase Functions, Firestore
-- **Deployment:** Netlify (frontend), Google Cloud Run (builds)
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, Framer Motion
+- **Backend:** Firebase (Auth, Firestore, Functions), Google Vertex AI
+- **Deployment:** Netlify (frontend)
+- **Cloud Build System:** Coming Soon (Google Cloud Run integration planned)
 - **LFS Version:** 12.0 (Kernel 6.4.12)
 
 ## License
