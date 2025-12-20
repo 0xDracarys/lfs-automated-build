@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- 
+    WiX Toolset Configuration for LFS Builder MSI Installer
+    
+    This generates a professional MSI installer package that can be distributed
+    and installed like any commercial Windows application.
+    
+    Prerequisites:
+    - WiX Toolset 3.11+ or WiX Toolset 4.0+
+    - .NET 8.0 SDK
+    
+    Build Command:
+    candle Product.wxs -ext WixUIExtension
+    light Product.wixobj -ext WixUIExtension -out LFSBuilderSetup.msi
+  -->
+  
+  <Product 
+    Id="*" 
+    Name="LFS Builder" 
+    Language="1033" 
+    Version="1.0.0.0" 
+    Manufacturer="LFS Automated Build" 
+    UpgradeCode="12345678-1234-1234-1234-123456789012">
+    
+    <Package 
+      InstallerVersion="200" 
+      Compressed="yes" 
+      InstallScope="perMachine" 
+      Description="Linux From Scratch Automated Build System"
+      Comments="Professional installer for LFS Builder" />
+
+    <!-- Upgrade support -->
+    <MajorUpgrade 
+      DowngradeErrorMessage="A newer version of [ProductName] is already installed." 
+      AllowSameVersionUpgrades="yes" />
+    
+    <!-- Embed CAB file in MSI -->
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- UI Configuration - use built-in dialogs -->
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    
+    <!-- License agreement -->
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    
+    <!-- Banner and dialog images -->
+    <WixVariable Id="WixUIBannerBmp" Value="Banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Dialog.bmp" />
+
+    <!-- Custom properties -->
+    <Property Id="LINUXDISTRO" Value="Ubuntu" />
+    <Property Id="BUILDCORES" Value="4" />
+    <Property Id="CREATEDESKTOPSHORTCUT" Value="1" />
+
+    <!-- Check for .NET 8.0 Runtime -->
+    <Property Id="DOTNET8INSTALLED">
+      <RegistrySearch 
+        Id="FindDotNet8" 
+        Root="HKLM" 
+        Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost"
+        Name="Version" 
+        Type="raw" />
+    </Property>
+    
+    <Condition Message="This application requires .NET 8.0 Runtime. Please install it from https://dotnet.microsoft.com/">
+      <![CDATA[Installed OR DOTNET8INSTALLED]]>
+    </Condition>
+
+    <!-- Check for Windows 10 2004+ -->
+    <Condition Message="This application requires Windows 10 version 2004 (Build 19041) or higher.">
+      <![CDATA[Installed OR (VersionNT >= 603)]]>
+    </Condition>
+
+    <!-- Feature: Main Application -->
+    <Feature Id="ProductFeature" Title="LFS Builder" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="BuildScripts" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+
+    <!-- Directory structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="LFS Builder">
+          <Directory Id="BinFolder" Name="bin" />
+          <Directory Id="ScriptsFolder" Name="scripts" />
+          <Directory Id="HelpersFolder" Name="helpers" />
+        </Directory>
+      </Directory>
+      
+      <!-- Start Menu -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="LFS Builder"/>
+      </Directory>
+      
+      <!-- Desktop -->
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <!-- Application Components -->
+    <ComponentGroup Id="ProductComponents" Directory="BinFolder">
+      <Component Id="MainExecutable" Guid="11111111-1111-1111-1111-111111111111">
+        <File 
+          Id="LFSBuilderSetup.exe" 
+          Source="$(var.LFSInstaller.TargetDir)LFSBuilderSetup.exe" 
+          KeyPath="yes" />
+        
+        <!-- Additional DLLs and dependencies -->
+        <File 
+          Id="LFSInstaller.dll" 
+          Source="$(var.LFSInstaller.TargetDir)LFSInstaller.dll" />
+      </Component>
+      
+      <Component Id="ConfigFiles" Guid="22222222-2222-2222-2222-222222222222">
+        <File 
+          Id="app.config" 
+          Source="$(var.LFSInstaller.TargetDir)LFSBuilderSetup.exe.config" 
+          KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Build Scripts -->
+    <ComponentGroup Id="BuildScripts" Directory="ScriptsFolder">
+      <Component Id="BuildScriptsComponent" Guid="33333333-3333-3333-3333-333333333333">
+        <File Id="lfs_build.sh" Source="..\..\lfs-build.sh" KeyPath="yes" />
+        <File Id="build_chapter6.sh" Source="..\..\build-chapter6-fixed.sh" />
+        <File Id="build_bootable.sh" Source="..\..\build-bootable-kernel.sh" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Start Menu Shortcut -->
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="44444444-4444-4444-4444-444444444444">
+        <Shortcut 
+          Id="ApplicationStartMenuShortcut"
+          Name="LFS Builder"
+          Description="Launch LFS Builder"
+          Target="[System64Folder]wsl.exe"
+          Arguments='bash -c "cd ~/lfs-automated &amp;&amp; bash lfs-build.sh"'
+          WorkingDirectory="INSTALLFOLDER" />
+        
+        <Shortcut 
+          Id="UninstallProduct"
+          Name="Uninstall LFS Builder"
+          Target="[System64Folder]msiexec.exe"
+          Arguments="/x [ProductCode]"
+          Description="Uninstalls LFS Builder" />
+        
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue 
+          Root="HKCU" 
+          Key="Software\LFSBuilder" 
+          Name="installed" 
+          Type="integer" 
+          Value="1" 
+          KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <!-- Desktop Shortcut -->
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="55555555-5555-5555-5555-555555555555">
+        <Shortcut 
+          Id="DesktopShortcut"
+          Name="LFS Builder"
+          Description="Launch LFS Builder"
+          Target="[System64Folder]wsl.exe"
+          Arguments='bash -c "cd ~/lfs-automated &amp;&amp; bash lfs-build.sh"'
+          WorkingDirectory="INSTALLFOLDER" />
+        
+        <RegistryValue 
+          Root="HKCU" 
+          Key="Software\LFSBuilder" 
+          Name="desktopShortcut" 
+          Type="integer" 
+          Value="1" 
+          KeyPath="yes"/>
+        
+        <Condition>CREATEDESKTOPSHORTCUT = 1</Condition>
+      </Component>
+    </DirectoryRef>
+
+    <!-- Custom Actions -->
+    <CustomAction 
+      Id="EnableWSL2" 
+      BinaryKey="WixCA" 
+      DllEntry="CAQuietExec" 
+      Execute="deferred" 
+      Return="check" 
+      Impersonate="no" />
+    
+    <CustomAction 
+      Id="SetEnableWSL2Command" 
+      Property="EnableWSL2" 
+      Value='"[SystemFolder]cmd.exe" /c dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart' />
+
+    <!-- Installation Sequence -->
+    <InstallExecuteSequence>
+      <Custom Action="SetEnableWSL2Command" Before="EnableWSL2">NOT Installed</Custom>
+      <Custom Action="EnableWSL2" After="InstallFiles">NOT Installed</Custom>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>lfs-icon.ico</ApplicationIcon>
+    <AssemblyName>LFSBuilderSetup</AssemblyName>
+    <Product>LFS Builder Installer</Product>
+    <Company>LFS Automated Build</Company>
+    <Version>1.0.0</Version>
+    <Description>Professional installer for Linux From Scratch automated build system</Description>
+    <Copyright>Copyright © 2025</Copyright>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,19 +1,45 @@
 # Linux From Scratch - Automated Build System
 
-A complete platform for building Linux From Scratch (LFS 12.0) with an interactive learning frontend.
+A complete platform for building Linux From Scratch (LFS 12.0) with an interactive learning frontend and professional Windows installer.
 
 **Live Site:** https://lfs-by-sam.netlify.app
 
-## Quick Start
+## 🚀 Two Ways to Build LFS
 
-### Frontend (Learning Platform)
+### Option 1: Windows Installer (Recommended for Windows Users)
+
+**One-click installation with professional GUI installer!**
+
+1. **Download** the installer package: [`LFS-Builder-Setup-v1.0.0.zip`](installer/)
+2. **Extract** and run `Install-LFS-Builder.bat`
+3. **Follow** the 7-step installation wizard (15-30 minutes)
+4. **Start building:** Double-click "LFS Builder" on your desktop
+
+**Features:**
+- ✅ Automated WSL2 setup
+- ✅ One-click LFS environment creation
+- ✅ Desktop shortcuts for easy access
+- ✅ Professional Windows Forms GUI
+- ✅ Progress tracking with visual feedback
+- ✅ Complete build automation (8-12 hours)
+
+**[📖 Full Installation Guide](installer/INSTALLATION-GUIDE.md)** | **[🏗️ Installer Documentation](installer/README.md)**
+
+---
+
+### Option 2: Web Learning Platform
+
+**Interactive tutorials and manual command execution**
+
 ```bash
 cd lfs-learning-platform
 npm install
 npm run dev
 ```
 
-### Deploy to Netlify
+Visit http://localhost:3000 for the interactive wizard.
+
+**Deploy to Netlify:**
 ```bash
 cd lfs-learning-platform
 netlify deploy --prod

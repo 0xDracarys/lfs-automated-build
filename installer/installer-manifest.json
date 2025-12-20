@@ -1,0 +1,206 @@
+{
+  "name": "LFS Builder",
+  "version": "1.0.0",
+  "description": "Windows installer for Linux From Scratch automated build system",
+  "author": "LFS Automated Build Team",
+  "license": "MIT",
+  "installer": {
+    "type": "PowerShell GUI",
+    "entryPoint": "LFS-Setup.ps1",
+    "requiresAdmin": true,
+    "minimumPowerShellVersion": "5.1",
+    "platform": "Windows 10/11"
+  },
+  "systemRequirements": {
+    "os": {
+      "name": "Windows 10/11",
+      "minimumBuild": 19041,
+      "note": "Required for WSL2 support"
+    },
+    "hardware": {
+      "diskSpace": {
+        "minimum": "30 GB",
+        "recommended": "50 GB"
+      },
+      "ram": {
+        "minimum": "4 GB",
+        "recommended": "8 GB"
+      },
+      "cpu": {
+        "cores": "2+",
+        "recommended": "4+ cores with SMT/HyperThreading"
+      }
+    },
+    "virtualization": {
+      "required": true,
+      "note": "CPU virtualization (VT-x/AMD-V) must be enabled in BIOS"
+    }
+  },
+  "dependencies": {
+    "required": [
+      {
+        "name": "WSL2",
+        "version": "latest",
+        "description": "Windows Subsystem for Linux 2",
+        "autoInstall": true,
+        "checkCommand": "wsl --status"
+      },
+      {
+        "name": "Ubuntu WSL",
+        "version": "20.04 or later",
+        "description": "Ubuntu distribution for WSL",
+        "autoInstall": true,
+        "checkCommand": "wsl -l -v"
+      }
+    ],
+    "optional": [
+      {
+        "name": "Git for Windows",
+        "version": "2.x",
+        "description": "Version control (for development)",
+        "url": "https://git-scm.com/download/win"
+      },
+      {
+        "name": "Node.js",
+        "version": "18.x or later",
+        "description": "For web dashboard (optional)",
+        "url": "https://nodejs.org/"
+      },
+      {
+        "name": "Visual Studio Code",
+        "description": "Recommended code editor",
+        "url": "https://code.visualstudio.com/"
+      }
+    ]
+  },
+  "installation": {
+    "stages": [
+      {
+        "id": 1,
+        "name": "Welcome",
+        "description": "Introduction and license agreement",
+        "estimatedDuration": "30 seconds"
+      },
+      {
+        "id": 2,
+        "name": "System Check",
+        "description": "Verify system requirements",
+        "estimatedDuration": "1 minute"
+      },
+      {
+        "id": 3,
+        "name": "Dependencies",
+        "description": "Install WSL2 and required features",
+        "estimatedDuration": "5-10 minutes"
+      },
+      {
+        "id": 4,
+        "name": "WSL Setup",
+        "description": "Configure WSL2 and Ubuntu",
+        "estimatedDuration": "5-10 minutes"
+      },
+      {
+        "id": 5,
+        "name": "Environment",
+        "description": "Create LFS build environment",
+        "estimatedDuration": "2-3 minutes"
+      },
+      {
+        "id": 6,
+        "name": "Scripts",
+        "description": "Install build scripts and tools",
+        "estimatedDuration": "1 minute"
+      },
+      {
+        "id": 7,
+        "name": "Complete",
+        "description": "Finish setup and show next steps",
+        "estimatedDuration": "30 seconds"
+      }
+    ],
+    "totalEstimatedTime": "15-30 minutes",
+    "requiresReboot": false,
+    "createShortcuts": true
+  },
+  "paths": {
+    "installDirectory": "%ProgramFiles%\\LFS-Builder",
+    "lfsRoot": "/mnt/lfs",
+    "wslDistro": "Ubuntu",
+    "shortcuts": [
+      {
+        "name": "LFS Builder",
+        "target": "BUILD-LFS-CORRECT.ps1",
+        "location": "Desktop",
+        "icon": "default"
+      },
+      {
+        "name": "LFS Shell",
+        "target": "ENTER-LFS-SHELL.ps1",
+        "location": "Desktop",
+        "icon": "default"
+      },
+      {
+        "name": "Check Build Status",
+        "target": "CHECK_BUILD_STATUS.ps1",
+        "location": "Start Menu",
+        "icon": "default"
+      }
+    ]
+  },
+  "postInstall": {
+    "actions": [
+      "Create desktop shortcuts",
+      "Generate quick start guide",
+      "Configure WSL environment variables",
+      "Create LFS directory structure"
+    ],
+    "documentation": [
+      "QUICK-START.txt",
+      "README.md",
+      "docs/LOCAL-LFS-BUILD-ARCHITECTURE.md"
+    ]
+  },
+  "buildProcess": {
+    "stages": {
+      "chapter5": {
+        "name": "Cross Toolchain",
+        "estimatedTime": "1-2 hours",
+        "description": "Build cross-compilation toolchain"
+      },
+      "chapter6": {
+        "name": "Temporary Tools",
+        "estimatedTime": "2-3 hours",
+        "description": "Build temporary tools in chroot"
+      },
+      "chapter7-8": {
+        "name": "Final System",
+        "estimatedTime": "4-6 hours",
+        "description": "Build complete LFS system"
+      },
+      "chapter9": {
+        "name": "Kernel & Boot",
+        "estimatedTime": "1 hour",
+        "description": "Compile kernel and create bootable image"
+      }
+    },
+    "totalEstimatedTime": "8-12 hours",
+    "parallelBuilds": true,
+    "logLocation": "/mnt/lfs/logs"
+  },
+  "features": [
+    "One-click installer with GUI",
+    "Automatic WSL2 setup and configuration",
+    "Pre-configured build environment",
+    "Desktop shortcuts for easy access",
+    "Progress tracking and logging",
+    "Integrated build scripts",
+    "Quick start documentation",
+    "Error recovery and resume support"
+  ],
+  "support": {
+    "documentation": "docs/",
+    "website": "http://localhost:3000",
+    "lfsDocs": "https://www.linuxfromscratch.org/lfs/",
+    "troubleshooting": "docs/TROUBLESHOOTING.md"
+  }
+}
