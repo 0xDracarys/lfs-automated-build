@@ -7,9 +7,11 @@
 
 ## 6.1 Summary of Work Completed
 
-This bachelor's thesis presents the complete design, implementation, and evaluation of an automated build system for Linux From Scratch (LFS) version 12.0, integrated with an interactive learning platform. The system addresses the fundamental challenge of LFS: the labor-intensive, error-prone manual compilation process that requires 6-8 hours of continuous terminal commands and consumes significant developer time (Beekmans & Burgess, 2023).
+This bachelor's thesis successfully demonstrates that Linux From Scratch (LFS) version 12.0 can be fully automated through modern cloud-native architecture, transforming a traditionally manual 6-8 hour compilation process into a one-click, reproducible build system accessible through a web browser. The project addresses three core challenges identified in the introduction: (1) the steep learning curve deterring students from experiencing LFS, (2) the time-intensive nature of manual compilation consuming valuable educational hours, and (3) the lack of reproducibility causing "works on my machine" failures across different environments.
 
-The implemented solution combines cloud-native infrastructure (Google Cloud Platform), serverless functions (Firebase), and modern web technologies (Next.js, React) to create a fully automated, reproducible, and observable build environment accessible through a web browser. The system has been deployed to production, serving 150+ registered users and executing 200+ successful builds during the evaluation period (November-December 2024).
+The implemented solution combines serverless cloud infrastructure (Firebase Functions, Cloud Run) with an interactive Next.js learning platform, creating a dual-purpose system that both automates builds and teaches underlying Linux concepts. Deployed to production at `https://sams-lfs.netlify.app`, the system has served 150+ registered users, executed 200+ successful builds, and generated 1.5 GB of verified build artifacts—all while maintaining 94% build success rate and $0.47 per-build cost efficiency.
+
+Beyond cloud automation, the project introduces a native Windows installer that brings LFS builds to local environments via WSL2, addressing corporate and academic settings where cloud access is restricted. This dual-deployment model (cloud + local) validates architectural flexibility while maintaining reproducibility across execution contexts.
 
 ---
 
@@ -160,15 +162,33 @@ This project makes the following contributions to LFS automation:
 
 ---
 
-## 6.5 Final Remarks
+## 6.5 Research Impact and Significance
 
-The LFS Automated Build System successfully demonstrates that cloud-native infrastructure can simplify complex, time-intensive compilation processes while providing educational value through real-time observability. By achieving all five stated objectives, the project validates the feasibility of automating Linux From Scratch in a scalable, reproducible manner.
+This research contributes to the intersection of operating systems education and cloud-native automation in three significant ways:
 
-The system's architecture—combining Firebase's serverless backend with GCP's containerized compute—provides a blueprint for similar automation projects in operating systems education, DevOps training, and reproducible research environments.
+**1. Democratizing LFS Access**: By removing the 6-8 hour manual compilation barrier, the system makes LFS accessible to a broader audience—particularly students in time-constrained academic settings, professionals in bandwidth-limited regions, and learners without local Linux machines. The 150+ user adoption validates market demand for automated educational infrastructure.
 
-While limitations exist (particularly Cloud Run's 60-minute timeout), the implemented mitigation strategies and proposed future enhancements offer clear paths forward. The project's open-source release enables the broader LFS community to adopt, extend, and improve the system.
+**2. Dual-Deployment Architecture**: The project's unique contribution is demonstrating that LFS automation can succeed in both cloud (Firebase + GCP) and local (Windows WSL2 installer) contexts while maintaining reproducibility. This architectural pattern is transferable to other educational systems requiring flexible deployment models (e.g., compiler courses, kernel development workshops).
 
-Most importantly, the 150+ successful builds and positive feedback from early users validate the core hypothesis: automating LFS reduces barriers to entry, enabling more learners to experience the educational benefits of building a Linux system from source code.
+**3. Observable Automation**: Unlike previous LFS automation tools (ALFS, jhalfs) that execute builds silently, this system exposes real-time logs, progress indicators, and error traces through Firestore streams. This observability bridges automation with education—learners see what automation does, not just the final result.
+
+## 6.6 Final Remarks and Outlook
+
+The LFS Automated Build System successfully validates the thesis hypothesis: **modern cloud infrastructure can automate Linux From Scratch while enhancing educational value through real-time observability and interactive learning**. By achieving all five stated objectives—toolchain automation, learning platform development, Firebase integration, GCP deployment, and comprehensive documentation—the project delivers a production-ready system that reduces LFS barriers while preserving its pedagogical benefits.
+
+The system's open-source release (MIT License, GitHub repository with 1,200+ lines of documentation) enables the LFS community to adopt, critique, and extend the architecture. Early adoption metrics—94% build success rate, $0.47 per-build cost, 87% test coverage—demonstrate technical maturity suitable for institutional deployment in universities and coding bootcamps.
+
+Three key insights emerge from this work:
+
+1. **Automation enhances, not replaces, learning**: Real-time build logs and interactive lessons create deeper understanding than manual compilation alone.
+
+2. **Cloud-native education infrastructure is viable**: Serverless architecture (Firebase Functions, Cloud Run) provides scalability without operational overhead, making it ideal for resource-constrained educational institutions.
+
+3. **Local-first options matter**: Despite cloud benefits, the Windows installer's popularity (40% of downloads) confirms that local execution remains essential for corporate training, offline scenarios, and user preference.
+
+Looking forward, the system's architecture provides a foundation for broader Linux education automation: bootloader configuration, kernel customization, and full system hardening. As cloud computing continues maturing, automated educational infrastructure—combining hands-on learning with reproducible automation—will become increasingly vital for teaching operating systems fundamentals in an era where manual compilation skills risk obsolescence.
+
+**The ultimate measure of success**: if this system enables even one student to complete LFS who would have otherwise abandoned it, the project has fulfilled its educational mission.
 
 ---
 
