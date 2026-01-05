@@ -1,0 +1,1779 @@
+{
+  "status": "COMPLETED",
+  "currentPackage": "sed-4.9 (Pass 2)",
+  "currentPackageIndex": 18,
+  "progress_percent": 100,
+  "startedAt": "2025-12-12T04:09:23.625Z",
+  "updatedAt": "2025-12-12T04:10:52.905Z",
+  "completedAt": "2025-12-12T04:10:52.905Z",
+  "totalTime_sec": 3342,
+  "peakMemory_GB": 6.8,
+  "errorMessage": null,
+  "artifactHash_SHA256": "a7f2c8e4b9d1f3e6a8c2d5b7e9f1a3c5d7e9b1f3e5a7c9d1e3f5a7b9c1d3e5f7",
+  "logs": [
+    {
+      "timestamp": "2025-12-12T04:09:23.634Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Build LFS-1765512563625-SIM submitted"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:23.636Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Project: LFS Chapter 5 Build - Screenshot Demo"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:23.636Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "LFS Version: 12.0"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:24.638Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Build queued, waiting for resources..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:26.641Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Build started!"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:26.642Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Initializing build environment..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:27.644Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "export LFS=/mnt/lfs"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:27.646Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "export LFS_TGT=x86_64-lfs-linux-gnu"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:27.647Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "export PATH=/tools/bin:/usr/bin:/bin"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:27.647Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "export MAKEFLAGS=\"-j12\""
+    },
+    {
+      "timestamp": "2025-12-12T04:09:27.648Z",
+      "level": "SUCCESS",
+      "packageName": "system",
+      "message": "Environment configured"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:28.648Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Creating directory structure..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:28.649Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "mkdir -pv $LFS/{bin,boot,etc,lib,lib64,sbin,usr,var,tools,sources}"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:28.649Z",
+      "level": "SUCCESS",
+      "packageName": "system",
+      "message": "Directory structure created"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:29.650Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Starting Chapter 5 toolchain build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:29.650Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Total packages: 18"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:29.651Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:30.152Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:31.353Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Configure flags (DEPENDENCY CLOSURE):"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:31.353Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "./configure --prefix=/tools \\\n    --with-sysroot=$LFS \\\n    --target=$LFS_TGT \\\n    --disable-nls \\\n    --enable-gprofng=no \\\n    --disable-werror"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:31.354Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:34.155Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:34.155Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:34.458Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:34.758Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.060Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[ 67%] Linking C executable binutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.361Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[100%] Built target binutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.362Z",
+      "level": "DEBUG",
+      "packageName": "binutils-2.41",
+      "message": "Peak memory: 6.75 GB"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.362Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.662Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.663Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.663Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "✓ Package completed in 4.3 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.663Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 1/18 packages (6%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:35.664Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:36.165Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:38.166Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Configure flags (--disable-shared for TCB):"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:38.166Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "./configure --target=$LFS_TGT \\\n    --prefix=/tools \\\n    --with-glibc-version=2.38 \\\n    --with-sysroot=$LFS \\\n    --with-newlib \\\n    --without-headers \\\n    --disable-nls \\\n    --disable-shared \\\n    --disable-multilib \\\n    --disable-threads \\\n    --disable-libatomic \\\n    --disable-libgomp \\\n    --disable-libquadmath \\\n    --disable-libssp \\\n    --disable-libvtv \\\n    --disable-libstdcxx \\\n    --enable-languages=c,c++"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:38.167Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:41.168Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:53.294Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:53.601Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:53.904Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:54.204Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[ 67%] Linking C executable gcc"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:54.505Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[100%] Built target gcc"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:54.506Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.309Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.310Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.310Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "✓ Package completed in 12.7 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.311Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 2/18 packages (11%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.311Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.812Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.913Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:55.914Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:56.216Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:56.517Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:56.818Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[ 67%] Linking C executable linux-api-headers"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.118Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[100%] Built target linux-api-headers"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.119Z",
+      "level": "SUCCESS",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.321Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.322Z",
+      "level": "SUCCESS",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.323Z",
+      "level": "SUCCESS",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "✓ Package completed in 0.3 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.325Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 3/18 packages (17%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.327Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:57.828Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:09:59.631Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "Configure flags (--without-bash-malloc):"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:59.632Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "./configure --prefix=/usr \\\n    --host=$LFS_TGT \\\n    --build=$(../scripts/config.guess) \\\n    --enable-kernel=4.14 \\\n    --with-headers=$LFS/usr/include \\\n    --without-bash-malloc \\\n    libc_cv_slibdir=/usr/lib"
+    },
+    {
+      "timestamp": "2025-12-12T04:09:59.634Z",
+      "level": "SUCCESS",
+      "packageName": "glibc-2.38",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:02.635Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:02.636Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:02.942Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:03.243Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:03.544Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "[ 67%] Linking C executable glibc"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:03.845Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "[100%] Built target glibc"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:03.845Z",
+      "level": "SUCCESS",
+      "packageName": "glibc-2.38",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:04.846Z",
+      "level": "INFO",
+      "packageName": "glibc-2.38",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:04.847Z",
+      "level": "SUCCESS",
+      "packageName": "glibc-2.38",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:04.847Z",
+      "level": "SUCCESS",
+      "packageName": "glibc-2.38",
+      "message": "✓ Package completed in 18.4 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:04.848Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 4/18 packages (22%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:04.848Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:05.348Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:05.848Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:05.849Z",
+      "level": "SUCCESS",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:07.650Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:07.651Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:07.954Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:08.255Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:08.557Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "[ 67%] Linking C executable libstdc++"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:08.858Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "[100%] Built target libstdc++"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:08.859Z",
+      "level": "SUCCESS",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.062Z",
+      "level": "INFO",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.063Z",
+      "level": "SUCCESS",
+      "packageName": "libstdc++-13.2.0",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.064Z",
+      "level": "SUCCESS",
+      "packageName": "libstdc++-13.2.0",
+      "message": "✓ Package completed in 2.5 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.067Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 5/18 packages (28%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.068Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.569Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.869Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:09.870Z",
+      "level": "SUCCESS",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:10.772Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:10.773Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:11.075Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:11.377Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:11.680Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "[ 67%] Linking C executable m4"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:11.980Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "[100%] Built target m4"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:11.981Z",
+      "level": "SUCCESS",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.082Z",
+      "level": "INFO",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.083Z",
+      "level": "SUCCESS",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.083Z",
+      "level": "SUCCESS",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "message": "✓ Package completed in 1.3 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.084Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 6/18 packages (33%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.085Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.586Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.986Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:12.987Z",
+      "level": "SUCCESS",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:14.189Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:14.190Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:14.491Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:14.791Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.095Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "[ 67%] Linking C executable ncurses"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.398Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "[100%] Built target ncurses"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.399Z",
+      "level": "SUCCESS",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.599Z",
+      "level": "INFO",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.600Z",
+      "level": "SUCCESS",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.601Z",
+      "level": "SUCCESS",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "message": "✓ Package completed in 1.8 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.601Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 7/18 packages (39%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:15.602Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:16.103Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:16.604Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:16.605Z",
+      "level": "SUCCESS",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:18.107Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:18.119Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:18.421Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:18.722Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.024Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "[ 67%] Linking C executable bash"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.324Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "[100%] Built target bash"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.325Z",
+      "level": "SUCCESS",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.526Z",
+      "level": "INFO",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.527Z",
+      "level": "SUCCESS",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.527Z",
+      "level": "SUCCESS",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "message": "✓ Package completed in 2.2 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.527Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 8/18 packages (44%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:19.528Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:20.029Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:20.630Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:20.631Z",
+      "level": "SUCCESS",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:22.734Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:22.735Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:23.036Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:23.338Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:23.639Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "[ 67%] Linking C executable coreutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:23.942Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "[100%] Built target coreutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:23.943Z",
+      "level": "SUCCESS",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:24.246Z",
+      "level": "INFO",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:24.246Z",
+      "level": "SUCCESS",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:24.247Z",
+      "level": "SUCCESS",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "message": "✓ Package completed in 3.0 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:24.247Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 9/18 packages (50%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:24.249Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:24.749Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:25.051Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:25.052Z",
+      "level": "SUCCESS",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:25.753Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:25.754Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:26.055Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:26.358Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:26.658Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "[ 67%] Linking C executable diffutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:26.959Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "[100%] Built target diffutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:26.959Z",
+      "level": "SUCCESS",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.060Z",
+      "level": "INFO",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.061Z",
+      "level": "SUCCESS",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.061Z",
+      "level": "SUCCESS",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "message": "✓ Package completed in 1.1 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.061Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 10/18 packages (56%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.062Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.565Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.769Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:27.769Z",
+      "level": "SUCCESS",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:28.170Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:28.171Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:28.472Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:28.773Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.073Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "[ 67%] Linking C executable file"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.374Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "[100%] Built target file"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.375Z",
+      "level": "SUCCESS",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.475Z",
+      "level": "INFO",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.476Z",
+      "level": "SUCCESS",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.476Z",
+      "level": "SUCCESS",
+      "packageName": "file-5.45 (Pass 2)",
+      "message": "✓ Package completed in 0.7 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.476Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 11/18 packages (61%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.477Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:29.978Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:30.381Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:30.382Z",
+      "level": "SUCCESS",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:31.385Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:31.386Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:31.687Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:31.988Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.291Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "[ 67%] Linking C executable findutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.591Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "[100%] Built target findutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.591Z",
+      "level": "SUCCESS",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.793Z",
+      "level": "INFO",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.794Z",
+      "level": "SUCCESS",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.795Z",
+      "level": "SUCCESS",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "message": "✓ Package completed in 1.6 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.795Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 12/18 packages (67%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:32.797Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:33.300Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:33.601Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:33.601Z",
+      "level": "SUCCESS",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:34.402Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:34.403Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:34.704Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.005Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.308Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "[ 67%] Linking C executable gawk"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.609Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "[100%] Built target gawk"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.610Z",
+      "level": "SUCCESS",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.710Z",
+      "level": "INFO",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.711Z",
+      "level": "SUCCESS",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.711Z",
+      "level": "SUCCESS",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "message": "✓ Package completed in 1.2 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.711Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 13/18 packages (72%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:35.712Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:36.214Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:36.515Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:36.515Z",
+      "level": "SUCCESS",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:37.216Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:37.217Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:37.521Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:37.823Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.124Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "[ 67%] Linking C executable grep"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.424Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "[100%] Built target grep"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.425Z",
+      "level": "DEBUG",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Peak memory: 6.80 GB"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.426Z",
+      "level": "SUCCESS",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.527Z",
+      "level": "INFO",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.527Z",
+      "level": "SUCCESS",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.528Z",
+      "level": "SUCCESS",
+      "packageName": "grep-3.11 (Pass 2)",
+      "message": "✓ Package completed in 1.1 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.528Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 14/18 packages (78%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:38.529Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:39.031Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:39.233Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:39.234Z",
+      "level": "SUCCESS",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:39.735Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:39.735Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:40.036Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:40.337Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:40.641Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "[ 67%] Linking C executable gzip"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:40.943Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "[100%] Built target gzip"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:40.943Z",
+      "level": "SUCCESS",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.044Z",
+      "level": "INFO",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.044Z",
+      "level": "SUCCESS",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.045Z",
+      "level": "SUCCESS",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "message": "✓ Package completed in 0.8 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.045Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 15/18 packages (83%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.047Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.547Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.849Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:41.850Z",
+      "level": "SUCCESS",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:42.651Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:42.652Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:42.953Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.255Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.556Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "[ 67%] Linking C executable make"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.858Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "[100%] Built target make"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.859Z",
+      "level": "SUCCESS",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.959Z",
+      "level": "INFO",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.959Z",
+      "level": "SUCCESS",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.960Z",
+      "level": "SUCCESS",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "message": "✓ Package completed in 1.2 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.960Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 16/18 packages (89%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:43.961Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:44.462Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:44.664Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:44.665Z",
+      "level": "SUCCESS",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:45.066Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:45.067Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:45.369Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:45.671Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:45.972Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "[ 67%] Linking C executable patch"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.273Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "[100%] Built target patch"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.274Z",
+      "level": "SUCCESS",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.375Z",
+      "level": "INFO",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.375Z",
+      "level": "SUCCESS",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.376Z",
+      "level": "SUCCESS",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "message": "✓ Package completed in 0.7 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.377Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 17/18 packages (94%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.379Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:46.882Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:47.085Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:47.085Z",
+      "level": "SUCCESS",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:47.587Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:47.587Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:47.888Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.190Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.493Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "[ 67%] Linking C executable sed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.793Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "[100%] Built target sed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.794Z",
+      "level": "SUCCESS",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.894Z",
+      "level": "INFO",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.895Z",
+      "level": "SUCCESS",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.895Z",
+      "level": "SUCCESS",
+      "packageName": "sed-4.9 (Pass 2)",
+      "message": "✓ Package completed in 0.8 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.896Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 18/18 packages (100%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:48.897Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "All packages built successfully!"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:49.898Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Creating artifact archive..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:51.902Z",
+      "level": "SUCCESS",
+      "packageName": "system",
+      "message": "Artifact created: lfs-chapter5.tar.gz (4.2 GB)"
+    },
+    {
+      "timestamp": "2025-12-12T04:10:51.902Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Calculating SHA256 hash..."
+    },
+    {
+      "timestamp": "2025-12-12T04:10:52.904Z",
+      "level": "SUCCESS",
+      "packageName": "system",
+      "message": "SHA256: a7f2c8e4b9d1f3e6a8c2d5b7e9f1a3c5d7e9b1f3e5a7c9d1e3f5a7b9c1d3e5f7"
+    }
+  ]
+}

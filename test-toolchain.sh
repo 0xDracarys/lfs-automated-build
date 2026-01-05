@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-export LFS=/home/dracarys/lfs-local-build/mnt/lfs
+# Use standard LFS path or environment variable
+export LFS=${LFS:-/mnt/lfs}
 export LFS_TGT=x86_64-lfs-linux-gnu
 export PATH=/tools/bin:$PATH
 

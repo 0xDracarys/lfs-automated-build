@@ -2,7 +2,8 @@
 # prepare-chroot.sh - Prepare the chroot environment for native LFS build
 set -e
 
-export LFS=/home/dracarys/lfs-local-build/mnt/lfs
+# Use standard LFS path or environment variable
+export LFS=${LFS:-/mnt/lfs}
 
 echo "======================================="
 echo "  PREPARING CHROOT ENVIRONMENT"

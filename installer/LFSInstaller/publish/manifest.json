@@ -1,0 +1,9 @@
+﻿{
+    "buildDate":  "2025-12-22 13:30:22",
+    "version":  "1.0.0",
+    "sha256":  "11F9A2DE9BA23938A27FACF32B3F486EBBA543D8CA466AFE1FFBF22380B0AFB3",
+    "framework":  "net8.0-windows",
+    "executable":  "LFSBuilderSetup.exe",
+    "runtime":  "win-x64",
+    "size":  193024
+}

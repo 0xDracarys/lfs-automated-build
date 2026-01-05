@@ -1,0 +1,528 @@
+{
+  "builds": {
+    "LFS-1765512957193-SIM": {
+      "buildId": "LFS-1765512957193-SIM",
+      "userId": "user-shubham-bhasker",
+      "projectName": "LFS Chapter 5 Build - Screenshot Demo",
+      "status": "FAILED",
+      "currentPackage": "linux-api-headers-6.4.12",
+      "progress_percent": 11,
+      "startedAt": "2025-12-12T04:15:57.193Z",
+      "updatedAt": "2025-12-12T04:16:20.290Z",
+      "completedAt": "2025-12-12T04:16:20.290Z",
+      "totalTime_sec": 1038.0000000000002,
+      "peakMemory_GB": 6.55,
+      "config": {
+        "kernelVersion": "6.4.12",
+        "optimization": "O2",
+        "options": {
+          "includeKernel": true,
+          "includeNetwork": false,
+          "includeGlibcDev": true
+        }
+      },
+      "targetTriplet": "x86_64-lfs-linux-gnu",
+      "errorMessage": "Compilation failed: gcc-13.2.0 - unrecognized command line option '-fstack-protector-strong'",
+      "artifactHash_SHA256": null,
+      "artifactUrl": null
+    }
+  },
+  "buildLogs": [
+    {
+      "logId": "LFS-1765512957193-SIM-log-0",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:15:57.211Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Build LFS-1765512957193-SIM queued"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-1",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:15:59.212Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Build started"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-2",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:00.214Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-3",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:00.717Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-4",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:01.919Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Configure flags (DEPENDENCY CLOSURE):"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-5",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:01.920Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "./configure --prefix=/tools \\\n    --with-sysroot=$LFS \\\n    --target=$LFS_TGT \\\n    --disable-nls \\\n    --enable-gprofng=no \\\n    --disable-werror"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-6",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:01.922Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-7",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:04.723Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-8",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:04.723Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-9",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:05.024Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-10",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:05.327Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-11",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:05.630Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable binutils"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-12",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:05.931Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[100%] Built target binutils"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-13",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:05.932Z",
+      "packageName": "binutils-2.41",
+      "level": "DEBUG",
+      "message": "Peak memory: 6.55 GB"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-14",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:05.933Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-15",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:06.233Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-16",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:06.234Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-17",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:06.236Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 4.3 minutes"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-18",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:06.238Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 1/18 packages (6%)"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-19",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:06.239Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-20",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:06.740Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-21",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:08.741Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Configure flags (--disable-shared for TCB):"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-22",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:08.742Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "./configure --target=$LFS_TGT \\\n    --prefix=/tools \\\n    --with-glibc-version=2.38 \\\n    --with-sysroot=$LFS \\\n    --with-newlib \\\n    --without-headers \\\n    --disable-nls \\\n    --disable-shared \\\n    --disable-multilib \\\n    --disable-threads \\\n    --disable-libatomic \\\n    --disable-libgomp \\\n    --disable-libquadmath \\\n    --disable-libssp \\\n    --disable-libvtv \\\n    --disable-libstdcxx \\\n    --enable-languages=c,c++"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-23",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:08.745Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-24",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:11.747Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-25",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:11.748Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-26",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:12.050Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-27",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:12.352Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-28",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:12.654Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable gcc"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-29",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:12.955Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[100%] Built target gcc"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-30",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:12.956Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-31",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:13.758Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-32",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:13.758Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-33",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:13.761Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 12.7 minutes"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-34",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:13.762Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 2/18 packages (11%)"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-35",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:13.763Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-36",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:14.263Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-37",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:14.365Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-38",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:14.366Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-39",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:14.667Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-40",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:14.968Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-41",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.270Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable linux-api-headers"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-42",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.571Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[100%] Built target linux-api-headers"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-43",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.572Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-44",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.775Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-45",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.776Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-46",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.778Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 0.3 minutes"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-47",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.778Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 3/18 packages (17%)"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-48",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:15.780Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-49",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:16.780Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-50",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:17.281Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Running ./configure..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-51",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:18.282Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Compiling..."
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-52",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.285Z",
+      "packageName": "gcc-13.2.0",
+      "level": "ERROR",
+      "message": "gcc: error: unrecognized command line option '-fstack-protector-strong'"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-53",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.286Z",
+      "packageName": "gcc-13.2.0",
+      "level": "ERROR",
+      "message": "make[2]: *** [Makefile:234: main.o] Error 1"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-54",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.288Z",
+      "packageName": "gcc-13.2.0",
+      "level": "ERROR",
+      "message": "make[1]: *** [Makefile:456: all-recursive] Error 1"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-55",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.289Z",
+      "packageName": "gcc-13.2.0",
+      "level": "ERROR",
+      "message": "make: *** [Makefile:789: all] Error 2"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-56",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.290Z",
+      "packageName": "system",
+      "level": "ERROR",
+      "message": "════════════════════════════════════════════════════════"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-57",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.290Z",
+      "packageName": "system",
+      "level": "ERROR",
+      "message": "                  BUILD FAILED!"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-58",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.291Z",
+      "packageName": "system",
+      "level": "ERROR",
+      "message": "════════════════════════════════════════════════════════"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-59",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.292Z",
+      "packageName": "system",
+      "level": "ERROR",
+      "message": "Compilation failed: gcc-13.2.0 - unrecognized command line option '-fstack-protector-strong'"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-60",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.294Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Check logs for details: C:\\Users\\Chintu\\Documents\\Dev Zone\\Dev work web\\lfs-automated\\lfs-output\\mock-build\\build-LFS-1765512957193-SIM.log"
+    },
+    {
+      "logId": "LFS-1765512957193-SIM-log-61",
+      "buildId": "LFS-1765512957193-SIM",
+      "timestamp": "2025-12-12T04:16:20.294Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "traceId: LFS-1765512957193-SIM"
+    }
+  ]
+}

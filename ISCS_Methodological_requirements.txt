@@ -1,0 +1,1237 @@
+VILNIUS UNIVERSITY KAUNAS FACULTY
+INSTITUTE OF SOCIAL SCIENCES AND APPLIED INFORMATICS
+
+
+
+
+
+
+Audrius Lopata, Vera Moskaliova
+
+
+
+
+
+
+
+
+
+METHODOLOGICAL GUIDELINES FOR PROFESSIONAL PRACTICE AND WRITING BACHELOR'S THESIS
+For students of the Information Systems and Cyber Security study programme
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KAUNAS
+2017
+
+
+
+
+Considered and recommended to be published in the Meeting of the Council of Vilnius University Kaunas Faculty on 8 November 2017, Protocol No 12
+
+
+
+
+
+REVIEWED BY:
+Assoc Prof Gintaras Dervinis Assoc Prof Kastytis Ratkevicius
+
+LANGUAGE EDITOR:
+Egle Dumskyte
+
+
+
+
+
+
+
+
+
+ISBN 978-609-459-892-0
+
+BIBLIOGRAPHIC INFORMATION ABOUT THE PUBLICATION IS AVAILABLE
+in the National Bibliographic Data Bank (NBDB) of
+the Martynas Mažvydas National Library of Lithuania.
+
+
+
+
+
+(c) Audrius Lopata, 2017
+(c) Vera Moskaliova, 2017
+(c) Vilnius University, 2017
+
+T U R I N Y S
+ABBREVIATIONS	4
+INTRODUCTION	5
+1. OBJECTIVE AND STRATEGIES OF THE FNAL THESIS	6
+General requirements for the topic of BA thesis	7
+2. STRUCTURE AND PREPARATION OF THE BACHELOR THESIS	10
+2.1. Requirements for the Preparation of the Bachelor Thesis	10
+2.2. The course of preparing a Bachelor's thesis	11
+2.3. Structure of a BA thesis description	12
+2.3.1. Initial pages	14
+2.3.2. Preparation of the Introduction	15
+2.3.3. Analytical part	17
+2.3.4. Technical task	18
+2.3.5. Project part	19
+2.3.6. Part of software implementation	19
+2.3.7. Conclusions and recommendations (or conclusions only)	20
+2.3.8. Final pages	20
+3. DRAWING UP THE DESCRIPTION OF THE FINAL THESIS	22
+3.1. Text requirements	22
+3.2. Tables, figures, formulas	24
+3.3. Quotation and references	25
+3.3.1. Quoting	25
+3.3.2. Paraphrasing	28
+3.3.3. References of ideas	28
+3.4. References description	29
+4. DEFENDING AND EVALUATING THE FINAL THESIS	32
+4.1. Preparation of a thesis presentation/report	33
+4.2. Procedure for defending final thesis	36
+REFERENCES	38
+ANNEXES	39
+
+
+
+
+
+
+ABBREVIATIONS
+
+FT	Final Thesis
+EPAS	Electronic Plagiarism Detection System SPC	Study Programme Committee
+ISSAI	Institute of Social Sciences and Applied Informatics VU SIS	VU Studies Information System
+VU KnF VU Kaunas Faculty
+
+
+
+INTRODUCTION
+
+    Methodological guidelines are intended for writing the Bachelor's thesis of Information Systems and Cyber Security as well as for the preparation of Professional Practice reports at the Kaunas Faculty of Vilnius University.
+    The publication describes the structure of the final thesis and the process of its writing from the formulation of the topic to the defence of the thesis. It also provides the requirements for the parts of the Bachelor's thesis, its content, recommendations for the text and illustrations and other general rules. The annexes present examples of individual elements of the thesis. The final section of the presentation provides general guidelines for organising Professional Practice.
+    The procedure for reporting on the stages of preparation of the final thesis is described in detail as the procedures for submitting to thesis to the commission and its defence are also described.
+    Methodological guidelines have been prepared in accordance with the Regulations for the Preparation, Defence and Storage of Research Papers of Students Studying at Vilnius University and the Regulations of Professional Practice of VU Studies.
+
+    We are thankful to all the personnel of the Institute of Social Sciences and Applied Informatics of the Kaunas Faculty of Vilnius University who contributed to the preparation of this publication.
+
+
+
+1. OBJECTIVE AND STRATEGIES OF THE FNAL THESIS
+
+     Final Bachelor's thesis (hereinafter - BA thesis) is a computerised solution to an organisational problem (or another problem area) independently performed and formalised by an undergraduate student witnessing student's ability to apply the knowledge acquired during the studies, to find and use scientific literature, apply and modify the necessary research methods, to independently cope with the assigned tasks, to submit one's own conclusions, recommendations, and to accurately describe the research and program solution in a concise and correct Lithuanian language. The author of the BA thesis demonstrates his/her ability to formulate and solve a problem relevant to science and practice.
+     In researching the selected problem, the author of the BA thesis shall rely on the general research methodology, analyse and critically evaluate the scientific literature, apply modern methods of analysis and design of the computerised subject area, development tools of computerised information systems, summarise practical achievements, draw conclusions and provide recommendations.
+     Final thesis (FT) of the first cycle of studies is a scientific work to assess the undergraduate student's preparation for engineering activity, self-improvement and second-cycle studies. The FT demonstrates the knowledge gained while studying specialisation modules as well as the ability to apply that knowledge in practice.
+Table 1 provides the key competencies of an undergraduate student revealed in FT.
+
+Table 1
+Expected study results of the study programme
+
+Description of learning outcomes of the first cycle studies
+Expected study results of the programme
+
+
+
+
+
+Knowledge and its applicationThe knowledge of basic concepts and definitions in the field of information systems engineering, will understand the possible scope and coverage of the subject.Ability to apply fundamental knowledge of algorithm theory and data structures, linear algebra and mathematical analysis, discrete mathematics, system theory and statistics in the field of information systems engineering.The knowledge of the latest security components, basic structure, evaluation criteria, basics of administration, effective firewall concepts, architecture, content scanning, will be able to detect intrusions and perform prevention as well as apply (IDS, IPS) systems. Will be able to apply security measures to the network architecture, tunelling, web applications, effective firewalls and other network security measures.The knowledge and ability to apply cybercrime investigation techniques in practice will understand the legal regulation of cyber security, information security management and security risk management.Ability to carry out researchAbility to perform research and analytical work specifying the processes in the computerised subject area, user requirements in designing, programming and implementation of secure information systems.Special skillsAbility to analyse and formalise the information flows of a business enterprise, to anticipate and technologically justify the directions of information technology implementation and the necessary
+
+
+
+Description of learning outcomes of the first cycle studies
+Expected study results of the programmetools, to design, implement, develop, use and professionally assess secure information systems,
+provide support and training for the users of information technologies.	Table 1 continuedAbility to understand and analyse the subject area of information systems, development, design, redesign (reengineering and reverse engineering) and implementation processes, will be able to apply methods and tools, effectively use hardware and software information systems.Ability to design a secure computer infrastructure and program safely.Ability to identify vulnerabilities in incorrect programming, common DoS, DDoS attacks, file access, local/remote code execution, buffer overrun, Web security vulnerabilities, ability to perform random testing of application software (App). Will understand the security context of the operating system (OS), the subtleties of phishing scams, session management and repeat attacks. Ability to address vulnerabilities in PHP, Java applications, to ensure security on hard internal servers.Ability to perform manual and semi-automatic testing of application software identifying security bugs and vulnerabilities. Will be able to apply the latest methods and tools for proactive gap detection, including reverse engineering.Ability to analyse the issues in the IT area, propose and apply secure (in IT cybersecurity) information system solutions in practice.Ability to understand computer architecture, apply programming languages as well as information presentation technologies on the Internet, will be able to design information system architecture and databases, develop information systems not only for traditional but also for mobile technologies.
+
+
+Personal skillsAbility to independently and in a team organise and manage IT processes. Will be able to design, develop and implement secure computer networks, will know the legal regulation of cyber security, will be able to apply ethical hacking methodologies in practice.A student will acquire a broad erudition, the ability to think creatively and critically, and the flexibility and creativity to evaluate phenomena.Ability to communicate effectively, be tactful, polite, careful and honest.
+
+
+
+Social skillsAbility to organise their work responsibly, independently and quickly, to maintain and improve their professional competence in the field of information systems and cyber security through lifelong learning.Students will be prepared to deepen their knowledge in the second cycle of studies.Students will be prepared to pursue their professional activities effectively in the international context.With the basic knowledge of computer engineering, the ability to follow social, legal and ethical norms when solving practical tasks.
+General requirements for the topic of BA thesis
+     Topics for the theses are usually offered by potential thesis (Members of the Institute of Social Sciences and Applied Informatics (ISSAI): lecturers, PhD students (only for Bachelor's theses), social partners). A student is also entitled to propose the topic for a BA thesis. It is
+
+
+
+important for a topic to be relevant and original. If a student is unable to choose a supervisor on his/her own, a supervisor may be appointed by the Chairman of the Study Programme Committee (SPC). The topic of the thesis chosen by an undergraduate student shall be coordinated with the supervisor.
+     The final topics of the final theses and their supervisors are approved by the Dean of the Faculty and ISSAI administrator uploads the data into Vilnius University Study Information System (VUSIS) system.
+     The topic shall be practically relevant, significant from a technological or scientific point of view and/or useful for the improvement of the activities of Vilnius University and Kaunas Faculty.
+     The topic shall be original, not identical to the topics of previous undergraduates. If several students carry out the works in one problem area or continue research, the titles of their works shall reflect the selected individual aspect of the IT solution.
+     Before formulating the topic of the final thesis, the boundaries of the thesis shall be clearly set. One should not choose a too broad topic as during the limited time available for the preparation of the thesis it would be reviewed only superficially.
+     It is necessary to consider the possibilities of realisation of the thesis, to anticipate whether it will be possible to collect the necessary, to apply the selected methods and to develop an operating software solution.
+     The preparation of the BA thesis begins with the discussion of the topic of the thesis with the supervisor and after completing the technical task of the final thesis (see an example in Annexe 5). The prepared technical task is confirmed by the signatures of the undergraduate student and the supervisor.
+     An extremely important part of the BA thesis preparation is the examination of scientific and technical literature. In the initial stages of a BA thesis preparation literature analysis helps to get acquainted with works done in the selected field, to formulate a concrete topic, to determine research methods, to write a plan for the preparation of a thesis.
+     A number of different publications and books on the topic of information systems and cyber security appear in the world every day.
+     When searching for reference material, it is recommended to use the material and electronic resources of VU, VU KnF and other libraries (scientific databases, electronic catalogues, electronic books, etc.), the references of which may be found on the website of Vilnius University Library at https://biblioteka.vu.lt/istekliai/. The majority of electronic resources are available only from Vilnius University computer network workstations.
+     When preparing a BA thesis, it is necessary to get acquainted with the already developed software solutions available on the market, the functions they perform, the applied technologies and methods, to compare and evaluate them. This will help to specify the topic of the thesis and justify the relevance of the work. In addition, in order to carry out a comparative analysis of the already existing software solutions, it is appropriate to use free demo versions provided by the companies.
+
+
+
+     The following chapters provide recommendations and requirements for how to prepare a BA thesis (Chapter 2), how to compile a qualitative description of work (Chapter 3) and how to successfully defend a BA thesis (Chapter 4). The final chapter of the publication provides the procedure for the preparation and defence of the professional practice (Chapter 5).
+
+
+
+2. STRUCTURE AND PREPARATION OF THE BACHELOR THESIS
+
+     This chapter provides the requirements, structure and methodology for the preparation of the Bachelor thesis (BA thesis).
+
+2.1. Requirements for the Preparation of the Bachelor Thesis
+
+     Bachelor thesis (BA thesis) is prepared in the sixth and seventh semesters of the first cycle studies. To prepare the Bachelor thesis, the undergraduate student shall choose the subject and advisor (member of VU KnF ISSAI) with whom he/she discusses the topic of a thesis. BA thesis in information systems and cyber security programmes is an individual applied work that examines and addresses the current issue of information system development or ensuring security and its software implementation. The Bachelor thesis theoretically and practically analyses the environment, functions, objectives and information flows of the research object (organisation, addressed issue, algorithm, security bug), designs information systems or its components, uses mathematical models, applies methods for statistical or system technical performance evaluation, also, software implementation is developed and tested and work description is prepared. For the preparation of the final thesis, the undergraduate student may extend or expand design or programming works or research that were carried out in the course paper during the sixth semester, to apply the knowledge gained during the internship on the activities of the companies or to choose another subject that meets his/her workplace, needs and expectations.
+     A fully prepared and well-designed description of a BA thesis together with an operating software implementation shall be submitted and defended in SPC during the last week of the seventh semester (the duration of the last semester of the final year is 12 weeks).
+
+Stages of the bachelor thesis preparation
+
+1. To choose a relevant topic and justify its practical significance for the research area.
+2. To formulate the aim and objectives of a BA thesis.
+3. To describe the theoretical and practical implementation aspects of the addressed issue, discussed in the scientific literature (recognised theories, methodologies, discussion and problematic issues, the most significant works abroad and in Lithuania).
+4. To discuss and compare the already developed software products for solving individual issues of the research problem.
+5. To analyse the computerised subject area.
+6. To specify user requirements for the developed software implementation.
+7. To design an information system, to choose modern computerisation tools, suitable for describing the structure and functioning of the system.
+8. To develop an operating software implementation according to the user's requirements, to check the functioning of the system with a set of real or test data.
+9. As far as possible, to test the developed information system with real data.
+10. To evaluate the developed system on the basis of the researched works and available solutions, provide recommendations for the development of the performed work.
+
+
+
+11. To formulate conclusions, discuss the results obtained in order to achieve the goal of the thesis and solve the set objectives.
+12. To comply with the requirements of the procedure for the preparation of the thesis's structure, terms, technical realisation, the list of references.
+
+2.2. The course of preparing a Bachelor's thesis
+
+     The supervisor advises the undergraduate student on various methodological and subject- related issues. After getting acquainted with the analysed subject area reviewing the diversity of literature and software products in this area, a preliminary title is formulated, the aim and objectives of a thesis are identified, a preliminary structure of the thesis description is prepared and technical task of a BA thesis is composed and agreed with the supervisor and it describes the content of analytical and research work, determines the functions of the designed system, identifies system description documents and instructions, describes system design tools, software and hardware requirements, system testing and evaluation, provides presentation requirements for a thesis.
+     A BA thesis is systematically prepared during the sixth and seventh semesters. The main stages of the thesis are carried out.
+1. Literature is reviewed, review analysis is prepared, the topic of a BA thesis is specified, the object and aim of the thesis are formulated and the objectives are determined.
+2. Material on the computerised subject area and similar software products is collected, the analytical part of a BA thesis is prepared.
+3. A specification of user requirements is being developed.
+4. The material required for the project part of the information system is collected, processed and evaluated.
+5. Information system project is developed, software implementation works are planned.
+6. Project part of a BA thesis is prepared.
+7. Software implementation of the information system and testing works are performed.
+8. The analysis and evaluation of the obtained results are performed, the description of the project part of a BA thesis is prepared.
+9. Conclusions, suggestions and recommendations of the thesis are prepared.
+10. The final version of a BA thesis introduction, summary in English, a list of references are prepared.
+11. Description of a BA thesis is properly formatted (title pages, content, figures and a list of tables are prepared, the text is revised), and submitted to the supervisor before defending the thesis in SPC.
+
+     If necessary, during the preparation of a BA thesis, the analytical section may be supplemented with new knowledge. When developing an information system, it may be necessary to collect additional factual material, to carry out additional research. A summary of their results and their use is described in the relevant section of a BA thesis.
+
+
+
+     During the last week of the seventh semester, the whole and well-designed description of a thesis and operating software implementation are submitted to the SPC. Members of the committee comment on further improvements.
+     Within 3 working days, since a BA thesis was submitted to SPC, ISSAI publishes a list of BA thesis reviewers.
+     A thesis is adjusted according to the remarks given in the SPC meeting and submitted to the supervisor for approval before uploading it into Vilnius University Study Information System (VU SIS).
+     A thesis is uploaded into VU SIS, a Warranty of a final thesis is printed. An undergraduate student signs that the thesis has been uploaded to the VU SIS and confirms that it was prepared honestly, independently, without the input of other persons.
+     A Warranty is provided to the supervisor to confirm that a BA thesis complies with the requirements and can be defended. Before making a decision to allow or not the BA thesis to be defended, the supervisor shall get acquainted with The Electronic Plagiarism Detection System (EPAS) and all the information of the thesis authenticity computer-based verification.
+     An undergraduate student prints and bounds a hardcover BA thesis (one copy). The thesis, along with the Warranty, is submitted to ISSAI to be registered. A printed or electronic version of a BA thesis is provided for a reviewer.
+
+     A reviewer evaluates the description of a thesis and the quality of the software implementation and prepares a written review for public defence. The reviewer's review is submitted to the student no later than one working day until public defence.
+
+2.3. Structure of a BA thesis description
+
+     The recommended scope of the description of a thesis (excluding a list of references and appendices) is 2-2.5 of the Author's Sheet (44-55 pages).
+     The structure of a Bachelor's thesis description is designed to fully reflect the research problem and its solution. The sequence, purpose of thesis parts as well as the issues discussed therein are summarised in Table 2.
+
+
+
+Table 2
+
+Structure of the BA thesis description
+
+Section of BA THESISContent of section
+
+Initial pages1. Two title pages (see Annexe 1).
+2. Table of Contents (see Annexe 4).
+3. Lists of Tables and Figures (See Annexe 2).
+4. List of Abbreviations (see Annexe 2).
+5. Summary in the Lithuanian language (see Annexe 3).
+
+
+
+
+
+
+IntroductionThe Introduction briefly describes and summarises the following aspects of the thesis:
+* relevance of the topic;
+* research problem;
+* the object of the thesis;
+* the aim of the thesis;
+* the objectives of the thesis;
+* methods of activity problem analysis;
+* methods of designing an information system;
+* software used;
+* brief overview and significance of obtained results;
+* difficulties and limitations of the thesis;
+* justification of logical structure of the thesis;
+* the structure and scope of the thesis;
+* the most significant literary sources used;
+* data on the implementation of the developed system.
+
+
+
+
+Analytical sectionThis section examines the factors that determine the needs and drawbacks of the existing system and evaluates the possibilities of developing a new information system or improving the existing one.
+The features of the developed system and evaluation criteria are estimated, possible alternatives of computing tools are reviewed.
+The analysis is carried out from the following perspectives:
+* research of the problem area, processes, characteristics of objectives; analysis of the research object environment;
+* analysis of information flows, functions, and existing software products or IS in the organisation or subject area;
+* investigation of the requirements for the new system or its components and selection of possible system development tools.
+Technical taskIt is a document that provides a structured specification of the key features of a system to be developed.
+The IS solution developed in the Bachelor's thesis must fully comply with the technical task. An example of a technical task is provided in Annexe 5.
+
+
+
+Project sectionThe project section describes the IS project developed by the author. The following aspects of the system are reviewed in the project part:
+* specification of user requirements using familiar notations and standards;
+* description of the system project (logical structure).
+The project includes the following components of the developed system:
+* user interface project;
+* project of the database (data structure if they are necessary for the implementation of the final thesis);
+* data processing procedures (algorithms).
+
+Table 2 contnued
+
+Section of BA THESISContent of section
+
+
+
+Section of software implementationSection of software implementation describes the physical structure of the system developed by the author, i.e. software elements and composition:
+* specification (implementation) of database (if it is necessary for the implementation of the final thesis) in a specific DBMS environment;
+* user interface modules (software components) and structure of their relationship;
+* developed data processing modules (software components), structure of their relationship;
+* examples of data from the system's trial run (e.g. examples of DB records, examples of screen forms, reports, queries filled with correct data).
+The test results of the system are described in detail, the characteristics of the developed system are evaluated using the test data and compared with other existing solutions. A detailed programmer's guide, as well as a comprehensive user's guide, are provided.
+
+ConclusionsThe main results obtained in achieving the aim of the thesis and addressing the objectives are presented in clear phrases.
+Conclusions emphasise the novelty presented by the author, the way the solutions made helped to address the research problem and how they differ from the existing ones. The conclusions shall be numbered.
+
+Final pages1. List of references.
+2. Summary in a foreign language (see Annexe 3).
+3. Annexes.
+An A5 format envelope for a Warranty, reviewer's review and CD (DVD) containing software implementation and description of the thesis shall be glued on the inside of the back hardcover.Source: compiled by authors.
+
+The main parts of the BA thesis description are described in detail below.
+
+2.3.1. Initial pages
+     Two title pages - the first and second pages of the thesis are prepared in accordance with the example in Annexe 1. Title pages are not numbered.
+     Table of Contents provides a detailed list of structural elements of the thesis (the example is provided in Annexe 4).
+     List of Abbreviations, List of Figures, List of Tables, Introduction, Conclusions and Recommendations, List of References and Annexes are provided as individual structural elements. These elements shall not be numbered although page numbering is required.
+     List of references provides the description of abbreviations, more complex concepts, terms and notations. The same terms, abbreviations and notations shall be used throughout the entire paper (see Annexe 2).
+     Lists of tables and figures - lists of tables and figures are provided on one (or separate) page. The number, name and page number of a figure shall be indicated (see Annexe 2).
+     Summary (in the Lithuanian language) - provides the aim and objectives of the thesis, describes the applied methods and tools, indicates what has been developed, presents the main conclusions of the thesis (see Annexe 3).
+
+     When preparing a thesis, it is recommended to start each chapter with an introductory text that briefly describes the purpose of the chapter and the issues addressed therein.
+
+
+
+     Chapters and subchapters are numbered in Arabic numerals (e.g. 3.1. and Annexe 4). The titles of chapters and subchapters shall be short, clear and consistent with the essence of the issue addressed. A separate chapter is not recommended if there is less than one page of text. A brief summary summing up the main results of the chapter shall be provided at the end of each chapter. It shows the completeness of the research question in the chapter. The summaries of the chapters are later used in writing the Conclusions and Recommendations of the entire BA thesis.
+
+2.3.2. Preparation of the Introduction
+     This is an important part of the Bachelor's thesis aiming to briefly describe all the most significant parts of the thesis and the solutions presented therein. It is similar to a business card. The introduction shall reveal the relevance of the research problem, the advantages of the presented solutions as well as the research methods and measures chosen in the thesis.
+     The writing of the Introduction begins as soon as the topic of the thesis is chosen but its final version is possible only when the thesis is complete. In this way, the most important results of the performed analytical, project and technological (programming) work and their advantages can be reflected. The scope of the introduction is 1-2 pages. The Introduction discusses the following aspects:
+* relevance of the topic;
+* research problem;
+* the object of the thesis;
+* the aim of the thesis;
+* objectives;
+* research methods;
+* methods of designing an information system, measures and tools used;
+* a brief overview of results and their significance;
+* difficulties and limitations of the thesis;
+* justification of logical structure of the thesis;
+* the most significant literary sources used;
+* data on the implementation of the developed system;
+* the structure and the scope of the thesis.
+
+     Relevance of the topic. This section provides reasons for choosing a BA thesis, indicating some of them:
+* relevance for the enterprise - an enterprise encourages the undergraduate student to analyse the issues in his/her work, to propose a solution (project), to develop a software product;
+* relevance for the university - the issue addressed in the BA thesis is relevant for the reorganisation of the university's activity and for the computerisation of specific functions. It is based on the need to improve the activities of the department of the faculty (Institute, Dean's office or other organisational units);
+
+
+
+* relevance of global practice - the issue examined in the thesis is constantly faced by the specialists in the researched field, such features are missing in the existing solutions.
+
+     The relevance of the topic is summarised by identifying the issue that will be further explored in the work.
+     Research problem is often formulated to describe a possible solution and more detailed steps or objectives.
+     Object of the thesis. It is indicated what activity process or activity management function will be the main object of the Bachelor's thesis.
+     The aim of the thesis. It expresses what part of the chosen problem or group of tasks is to be solved. It should be briefly defined in one sentence. When formulating the aim, such words as "to accelerate (a certain process)", "to improve (a specific system)" shall be used.
+     The title of a BA thesis shall correspond to the aim of the thesis, i.e. to reflect the object of research and express the intended result. Typically, the desired result of a BA thesis is an information system of a specific application.
+     The aim can be achieved only through a series of individual stages of a BA thesis. Therefore, the formulated objectives of the thesis reflect the theoretical and practical stages of achieving the aim and the research methods applied.
+     Objectives of the thesis identify the task the students have to fulfil in order to address the issue and achieve the aim. The objectives shall be defined briefly and specifically. 3-5 well-defined objectives are enough for a BA thesis. Usually, 1-2 theoretical objectives (fulfilled in the analytical section of a BA thesis) and 1-3 practical objectives (performed in the projects and implementation sections) are provided. The results of the solution of each objective shall be presented in the section of conclusions of a BA thesis. The objectives of a thesis shall be related to the stages of the information system development cycle (performance modelling, specification of user requirements, design, implementation, testing, installation).
+The objectives shall be numbered and their description shall be formulated as follows: To achieve the set aim, the following objectives have been addressed/examined:
+* based on<...>, to specify <...>;
+* to examine <...>, to summarise <...>;
+* to propose a method, to create a subsystem <...>;
+* having evaluated <...>, to form <...>;
+* to explore<...>, to carry out an experiment, <...> to test calculations.
+     Research methods. Research methods that were used in the preparation of a thesis (e.g. analysis and summary of scientific literature, digital modelling, questionnaire, observation, strategic analysis methods, factor analysis, correlation analysis, experimental measures, statistical analysis methods, etc.) and the way they were applied are indicated.
+     Methods of designing a software implementation, used measures and tools. All the IS development methods, measures and tools used in all the stages of software implementation development (e.g. user requirement specification developed with Volere template, UML language
+
+
+
+used for design and Magic Draw CASE tool, implemented in PHP language, a database created with MySQL, etc.) are listed.
+     A brief overview of results and their significance. Software product developed in the study is briefly described, it is assessed which user requirements were fully or partially met by the software solution and how it could be further developed.
+     Difficulties and limitations of the thesis. The difficulties encountered during the preparation of the thesis (if any) and the reasons why not all ideas were implemented are explained.
+     Justification of logical structure of the thesis. The logical structure of a thesis (relations between chapters) are discussed, titles of the main chapters are provided and the issues covered in the chapters are briefly presented.
+     The most significant literary sources used. The types of literary sources used in the course of the preparation of a thesis are discussed. Their novelty is indicated, different categories of literary sources are discussed: scientific literature of Lithuanian and foreign authors, descriptions of software products, monographs, manuals, articles, research data. The relation between published and Internet sources is indicated.
+     Data on the implementation of the developed system. If the information system developed during the preparation of a BA thesis is implemented in practice, it shall be emphasised as one of the advantages of the thesis.
+     The structure and the scope of the thesis. The number of chapters of the thesis is indicated and the number of pages, tables, figures and appendices is provided.
+
+2.3.3. Analytical part
+     The aim of the analytical part is to examine and describe the factors that determine the characteristics, specifics, shortcomings of the existing system, to assess the information needs of the research object, the possibilities to implement new methods, to improve the existing system or to create a new one. The topic chosen in the analytical part is analysed in several key aspects.
+  1. Characteristics of the research problem area, operational processes, objectives and analysis of the research object environment.
+* The analysed processes, problematic objectives, the activity of the research object, business branch, external conditions are introduced. The organisational structure of the enterprise, business processes that require an information system of software tools to be maintained are described.
+* Theoretical concepts, methods and specifics of their application, mathematical apparatus, management models that are already applied to the research processes or that are intended to be implemented and computerised are reviewed.
+* The subsection is summarised by assessing the current process management situation in the research area or in a particular enterprise, providing positive and negative arguments about the relevance and opportunities for change and improvement.
+2. Analysis of information flows, functions and existing software products or IS.
+
+
+
+* The requirements of the research object (enterprise, process or other problematic areas) for the information system, its functional properties, information processing and presentation methods are examined in detail. The functions performed by the existing operating components of the system as well as the hardware and software used are described.
+* The qualification and information needs of professionals using IS are specified.
+* The already used mathematical models, as well as other methods used to obtain, process and present information to the employees and customers of the enterprise or to conduct research processes, are described.
+* The shortcomings of the current system, discrepancies between the functions performed and the needs of users are highlighted.
+* Criteria and features that are relevant to the information system or software solution being developed are identified.
+3. Investigation of the requirements for the new information system or its components and selection of possible system development tools.
+* Based on the analysis carried out, this section discusses the features of the information system that are not currently satisfied with the available information system.
+* Alternatives for choosing methods and computational tools to develop an information system that meets the needs of the enterprise are described.
+* Software products developed by foreign and Lithuanian software manufacturers, modules of integrated systems, specialised software packages related to the objectives of the research, specifics of the analysed enterprise, or already used information processing methods are reviewed.
+* The components of the already used information system and the properties of the developed software products are compared with the functional possibilities of the desired system. The advantages and disadvantages of different possible solutions in the research problem area are highlighted. Comparative analysis is illustrated in tables, graphical or other forms so that the compliance of existing system components with the criteria of the developed system may be assessed in various categories (by determining whether there is a characteristic to perform a research by scoring it, ranking, or presenting the results of experiments or surveys).
+* The analytical chapter is summarised in a separate subchapter which justifies the further direction of the study: what issues of existing enterprise information flow management or negative features of research processes will be solved by the developed system, what methods, algorithms or models will be implemented by these IS functions and with what development and computational measures the project will be implemented. Examples of figures used in the analytical part are given in Annexes 8, 9, 11.
+2.3.4. Technical task
+     It is a document that describes in a structured way the exact specification of the features of the developed software implementation. The software solution developed in a BA thesis shall fully comply with it.
+
+
+
+Components of a technical task:
+* Title of a thesis (topic);
+* Content of analytical and research study;
+* Functions of the designed information system;
+* Documents and instructions of information system description;
+* Information system design and development tools, software and hardware requirements;
+* Testing and assessment of information system;
+* Requirements for presentation of the thesis.
+     The technical task is agreed upon with the supervisor and confirmed by the signatures of the student and the supervisor. An example of the technical task is provided in Annexe 5.
+
+2.3.5. Project part
+     Having regard to the specifics of the developed software solution, the project part reviews and evaluates the IS design tools. The author of a BA thesis shall select appropriate computational design tools in order to provide static and dynamic graphical models of the developed information system in this section. This section provides calculation algorithms, describes and graphically depicts the operating modes of the developed system, presents the system performance results and examples of reports.
+The project part provides a consistent overview of:
+* A description of the logical structure of the system (e.g. Entity-Relationship diagram, data flow diagram, etc.);
+* A description of information architecture (including the structure of the database if necessary for implementation) (e.g. relational schema of the database, etc.);
+* System specifications.
+
+The components of the developed system are discussed in the following aspects:
+* User interface;
+* Data structure;
+* Processes and system states.
+     In the project part, using the control test data and comparing them with the existing software solutions, the characteristics of the developed information system are evaluated. A timetable for the installation of the developed system is estimated. An example of the components of a project description is provided in Annexe 4. Examples of figures used in the project part are presented in Annexes 10, 12.
+
+2.3.6. Part of software implementation
+     Part of software implementation describes the physical structure of the information system developed by the author, i.e. software architecture, composition and elements:
+* Specification of databases (if required for implementation) (e.g. in the format of DDL language format) in a specific DBMS environment;
+
+
+
+* User interface modules (software components) and their relationship structure;
+* Specifications of the developed software components (software modules or objects), their relationship structure;
+Provided for each module/object:
+* Module name, functional description, algorithm (if it is original);
+* Structure of module data;
+* Module interface, selected dialogue structure (interactive objects);
+* Source code does not need to be printed;
+* Examples of system test operation data: examples of DB records, examples of screen forms, requests, reports filled with data.
+     System testing results are described, characteristics of the developed system are evaluated using testing data and comparing them with other existing solutions.
+     At the end of the thesis, a programmer's guide (it indicates how to install the developed information system) and a detailed user guide are provided.
+
+2.3.7. Conclusions and recommendations (or conclusions only)
+     The chapter of Conclusions shall be made in a concise manner and summarise the main results of the work that were obtained to achieve the set goal and objectives. The Conclusions shall not contain new information that has not been discussed in the parts of the thesis or truths and axioms that have been already recognised in science and practice.
+     The Conclusions emphasise the following key points: what has been done, how the proposed solution help to address the research problem of the organisation and how they differ from the existing ones.
+     The obtained results are illustrated by changes in the values of calculations performed in the thesis. The obtained results are illustrated by value changes in calculations, research, selected system evaluation criteria, justifying that the developed software solution fully or partially solves the shortcomings of the enterprise's IS identified in the analytical part.
+     The section of Recommendations is written separately. It is not mandatory. Recommendations shall be specific, factual and concise. It shall be based on the results and conclusions of the work (Kardelis, 2016). Recommendations shall be grounded theoretically and empirically.
+     The order of the Conclusions and Recommendations does not necessarily coincide with the order of the text. The statements are grouped and presented to highlight the main results of the work. Usually, at least one conclusion shall be attributed to each objective of the thesis. Conclusions and Recommendations shall be numbered.
+
+2.3.8. Final pages
+     It is a List of References used in the thesis, a Summary of the thesis in a foreign language (Annexe 3), a List of Annexes and Annexes.
+
+
+
+     Literature. When writing a final thesis, scientific literature, articles, standards, normative acts and other documents are used (quoted, analysed, mentioned). Therefore, the list of used literature (monographs, books, textbooks, articles, methodological guidance) and other information sources (unpublished research papers, translations, manuscripts of books and articles, information obtained in business enterprises and on the Internet, sets of statistics, manuals, standards and norms, promotional publications, technical documentation, etc.). The numbering of information sources extends the numbering of sources of scientific literature. At least 10-15 sources shall be analysed in a final thesis.
+     The basic rules and examples for compiling the description of literature and sources are given in Section 3.4.
+     Summary in a foreign language. A summary is a short (approximately 3,000 characters) presentation of the main idea of a BA thesis in one of the following languages: English, German or French. It contains the following elements consistently written according to the laid down procedure (see Annexe 3):
+* name and surname of the author;
+* year of thesis preparation;
+* title;
+* words - Bachelor's thesis;
+* location of thesis preparation, the name of higher school, faculty, or institute;
+* scope of a thesis (pages).
+     The word 'SUMMARY' is written in a separate paragraph and it is followed by a brief description of the work, indicating:
+* the aim and objectives of a thesis;
+* research methodology;
+* specific results of the work;
+* main conclusions;
+* scope of a thesis in pages (excluding the list of tables and figures. List of Abbreviations, List of References, and List of Annexes), the number of tables and figures.
+Keywords (5-10) are provided in a separate paragraph. A summary shall not exceed one printed page.
+     Annexes. They include structural diagrams of the software implementation or software modules, algorithms, calculation results, large-scale tables, examples of questionnaire surveys, larger-scale explanations and other supportive and illustrative material. Annexes may include only the material which is examined in the main chapters of the thesis. If a description of a work does not have a reference to the material or its analysis is not provided, it cannot be included in the annexes. The requirements for the processing of annexes are provided in Subchapter 3.1.
+     Review by the reviewer of a thesis, Warranty and CD (DVD). An A5 format envelope for a reviewer's review, Warranty, and CD (DVD) with the text of a BA thesis and software implementation files shall be glued on the inside of the back hardcover of a thesis.
+
+
+
+3. DRAWING UP THE DESCRIPTION OF THE FINAL THESIS
+
+     This chapter presents the main technical formatting requirements for a final thesis, introduces the rules of quotation and linking, providing the description of references, tables, figures and formulas in the text as well as the rules of text processing.
+
+3.1. Text requirements
+
+     The text of a final thesis shall be written in consistent and correct English language, i.e. it must be free of grammar, style and proofreading errors. The work shall be printed in excellent quality and meet the requirements for this type of work.
+     White unlined standard A4 office paper is used for printing the prepared work. The text of well-printed work shall be clear and bright.
+     The text is typed on a computer using the programme of a word processor or editor. Sheet settings - A4 (210x297 mm). Page orientation - Portrait. Margins - top and bottom - 20 mm, on the left side - 25 mm; on the right side - 15 mm. Header and Footer -12.5 each mm.
+     Text size - 12 pt, recommended fonts - Times New Roman or Calibri. Line spacing in the paragraph - 1.5. Text alignment - justified from the right and the left edges. Indentation of the first line - 1.25 cm (Indentation ? Special: First Line).
+     The numbering of the pages shall be consistent, beginning from the Contents of the paper to the last page of the work. Pages are counted from the title page but both title pages are not numbered. For this break/section, a text processor tool (Layout ? Breaks ? Section Breaks) is used in order to use different numeration in different sections. On other pages, the number is placed in the footer on the right. The number is written in Arabic numerals, without dots or dashes. It is not allowed to skip pages, repeat the same numbers, add letters. For page numeration, the text processor tool (Insert ? Page Number) is used.
+     The text of the main research part shall be divided into chapters, subchapters and, if necessary, sub-subchapters.
+
+Requirements for chapters and subchapters of the thesis
+1. Chapters are numbered in Arabic numerals (1., 2, etc.).
+2. The titles of the following chapters shall not be numbered: Contents, List of Figures, List of Tables, List of Abbreviations, Introduction, Conclusions, Summary, List of References and Annexes.
+3. The number of chapters and subchapters depends on the nature of the topic but they should not be too small (one chapter usually consists of 2-5 subchapters). The volume of the smallest structural part should not be less than 1 page.
+4. It is recommended to apply the standard or author-created individual styles (Styles) of the word processor to the titles of chapters and subchapters. This would facilitate the creation of automated contents (Table of Contents).
+
+
+
+5. Chapters of a thesis begin on a new page, their titles are written in capital letters, 14 pt, in the centre of the page (center), in Bold font.
+6. Subchapters are numbered inside the chapter and the number consists of two Arabic numerals (1.1., 1.2., <....> 2.1., 2.2., etc), which from each other and from the subchapter title are separated by a dot.
+7. Titles of subchapters are written in lower-case letters (except the first letter of the heading), left alignment, 12 pt, in Bold font.
+8. Titles of subchapters are separated from the text above and below them skipping one space.
+9. Subchapters are consistently laid out on the same page.
+10. If the text is divided into even smaller parts - sub-subchapters, they are written in the same way as subchapters, the number of sub-subchapter consists of three numerals separated by dots (1.1.1., 1.1.2., etc.).
+11. it is recommended to start each chapter with an introductory text that briefly describes the purpose of this chapter and the issues that will be addressed in this chapter. It is desirable to provide a summary at the end of the chapter.
+
+Contents
+1. The word 'CONTENTS' and the titles of all other chapters are written in capital letters. Font size - 14 pt. The titles of subchapters and sub-subchapters are written in low-case letters (except the first letter which is capitalised). Font size - 12 pt.
+2. Contents shall be developed using a word processor tool for automatic Table of Contents (References ? Table of Contents).
+3. Styles do not apply to the word 'CONTENTS'. This word should not be in automated content.
+
+List of References
+1. The List of References provides the list of used literature (monographs, books, textbooks, articles, methodological guidance) and other information sources (unpublished research papers, translations, manuscripts of books and articles, information obtained in business enterprises and on the Internet, sets of statistics, manuals, standards and norms, promotional publications, technical documentation, etc.). The numbering of information sources extends the numbering of sources of scientific literature.
+2. The basic rules and examples for compiling a List of References are provided in Section 3.4.
+3. The List of References shall be compiled using a word processor tool for automatic bibliography (References ? Bibliography).
+
+
+
+Annexes
+1. Each Annex shall be presented on a new page where the word "ANNEX" is written in the upper right-hand corner, in capital letters (font size - 12 pt). The title of the Annex is written below, in the centre of the page, in Bold font.
+2. If there is more than one annexe, they are numbered sequentially in Arabic numerals, e.g. ANNEXE 1, ANNEXE 2, etc.
+3. If there are less than 5 annexes, they are listed in CONTENTS indicating their page numbers.
+4. If there are more than 5 annexes, a separate list of annexes 'ANNEXES' shall be drawn up at the end of the work, indicating titles and page numbers of annexes. Only the page number of the list of annexes shall be indicated in the CONTENTS.
+Note. References to annexes shall be included in the text of the work.
+
+3.2. Tables, figures, formulas
+
+     Tables and figures are consistently presented in the text. If they are larger in volume, then they shall be moved to annexes. All the tables, figures and annexes shall have their numbers and titles. Tables, figures and annexes are numbered separately. The numbering is as follows: Table 1, Figure 1, etc. To number the tables and figures, it is recommended to use word processor tool References ? Insert Caption.
+     The number of the table is written above the title of the table, in the right corner. The title of the table is written in the low-case letters, starting with a capital letter, above the table in the centre in Bold font, font size - 11 pt. Examples of table formatting are provided in Annexe 6.
+     If there is only one table in the text, only the word 'Table' is written above the table on the right corner of the page. Data font size in tables - 10 pt. The name of the source is displayed after the title of the table and it should be also written if the table was created by the author (see Annexe 6). The font size of the source - 9 pt.
+
+     The number and title of a figure are written below the figure, in the centre of the page in Bold font, font size - 11 pt. The name of the source is displayed after the title of the figure and it should be also written if the figure was created by the author (see Annexe 7). The font size of the source - 9 pt.
+     Tables and figures can occupy part of the page, an entire page, two or more pages. If a table or other visual material fits on one page, it shall not be split into two pages.
+     If a table occupies more than one page, "Table 1 continued" can be written on the right corner of the continuation of the table. The column headings are repeated and the table is further completed. To repeat column headings, a word processor tool Table properties ? Row ? Repeat as header row at the top of each page is used.
+     If a table is expected to occupy almost the entire page or the larger part of the page, it is appropriate to start writing the table on a new page instead of below the text.
+
+
+
+     Tables containing a larger amount of material and large-scale illustrations are recommended to be provided in annexes.
+Examples of tables and figures are provided in Annexes 6 and 7.
+     Using formulas, its symbol can have only one meaning throughout the work and it needs to be identified in advance. Formulas that are used more than once must also be numbered using the word processor tool References ? Insert Caption.
+     Figures, formulas, tables are numbered according to the numbering system: numeration can be continuous throughout the entire work or it can be divided according to the sections.
+
+3.3. Quotation and references
+
+     When preparing various studies or research papers, authors often not only present their own thoughts but also paraphrase the ideas of others. The use of other ideas in the work is welcomed as it demonstrates the author's proficiency and ability to use intelligent work tools. There are several types of using other works:
+* Quotation - a verbatim rendering of another text;
+* Paraphrasing - the ideas of another work are restated while maintaining consistency;
+* Mentioning an idea, when an author takes the idea but continues presenting ideas following his/her own logic and consistency.
+     References are formed based on the way other thoughts were used in the work. There are different requirements for each type, and the references also depend on the author's literary style. The number of references, the place and form in which they are provided are directly related to a person's ability to express thought in writing, to how well he or she understand theoretical concepts or selects empirical material. References bring a reader closer to the natural form of active thinking.
+     The most suitable references are original books, their first or latest editions. Various events of scientific and cultural significance, historical dates, various statistical data, graphic documents related to the text, and other unique illustrative material may also be indicated. It is necessary to take into account the proportions of the text and references, the font, their spatial arrangement on the page, the visual expression.
+     Each reference that was used in the text shall be listed in the List of References. All sources shall be carefully recorded. Surnames, names and initials of authors of the sources, titles of publications, volumes of journals, numbers, number of pages shall be written accurately (Kardelis, 2016).
+
+3.3.1. Quoting
+     The term citatum (Latin) means verbatim extract. To quote it is necessary to choose the extract with a clear, logically complete idea. The most common quoting mistakes (Misevicius, 1995) are as the following:
+
+
+
+* Indiscriminate quoting: an outdated or unauthorised source is quoted where the problem is only raised but not resolved and where the examined issue is poorly referred to;
+* Unfair quoting: artificial use of quotations, distortion, interruption of phrases or expressions in order to give another meaning;
+* Excessive quoting: excessive quoting gives the impression that the author is not able to retell the author's thoughts in his/her own words, is unable to refer;
+* The fact of plagiarism may be found in the case of the failure to properly cite the sources.
+     Plagiarism (Lat. plagium - kidnapping) is the appropriation of someone else's authorship, presenting someone else's work, invention, ideas, thoughts as your own. It is wrongdoing equivalent to theft. It is the appropriation of someone else's authorship, in other words, the presentation of the text, or part of it, of a copyright-protected object without reference to the actual author and source with an inappropriate reference (without complying with the quoting requirements). Upon the establishment of a fact of plagiarism, the paper may not be defended, assessed, or made public, while the student is sanctioned as prescribed by the Study Regulations and/or the procedures laid out in University's other legal acts.
+     It is very important to follow the procedure of proper quoting. When quoting in the text of the paper:
+* a colon shall be written before the quote, the quote shall be separated by quotation marks, starting with a capital letter;
+* Longer quotations start on a new line;
+* Quotations that are part of the author's sentence, are written in quotation marks starting with a low-case letter;
+* Omitted parts of quotation (cuts) are indicated by an ellipsis in brackets <...>, (...).
+     When quoting, it is necessary to indicate the exact source of the quote, i.e. accurate bibliographic data of the source shall be provided. The data can be provided in the following parts of the paper:
+* In a text;
+* In a footnote;
+* At the end of the paper ;
+* Included in the explanatory note (provided in the supporting text).
+     To describe quotations and references, it is recommended to use the text processor tool References ? Insert Citations, which is in section Citations&Bibliography. In the field of Informatics, the IEEE referencing style is commonly used but a simpler APA style.
+     References are usually provided in the text. When using the APA style, the source is written in parentheses indicating the essential elements: author, year of publication. For example:
+(Winkler, 2011)
+(Sommerville, 2010)
+
+
+
+     If the thesis uses several works published in the same year by the same author, the year of publication is followed by the alphabetical order of the letters in both the reference list and the reference. For example:
+In the reference: (Jonaitis, 2014b) In the List of References:
+Jonaitis, J. (2014a). Statistika. Vilnius: Aldorija.
+Jonaitis, J. (2014b). Informatika. Kaunas: Naujasis lankas.
+
+     Foreign publications are written in the original language. Cyrillic font publications may be written in Latin characters in the Lithuanian text while in the footnote - authentically.
+     Frequently quoted copyrighted and other works are provided in the footnote of the page. They may be described more briefly than in the List of References, however, it is necessary to indicate the author, title, publication place, year and page. For example:
+
+In the text: The concept of statistical elements was studied by J. Jonaitis1.
+In the footnote:
+
+
+1 Jonaitis, J. (2014). Statistika. Vilnius: Aldorija.
+
+
+
+
+     In the duplicate reference, only the author's name, main titles and pages are indicated. If the title is long, only the first three words may be written followed by an ellipse.
+     If the quote was taken not from the original source but from the secondary source, the quote begins with words "quoted after": <...> (for a Lithuanian publication), "op. cit.": <...> (for a foreign publication). For example:
+
+Jonaitis, J. (2014). Statistika. Vilnius: Aldorija. - quoted after: Martišius, S. Ekonometrija ir prognozavimas. Vilnius: Vilniaus universiteto leidykla, 2000.
+
+If a thought or a fact is documented in several works, they can be combined in one reference.
+Descriptions are separated by semicolons.
+     References to periodicals and a series of documents are usually provided at the end of the paper.
+
+
+
+     Explanatory notes. They are written in the footnotes at the end of the text. It is the explanation of terms and concepts often referring to extracts of definitions and statements with bibliographic data of sources.
+
+3.3.2. Paraphrasing
+     Quotation requirements do not apply in this case. However, when paraphrasing the thought, it is necessary to provide a bibliographic reference to the original source. As in quotation, references may be integrated into the text, into the footnote, at the end of the paper or in the explanatory notes. The reference is indicated in the place where the paraphrased thought ends. If it covers the whole paragraph, the reference is given at the end of the paragraph. If the same thought is paraphrased in several paragraphs, a separate reference shall be given to each of them. When referring to the text, it is necessary to indicate the author and the year. Pages are indicated when a brief statement of the author, for instance, definition, is repeated but if the text is paraphrased freely, page indication is not required.
+     When the author paraphrases the thoughts that were not taken from the original source, it is necessary to indicate the original author and the source. In this case, a bibliographic reference "quoted after" or "op. cit." is used. An easier option is to mention the original author in the text and the reference shall be given to the source the author was directly working with. It is strictly forbidden to refer only to the original source if the author of the paper is not directly acquainted with it.
+
+3.3.3. References of ideas
+     It is the easiest use of someone else's work when preparing a study or research work. No attempt is made here to present the logic of another's interpretation but rather to use the results of the analysis: terms, conceptions, ideas. According to scientific ethics, if we take the ideas of other authors, we have to name them. This is not easy as the most popular ideas promptly lose their authorial identity and become 'generic'. Who remembers the authorship of such concepts as 'capital' or '4P'? Thus, many ideas are used in papers the authorship of which is no longer possible to indicate. However, the aim of the studies or final theses is usually to analyse the latest ideas and not the old ones. New ideas always have their authorship. In this case, it is necessary to indicate their author.
+Referring in the text without a special reference
+     If you have not analysed any of the sources of the mentioned author but you know that he/she has proposed the idea, then he/she shall be referred to as the author.
+
+M. Porter distinguished three types of competitive strategy...
+
+
+
+
+Reference in the text with reference to the List of References
+
+
+
+     The year of publication of the source shall be written in brackets next to the mentioned surname in the text. It is necessary to indicate this source in the List of References. A student shall be acquainted with this source.
+In the text: M. Porter (1980) distinguished three types of competitive strategy... In the List of References:
+Porter, M. E. (1980). Competitive Strategy: Techniques for Analyzing Industries and Competitors. New York: The Free Press.
+
+     When preparing the final theses, references to scientific sources are given in the text (author, year, page), references to information sources are provided in a footnote, at the bottom of the page. A more brief references description is provided here.
+
+3.4. References description
+
+     When preparing BT, various sources, documents, figures and statements may be quoted or mentioned in the text. All literary and other sources quoted and used in the work shall be appropriately described and provided in a separate chapter "List of References". It shall be prepared in accordance with the standards of Bibliographic Description of a document valid in Lithuania.
+It is recommended to provide the list in alphabetical order.
+
+Examples of books and dissertation descriptions:
+
+1. Ambraziunas, M. (2014). Veiklos žiniu baze išplestos modeliais grindžiamos architekturos taikymo informacijos sistemu inžinerijoje metodas : daktaro disertacija : fiziniai mokslai, informatika (09P); Vilniaus universitetas.
+2. Belevicius, R., ir Valentinavicius, S. (2015). Programavimas C++. Vilnius: Technika.
+3. Dzemydiene, D., Naujikiene, R., ir Dzindzalieta, R. (2016). Elektroniniu paslaugu igyvendinimo sprendimai. Vilnius: Registru centras.
+4. Goranin, N., ir Mažeika, D. (2011). Nusikaltimai elektronineje erdveje ir ju tyrimo metodikos. Kaunas: TEV.
+5. Manstavicius, E. (2007). Analizine ir tikimybine kombinatorika. Vilnius: TEV.
+
+If the book's author is unknown
+1. Lietuvos Respublikos darbo kodeksas. Pirmoji laida, 2017-07-01. (2017). Vilnius: VI Registru centras.
+
+Examples of articles, conference material descriptions:
+
+Article in journal
+
+
+
+1. Astromskis, P. (2017). Legal Technologies and Cyber Security in The Singularity Age. Teises apžvalga
+/ Low Review, 2 (16), 34-57.
+2. Savukynas, R., ir Marcinkevicius V. (2017). Daiktu interneto objektu identifikavimo metodu palyginimas. Informacijos mokslai, 78, 66-82.
+
+Article in conference material
+1. Lopata, A., ir Veitaite, I. (2017). Transformation Algorithms of Knowledge Based UML Dynamic Models Generation. In Business information systems workshops BIS 2017, Poznan, Poland, 28-30 June/ editor Witold Abramowicz. LNBIP 303 (59-68). Cham: Springer International Publishing.
+2. Ramanauskaite S., Cenys A., Goranin N., ir Janulevicius J. (2017). Modeling of two-tier DDoS by combining different types of DDoS models. In 2017 Open conference of Electrical, Electronic and Information Sciences (eStream): proceedings of the conference, April 27, 2017, Vilnius, Lithuania / Organized by: Vilnius Gediminas technical university (1-4). New York: IEEE.
+
+Examples of electronic books, databases and computer media descriptions
+
+     More and more material is available on websites. They shall also be appropriately referred to both in the text and the List of References.
+
+1. Goranin, N., ir Mažeika, D. (2011). Nusikaltimai elektronineje erdveje ir ju tyrimo metodikos. Žiureta 2017 11 24 per interneta:
+<http://www.esparama.lt/documents/10157/490675/Nusikaltimai_elektronineje_erdveje_ir_ju_tyrimo_metodikos.pdf>.
+2. Shipley T. G., and Bowker, A. (2013). Investigating Internet Crimes: an Introduction to Solving Crimes in Cyberspace. [Accessed on 08/11/20172017] Web access: ProQuest Ebook Central.
+3. Holm, H., Sommestad, T., Ekstedt M., and Honeth N. (2014). Indicators of Expert Judgement and Their Significance: an Empirical Investigation in the Area of Cyber Security. Expert Systems, 31(4), 299-318. [Accessed on 21/11/2017] Web access: EBSCOhost.
+4. Vilniaus universiteto bibliotekos istoriniai rinkiniai. (1998). [CD-ROM] Vilnius: UN|ESCO: Vilniaus universiteto biblioteka.
+5. Lietuvos Respublikos kibernetinio saugumo istatymas. (2014, gruodžio 11 d. Nr. XII-1428). Vilnius: Lietuvos Respublikos Seimas. [Accessed on 02/11/2017] Web access: <https://e- seimas.lrs.lt>.
+
+Examples of other sources, web pages/websites
+
+1. Technologijos.lt. (2004-2017). Vienas iš paciu pajegiausiu namu maršrutizatoriu "Asus ROG Rapture GT-AC5300": ko iš tikro jis vertas ir ar atitinka savo kaina? (Apžvalga). Žiureta	2017 11 16	per	interneta:	<http://www.technologijos.lt/rinka/apzvalgos/S- 64883/straipsnis/Vienas-is-paciu-pajegiausiu-namu-marsrutizatoriu-Asus-ROG-Rapture-GT- AC5300-ko-is-tikro-jis-vertas-ir-ar-atitinka-savo-kaina-Apzvalga>.
+
+
+
+2. Vilniaus universiteto biblioteka. (2009-2010). Buk etiškas. [Accessed on 20/11/2017] Web access: <http://www.ir.mb.vu.lt>.
+3. Blue Solutions. QlikView. [Accessed on 24/11/2017] Web access: <http://www.blue- s.lt/607>.
+
+
+
+4. DEFENDING AND EVALUATING THE FINAL THESIS
+
+     Final thesis can be defended by students who have completed a full study programme and do not have academic debts. The key dates and deadlines for the final phase of the drafting of the BA thesis are set out in Annexe 13.
+     During the presentation of the BA thesis to the SPC, the author of the thesis discusses a fully prepared thesis - indicates the problem, aim, objectives of the research, describes the object, the results obtained, the reliability of the methods used, presents and substantiates the conclusions, makes recommendations and shows the functioning of the software realisation. Answer questions put by the Committee. Members of the Committee shall assess whether the thesis is suitable for public defence and make comments in order to improve the thesis of the student in the period leading up to the public defence.
+     In the period prior to public defence, the bachelor student corrects the thesis description and software realisation according to the comments received, prepares summaries of the thesis in Lithuanian and English, shows the final version to the supervisor.
+     BA thesis (pdf format), summaries in Lithuanian and English and work metadata are uploaded to VU SIS. The Guarantee shall be printed and signed.
+     Before taking a decision to allow or refuse to defend the BA thesis, the FT supervisor shall have access to the computer verification report of the thesis EPAS and all information from the computer verification of the thesis authenticity.
+     The decision to allow or refuse to defend the BA thesis shall be notified to the bachelor student no later than 4 working days before the public defence date. The decision to allow the thesis to be defended shall be recorded in the Guarantee and certified by the signature of the thesis supervisor.
+     The bachelor student shall provide a properly prepared, correct language written and qualitatively printed work (hardcovered) together with the Warranty and CD (DVD) media (with the recorded text of the bachelor's final thesis and software realisation files) to the VU KnF Institute of Social Sciences and Applied Informatics. The submitted thesis must be registered immediately.
+The Bachelor student is in contact with the thesis reviewer.
+     The second copy of the bachelor's thesis description shall be handed over to a reviewer appointed by the VU KnF Institute of Social Sciences and Applied Informatics on the provision of SPC. The reviewer critically examines the work, evaluates the quality of the thesis description and created software product and the signature review, which discusses the novelty, relevance, advantages, disadvantages of the thesis, gives a conclusion on whether the thesis meets the requirements of the undergraduate's thesis, proposes an assessment. The reviewer shall provide a review of the thesis and the proposed assessment to the Institute or to the Committee for the Defence of Final Theses one day before the day of the defence of the thesis, and no later than one day for the student.
+
+     If the thesis is not properly prepared and the thesis supervisor decides not to allow the thesis to be defended, the bachelor has the right to apply to the SPC in accordance with the current version
+
+
+
+of the description of the procedure for the preparation, defence and accumulation of written theses and dissertations of the VU undergraduate students.
+Once plagiarism has been established, the work cannot be defended and evaluated. The BA thesis can only be defended if:
+* thesis is uploaded to VU SIS;
+* the printed thesis is submitted and registered in the ISSAI;
+* the thesis supervisor has allowed defending the final thesis.
+
+     The final evaluation of the thesis is carried out by the commission. The evaluation of the BA thesis takes into account the quality of the thesis description, the developed software product, the presentation and report of public defence, the workflow of the thesis and the initiative and independence of the author in analysing the selected topic. The decision of the Commission for Final Theses on the evaluation of the final thesis shall be final and shall not be subject to appeal1. The composition of the Commission for Final Theses and its chairman shall be approved by the Rector on a proposal from the Department, approved by the Dean.
+
+4.1. Preparation of a thesis presentation/report
+
+     A very important part of defending the final thesis is the presentation of the thesis of a candidate for a Bachelor's Degree (presentation). 6-8 minutes to present the final thesis. The student must use visual means (slides).
+The bachelor's thesis defence report must provide answers to the following questions:
+1. What has been analysed (what field of activity, task) and by what method (what models are formed)?
+2. What purpose IS was designed, by which method and means it was designed?
+3. How the project was realised - which software tools have been implemented?
+4. What is the most interesting (the most complex) part of the work/project carried out?
+
+The content of the BA thesis report should include the following elements:
+* title slide (university name, thesis name, author's name, group (including the author's e-mail address), scientific degree, name and surname of the thesis supervisor);
+* research problem;
+* thesis object, thesis aim, the objectives to be solved, research methods;
+* the scientific basis of the thesis (theories, standards, methods, similar systems);
+* design method;
+* what is designed, by which means;
+* what has been realised, by which means;
+* research results;
+
+1 Description of the Procedure for the Preparation, Defence and Storage of Written Theses of VU Students. 17 November 2015, No R-446.
+
+
+
+* practical (theoretical) significance of the work;
+* conclusions and proposals.
+     It is recommended to prepare a presentation of 10-15 slides using a template approved by the Faculty, which can be downloaded from the website http://www.knf.vu.lt/apie- fakulteta/atributika. All slides of the presentation, except the first (title slide), must be numbered.
+
+
+Fig. 1: An example of a title slide
+
+
+
+
+
+Fig. 2: An example of a slide for thesis object and aim
+
+Fig. 3: An example of a slide for thesis objectives
+
+     To avoid any surprises when defending your thesis, you should prepare your presentation in advance and rehearse it aloud to ensure that the time limit for the presentation is not exceeded. It
+
+
+
+is very useful, if possible, to record the rehearsal of the presentation in audio or video electronic format and, after a self-critical evaluation, to look for ways to improve it.
+     When presenting the thesis, it should be avoided reading the presentation. The Commission has a much better impression if the author speaks about his/her thesis freely and clearly, emphasising individual statements. In response to the questions and comments of the members of the Commission, the student can use the work and cite it. The answers must be short and specific.
+     The student may reply to the comments of the members of the commission, provided that they have been made, by giving a final word. The student can present his/her future scientific plans, thank everyone who helped to prepare the thesis.
+
+4.2. Procedure for defending final thesis
+
+     The defence of the BA thesis takes place at a meeting of the Commission and is open to the public, i.e. it is open to anyone who wishes to participate in BA thesis defence (being in the room where the defence takes place, asking questions to the student defending the thesis, taking part in discussions).
+Thesis defence shall take place in the following order:
+1. The Chairman of the Commission shall invite the author of the thesis, publish the subject of the student's thesis, the name of the thesis supervisor and give the author the floor.
+2. The author presents his/her thesis within 6-8 minutes: indicates the problem, aim, objectives of the research, briefly describes the object, the results obtained, the reliability of the methods used, presents the conclusions and substantiates them, makes recommendations.
+3. The student is asked questions from the members of the Commission, to which he/she answers immediately, without further preparation.
+4. The floor is given to the reviewer. If the reviewer is not present, the review and its conclusions shall be communicated by the Chairman of the Commission or by one of the members of the Commission.
+5. The student answers the reviewer's comments and questions (if any).
+6. The members of the Commission and other persons involved in the defence shall read the written feedback and recommendations received in writing (if any).
+7. The author of the thesis is given the final floor.
+
+     A bachelor student, who has not defended or failed to defend his/her final thesis, is expelled from the university due to his/her lack of progressiveness.
+     The second time is allowed to defend the final thesis after resuming studies, i.e. in the next year of study. In the event of a second failure to defend the final thesis, a new final thesis must be written.
+     After successfully defending the thesis, the Commission grants the student a Bachelor's Degree in Informatics Sciences.
+     Note: Graduates of the 2016 Programme is awarded Bachelor of Informatics Engineering.
+
+
+
+
+
+
+REFERENCES
+
+1. Driaunys, K., Gudas, S., Lopata A., ir Moskaliova V. (2007). Bakalauro baigiamojo darbo metodiniai nurodymai: verslo informatikos studiju programos studentams. Kaunas: Vilniaus universiteto leidykla.
+2. Kardelis, K. (2016). Moksliniu tyrimu metodologija ir metodai. Vilnius: Mokslo ir enciklopediju leidybos centras.
+3. Misevicius, V. (1995). Moksliniu tiriamuju darbu vadyba. Kaunas: Technologija.
+4. Vilniaus universiteto biblioteka (2009-2010). Buk etiškas. Žiureta 2017 10 12 per interneta:
+<http://www.ir.mb.vu.lt/buk-etiskas >.
+5. Vilniaus universiteto Kauno humanitarinio fakulteto kursiniu ir baigiamuju bakalauro ir magistro darbu rengimo, gynimo ir kaupimo aprašas. (2016 03 31, Nr.6).
+6. Vilniaus universiteto Kauno humanitarinio fakulteto praktikos nuostatai. (2015 09 28, Nr. 14;
+2016 01 06, Nr. 1).
+7. Vilniaus universiteto studijuojanciuju rašto darbu rengimo, gynimo ir kaupimo tvarkos aprašas. (2015 11 17, Nr. R-446). Žiureta 2017 10 02 per interneta:
+<https://www.vu.lt/site_files/SD/Studentams/st._reglamentuojantys_dok/Rasto_darbu_rengimo_gyni mo_kaupimo_tvarka_11_27.pdf >.
+8. Vilniaus universiteto studiju praktikos reglamentas. (2015 05 26, Nr. S-2015-5-5).
+
+
+
+ANNEXES
+
+ANNEXE 1. EXAMPLE OF BACHELOR'S THESIS FIRST TITLE PAGE ANNEXE 2. EXAMPLES OF ABBREVIATIONS, TABLES AND PICTURES ANNEXE 3. EXAMPLE OF SUMMARY FORM (IN FOREIGN LANGUAGE) ANNEXE 4. EXAMPLE OF BACHELOR'S THESIS CONTENTS
+ANNEXE 5. EXAMPLE OF A TECHNICAL TASK ANNEXE 6. EXAMPLES OF TABLES PRESENTATION ANNEXE 7. EXAMPLES OF PICTURES PRESENTATION ANNEXE 8. EXAMPLE OF A USE CASE DIAGRAM ANNEXE 9. EXAMPLES OF SEQUENCE DIAGRAMS ANNEXE 10. EXAMPLE OF A CLASS DIAGRAM ANNEXE 11. EXAMPLE OF AN ACTIVITY DIAGRAM
+ANNEXE 12. EXAMPLE OF A DIAGRAM OF SYSTEM COMPONENTS
+ANNEXE 13. KEY DATES AND DEADLINES FOR THE FINAL PHASE OF THE DRAFTING OF THE BA THESIS
+
+ANNEXE 1
+EXAMPLE OF BACHELOR'S THESIS FIRST TITLE PAGE
+
+VILNIUS UNIVERSITY KAUNAS FACULTY
+
+
+INSTITUTE OF SOCIAL SCIENCES AND APPLIED INFORMATICS
+
+
+
+
+Study programme Information Systems and Cyber Security State code 6121BX003
+
+
+
+
+
+
+
+NAME SURNAME
+
+
+
+
+
+
+BACHELOR'S THESIS
+
+
+
+PERSONNEL ACCOUNTING INFORMATION SYSTEM
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Kaunas 2017
+
+Annexe 1 (continued)
+EXAMPLE OF A SECOND PAGE OF A BACHELOR'S THESIS
+
+VILNIUS UNIVERSITY KAUNAS FACULTY
+
+
+INSTITUTE OF SOCIAL SCIENCES AND APPLIED INFORMATICS
+
+
+
+
+
+NAME SURNAME
+
+
+
+
+
+BACHELOR'S THESIS
+
+
+
+PERSONNEL ACCOUNTING INFORMATION SYSTEM
+
+
+
+
+
+
+
+Allowed to defend	Bachelor student
+
+
+
+(signature)
+
+
+
+Scientific advisor
+
+
+
+(signature)
+
+
+
+(scientific degree of the advisor, scientific pedagogical name, name and surname)
+
+
+
+Thesis submitted on
+
+Registration No:
+
+
+
+
+
+
+
+
+Kaunas 2017
+
+ANNEXE 2
+EXAMPLES OF ABBREVIATIONS, TABLES AND PICTURES
+
+
+
+
+
+
+EXAMPLE OF SUMMARY FORM (IN FOREIGN LANGUAGE)
+
+
+
+
+
+
+
+Example of summary (in Lithuanian)
+
+
+
+EXAMPLE OF BACHELOR'S THESIS CONTENTS (1)
+
+CONTENTS
+
+LIST OF ABBREVIATIONS LIST OF PICTURES
+LIST OF TABLES
+LIST OF ABBREVIATIONS SUMMARY INTRODUCTION
+1. ANALYTICAL PART
+1.1. The characteristics of the problem area, processes, objectives under research. Analysis of the environment of the object under research
+1.2. Analysis of information flows, functions and existing software products or IS
+1.3. Study of requirements for a new information system or its components and selection of possible tools for the development of the system
+2. TERMS OF REFERENCE
+3. PROJECT PART
+3.1. Objective of the project
+3.2. Logic structure of the computerised system
+3.2.1. Hierarchy of computerised functions
+3.2.2. Data flow diagram of the computerised system
+3.2.3. Conceptual object model
+3.2.4. Description of system states, processes and performance scenarios
+3.2.5. Formal description of calculations
+3.3. Information equipment project
+3.3.1. Description of the classification and coding system
+3.3.2. Specification of input data
+3.3.3. Specification of output data
+3.3.4. Database project
+3.3.5. Processing, retrieval and collection of information
+3.4. Software project
+3.4.1. System architecture
+3.4.2. Description of the software environment
+3.4.3. Description of test data
+3.4.4. User manual
+3.4.5. Manager of the programmer
+3.5. Technical equipment project
+3.6. Plan of measures for the deployment of the system
+   3.7. Assessment and comparison of the designed system with the analogues examined CONCLUSIONS AND RECOMMENDATIONS
+LITERATURE ANNEXES
+
+ANNEXE 4 (continued)
+
+EXAMPLE OF BACHELOR'S THESIS CONTENTS (2)
+
+
+CONTENTS
+LIST OF PICTURES LIST OF TABLES
+LIST OF ABBREVIATIONS SUMMARY INTRODUCTION
+1. ANALYTICAL PART
+1.1. General characteristics of the object.
+1.2. Accounting policy of the company
+1.3. Analysis of information flows
+1.4. Analysis of functions performed
+1.5. Selection of computer-enabled works
+1.6. Comparison of similar accounting programs
+1.7. Description of computerisation tools
+2. TERMS OF REFERENCE
+3. PROJECT PART
+3.1. Aim of the project
+3.2. Characteristic of computerised functions
+3.3. Information equipment description
+3.3.1. Description of the classification and coding system
+3.3.2. Characteristics of the information to be entered
+3.3.3. Characteristic of the output information
+3.3.4. Conceptual object model (ER diagram)
+3.3.5. Computerised system DSD
+3.3.6. Description of the logical diagram of the database
+3.4. Specification of the search and extraction of information
+3.5. Formal description of the calculations carried out
+3.6. Software project
+3.6.1. List of system software
+3.6.2. Description of system architecture
+3.6.3. Description of test data
+3.6.4. Description of system dynamics
+3.6.5. Instructions for the user
+3.6.6. Instructions for the programmer
+3.7. Technical equipment project
+     3.8. Plan of measures for the deployment of the system CONCLUSIONS
+LIST OF REFERENCES LIST OF ANNEXES
+
+
+
+
+
+APPROVED
+Supervisor: 	 Bachelor student: 	 Date: 	
+TECHNICAL TASK
+
+1. TITLE OF THE THESIS (TITLE):
+Subscription to Periodicals IS.
+2. CONTENT OF THE ANALYTICAL AND RESEARCH WORK:
+2.1. Analysis of the market for periodicals and of the activities of the organisation providing subscription services;
+2.2. Analysis of algorithms, mathematical calculations, management and other methods that meet the needs of the computerised object;
+2.3. Search and benchmarking of IS analogues for subscriptions to periodicals.
+3. DESIGN SYSTEM FUNCTIONS:
+3.1. Input, review, adjustment, output of publications information;
+3.2. Subscriber registration, adjustment;
+3.3. Formation, adjustment, withdrawal of subscription transactions;
+3.4. Output of documents, preparation of reports.
+4. SYSTEM DESCRIPTION DOCUMENTATION AND INSTRUCTIONS:
+4.1. System user manual;
+4.2. System installation and support instructions for the administrator.
+5. SYSTEM DESIGN TOOLS, SOFTWARE AND HARDWARE REQUIREMENTS:
+5.1. Design and OM logic generation tools - VISIO2013 and Provision Workbench software packages;
+5.2. DB control system - My SQL;
+5.3. System operating environment - Windows7/8/10;
+5.4. Technical equipment requirements: Intel Core i5-7xxx, 3.10 GHz, DDR4-SDRAM.
+6. SYSTEM TESTING AND EVALUATION
+6.1. Preparation of the control set for testing the system;
+6.2. Evaluation of the test results;
+6.3. Comparison of the designed system with the analogues examined.
+7. THESIS PRESENTATION REQUIREMENTS:
+7.1. Thesis description in accordance with the methodological guidelines for writing a Bachelor's thesis;
+7.2. Computer media (CD) with a BA thesis description and software implementation;
+7.3. Oral presentation and pptx presentation of a BA thesis during the defence (6-8 min.)
+
+
+
+If the table is taken from a literary source, it is presented as follows:
+
+Comparative analysis of different types of CSIRT groups
+
+
+Table 1
+
+
+Type of CSIRT/CERT groupAdvantagesShortcomingsInternal group (formed from company employees).Understanding the nuances of systems architecture and
+organisation's activities.Conflict of interest: The suspect may be part of a group.
+External consultants (outsource)Avoidance of conflicts of interest.High price. Qualification issues. Long period of time needed to understand the
+organisation's systems.Law enforcement bodies, government-authorised organisations
+Avoidance of conflicts of interest. Low price.Qualification issues. Long period of time needed to understand the organisation's systems. Little control over the course of the investigation.Source: Goranin, N., and Mažeika, D. (2011). Nusikaltimai elektronineje erdveje ir ju tyrimo metodikos.
+
+
+If the table is created by the author, it is presented as follows:
+
+Description of fields in the user registration form
+
+
+Table 2
+
+
+Field nameDescriptionCommentsUsernameUser login nameEntry field. Mandatory. The company determines the
+principle of creating a login.PasswordUser passwordEntry field. Mandatory. The company determines the
+principle of creating a temporary password.
+RoleUser role: instructor/Trainee.Selection fields. An instructor or student is being created. After selecting the desired role, the following form is provided.Source: compiled by the author.
+
+
+If the table is compiled by the author based on the source, it is presented as follows:
+
+Service Productivity Components
+
+
+Table 3
+
+
+ComponentDescription
+Price EfficiencyPrice efficiency means the purchase of resources at a minimum price, while maintaining the required quality requirements. Organisations providing services can increase productivity if they use cheaper human and material resources for the
+development of services, without compromising the quality of service.
+Allocative EfficiencyResource allocation efficiency is the use of the required resource set to provide the service. It involves optimising the capital and workforce needed, for example banks using ATMs and online banking, thus eliminating part of the workforce and
+investing in capital.Technical EfficiencyTechnological efficiency is an opportunity to produce more with the same
+resources or vice versa to produce the same amount with smaller resources.
+
+Scale EfficiencyScale efficiencies examine the optimal level of coverage of activities. Higher or lower service production than the optimal level entails additional costs due to insufficient demand or insufficient supply - inadequate volumes and size. Most of the cases relate to excess management, control costs, which are linked to fixed costs.
+Source: compiled by the author by Sherman, H.D., Zhu J. (2006). Service Productivity Management, Improving Service Performance Using Data Envelopment Analysis (DEA).
+If the table covers more than one page:
+
+
+
+
+On page 1, the table is presented as follows:
+
+Service Productivity Components
+
+
+
+Table 4
+
+
+ComponentDescription
+
+Price EfficiencyPrice efficiency means the purchase of resources at a minimum price, while maintaining the required quality requirements. Organisations providing services can increase productivity if they use cheaper human and material resources for the
+development of services, without compromising the quality of service.
+Allocative EfficiencyResource allocation efficiency is the use of the required resource set to provide the service. It involves optimising the capital and workforce needed, for example banks using ATMs and online banking, thus eliminating part of the workforce and investing in capital.
+
+
+
+On page 2, the table is continued and presented as follows:
+
+
+
+   Table 4 (continued)
+
+ComponentDescription
+Technical EfficiencyTechnological efficiency is an opportunity to produce more with the same
+resources or vice versa to produce the same amount with smaller resources.
+
+Scale EfficiencyScale efficiencies examine the optimal level of coverage of activities. Higher or lower service production than the optimal level entails additional costs due to insufficient demand or insufficient supply - inadequate volumes and size. Most of the cases relate to excess management, control costs, which are linked to fixed costs.Source: compiled by the author by Sherman, H.D., Zhu J. (2006). Service Productivity Management, Improving Service Performance Using Data Envelopment Analysis (DEA).
+
+
+EXAMPLES OF PICTURES PRESENTATION
+
+If a picture is taken from scientific literature or from another source, it is presented as follows:
+
+
+
+Source: NKSC: (2017). 2016 metu nacionalinio kibernetinio saugumo bukles ataskaita Accessed on 18/11/2017 via the Internet: <https://kam.lt/download/57062/nksc_metine_ataskaita_uz_2016.pdf>.
+
+Figure 1: Vulnerability of Lithuanian websites in terms of hacking complexity and positive trend
+
+
+If a picture based on a literary source but modified by the author of the work is presented as follows:
+
+
+Source: created by the author by Von Solms (2006).
+
+Figure 3: The genesis of the concept of information security
+
+EXAMPLE OF A USE CASE DIAGRAM
+
+
+A use case diagram for address book management
+
+
+
+A use case diagram for requirements management
+
+
+EXAMPLES OF SEQUENCE DIAGRAMS
+
+An example of a sequence diagram
+
+
+
+A sequence diagram of the use case "Register Troubleshooting Requests"
+
+EXAMPLES OF SEQUENCE DIAGRAMS
+
+A sequence diagram "Create a Company"
+
+A sequence diagram "Edit Contact"
+
+
+EXAMPLE OF A CLASS DIAGRAM
+
+A user control class diagram for the administration subsystem
+
+EXAMPLE OF AN ACTIVITY DIAGRAM
+
+Activity diagram of the use case "Check Rights"
+
+
+An activity diagram for the activity process "Submission of Information"
+
+EXAMPLE OF A DIAGRAM OF SYSTEM COMPONENTS
+
+
+
+
+A system component diagram
+
+KEY DATES AND DEADLINES FOR THE FINAL PHASE OF THE DRAFTING OF THE BA THESIS
+
+Time/deadlineTask/activitiesLast semester of studies in the last week (12th) week (last week of November, 24-30th)BA thesis defence in SPC (printed BA thesis and running software are submitted)At the beginning of the last semester session (first week of December)Defence of professional practice
+Until 15 DecemberApproval of BA thesis topics (in Lithuanian and English language), authors, and supervisors and their registration on the VU SIS)Until 20 DecemberUploading BA theses to the VU SISUntil 22 DecemberApproval/disapproval of the BA thesis supervisor is entered in the Warranty
+Until 23 DecemberBA thesis registration in the ISSAI (delivery of printed and hardcovered BA thesis to ISSAI with the Warranty sheet and CD media; submission of the work to the BA thesis reviewer (paper or electronic version according to agreement)January (first two weeks)Public defence of a BA thesis
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace LFSInstaller.Core
 {
@@ -15,10 +16,12 @@ namespace LFSInstaller.Core
         public event EventHandler<string>? LogMessage;
 
         private readonly InstallationConfig _config;
+        private readonly StructuredLogger _logger;
 
         public InstallationManager(InstallationConfig config)
         {
             _config = config;
+            _logger = new StructuredLogger();
         }
 
         /// <summary>
@@ -26,40 +29,66 @@ namespace LFSInstaller.Core
         /// </summary>
         public async Task<bool> InstallAsync()
         {
+            _logger.Log(LogLevel.Info, "Starting LFS Builder installation", "Installation");
+            
             try
             {
                 OnStatusChanged("Starting installation...");
                 OnProgressChanged(0, "Initializing");
 
                 // Step 1: Check prerequisites (10%)
+                _logger.Log(LogLevel.Info, "Checking system prerequisites", "Prerequisites");
                 if (!await CheckPrerequisitesAsync())
+                {
+                    _logger.Log(LogLevel.Critical, "Prerequisites check FAILED", "Prerequisites");
                     return false;
+                }
 
                 // Step 2: Enable WSL2 feature (25%)
+                _logger.Log(LogLevel.Info, "Enabling WSL2 features", "WSL2");
                 if (!await EnableWSL2Async())
+                {
+                    _logger.Log(LogLevel.Critical, "WSL2 enablement FAILED", "WSL2");
                     return false;
+                }
 
                 // Step 3: Install Linux distribution (50%)
+                _logger.Log(LogLevel.Info, "Installing Linux distribution", "Linux");
                 if (!await InstallLinuxDistributionAsync())
+                {
+                    _logger.Log(LogLevel.Critical, "Linux distribution installation FAILED", "Linux");
                     return false;
+                }
 
                 // Step 4: Configure LFS environment (70%)
+                _logger.Log(LogLevel.Info, "Configuring LFS environment", "LFS");
                 if (!await ConfigureLFSEnvironmentAsync())
+                {
+                    _logger.Log(LogLevel.Critical, "LFS configuration FAILED", "LFS");
                     return false;
+                }
 
                 // Step 5: Create shortcuts (90%)
+                _logger.Log(LogLevel.Info, "Creating shortcuts", "Shortcuts");
                 if (!await CreateShortcutsAsync())
+                {
+                    _logger.Log(LogLevel.Critical, "Shortcut creation FAILED", "Shortcuts");
                     return false;
+                }
 
                 // Step 6: Finalize (100%)
                 OnProgressChanged(100, "Installation complete!");
                 OnStatusChanged("LFS Builder installed successfully");
+                _logger.Log(LogLevel.Info, "Installation completed successfully", "Installation");
 
+                _logger.SaveToFile();
                 return true;
             }
             catch (Exception ex)
             {
+                _logger.LogError("Installation failed with unexpected error", ex, "Installation");
                 OnLogMessage($"Installation failed: {ex.Message}");
+                _logger.SaveToFile();
                 return false;
             }
         }
@@ -218,6 +247,8 @@ sudo chown -v $USER $LFS
 
         private async Task ExecutePowerShellAsync(string command)
         {
+            OnLogMessage($"Executing: {command}");
+            
             var startInfo = new ProcessStartInfo
             {
                 FileName = "powershell.exe",
@@ -225,7 +256,8 @@ sudo chown -v $USER $LFS
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                Verb = "runas" // Request elevation if needed
             };
 
             using var process = Process.Start(startInfo);
@@ -238,13 +270,13 @@ sudo chown -v $USER $LFS
             await process.WaitForExitAsync();
 
             if (!string.IsNullOrWhiteSpace(output))
-                OnLogMessage(output);
+                OnLogMessage($"Output: {output.Trim()}");
 
             if (!string.IsNullOrWhiteSpace(error))
-                OnLogMessage($"Error: {error}");
+                OnLogMessage($"Error: {error.Trim()}");
 
             if (process.ExitCode != 0)
-                throw new Exception($"Command failed with exit code {process.ExitCode}");
+                throw new Exception($"Command failed with exit code {process.ExitCode}. Error: {error}");
         }
 
         private async Task ExecuteWSLCommandAsync(string command)

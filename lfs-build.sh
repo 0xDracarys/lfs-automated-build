@@ -12,7 +12,7 @@
 #   - Uploads output to Google Cloud Storage
 ################################################################################
 
-set -euo pipefail
+set -eo pipefail  # Remove -u to allow undefined variables in diagnostics
 
 # ============================================================================
 # STARTUP DIAGNOSTICS - Run BEFORE any other code
@@ -24,7 +24,7 @@ echo "📋 Environment Diagnostics:"
 echo "  - Hostname: $(hostname)"
 echo "  - User: $(whoami)"
 echo "  - Working Directory: $(pwd)"
-echo "  - Script Location: ${BASH_SOURCE[0]}"
+echo "  - Script Location: ${BASH_SOURCE[0]:-$0}"
 echo ""
 echo "🔍 PATH Diagnostics:"
 echo "  - PATH: $PATH"
@@ -932,4 +932,22 @@ done
 
 # Run main function (LFS_CONFIG_JSON is optional - will auto-generate BUILD_ID)
 main "$@"
+
+# If build succeeded, package outputs for distribution
+if [ $? -eq 0 ]; then
+    echo ""
+    echo "=================================================="
+    echo "  PACKAGING BUILD OUTPUTS"
+    echo "=================================================="
+    
+    # Call packaging script
+    if [ -f "/app/package-lfs-outputs.sh" ]; then
+        bash /app/package-lfs-outputs.sh
+    elif [ -f "./package-lfs-outputs.sh" ]; then
+        bash ./package-lfs-outputs.sh
+    else
+        echo "⚠️ Warning: package-lfs-outputs.sh not found, skipping packaging"
+    fi
+fi
+
 exit $?

@@ -2,13 +2,15 @@
 # build-bootable-kernel.sh - Build Linux kernel for bootable LFS
 set -e
 
-export LFS_TOOLS=/home/dracarys/lfs-test/mnt/lfs
-export LFS_USR=/home/dracarys/lfs-local-build/mnt/lfs
+# Use standard LFS path or environment variable
+export LFS=${LFS:-/mnt/lfs}
+export LFS_TOOLS=${LFS_TOOLS:-$LFS}
+export LFS_USR=${LFS_USR:-$LFS}
 export PATH=$LFS_TOOLS/tools/bin:/usr/bin:/bin:/usr/sbin:/sbin
-export MAKEFLAGS=-j12
+export MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
 
 # Create build directory
-BUILDDIR=/home/dracarys/lfs-bootable
+BUILDDIR=${BUILDDIR:-$LFS/bootable}
 mkdir -p $BUILDDIR/{boot,lib,bin,sbin,etc}
 
 echo "========================================="

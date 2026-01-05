@@ -1,18 +1,70 @@
-# Ignore everything by default
-*
+# Import .gitignore patterns
+#!include:.gitignore
 
-# INCLUDE these explicitly:
-!Dockerfile.cloudrun
-!lfs-toolchain-final.tar.gz
-!cloudbuild.yaml
+# === CRITICAL: Exclude large files/directories ===
+# These are the main culprits for 327 MB uploads
 
-# Definitely exclude these:
-.git/
+# 1. Toolchain archives (916 MB total)
+*.tar.gz
+*.tar.xz
+*.tgz
+*.iso
+*.zip
+lfs-*.tar.gz
+lfs-toolchain*.tar.gz
+
+# 2. Frontend directory with node_modules (1.1+ GB)
+lfs-learning-platform/
+lfs-learning-platform/**
+
+# 3. Thesis documentation (5 MB)
+THESIS-ISCS/
+THESIS-ISCS/**
+
+# 4. Build outputs and logs
+lfs-output/
+lfs-output/**
+output/
+logs/
+build/
+
+# 5. Node.js and dependencies
 node_modules/
+**/node_modules/
+package-lock.json
+.next/
+
+# 6. Firebase files (not needed for Docker)
 .firebase/
 functions/
-helpers/
-public/
+functions/**
+firebase-debug.log
+
+# 7. Git and version control
+.git/
+.gitignore
+.gitattributes
+
+# 8. Documentation
 docs/
-*.log
+docs/**
 *.md
+!README.md
+
+# 9. IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+*.log
+*.swp
+*.swo
+
+# === What WILL be uploaded (needed for Docker build) ===
+# These files are NOT excluded:
+# - Dockerfile.cloudrun
+# - cloudbuild.yaml  
+# - lfs-build.sh
+# - build-chapter6-fixed.sh
+# - helpers/*.js
+# - helpers/package.json
+# Total: ~5-10 MB

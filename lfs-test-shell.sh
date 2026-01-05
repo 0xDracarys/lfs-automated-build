@@ -1,8 +1,9 @@
 #!/bin/bash
 # Interactive LFS Test Environment
 
-export LFS=/home/dracarys/lfs-test/mnt/lfs
-export LFS_TGT=x86_64-lfs-linux-gnu
+# Use standard LFS path or environment variable
+export LFS=${LFS:-/mnt/lfs}
+export LFS_TGT=${LFS_TGT:-x86_64-lfs-linux-gnu}
 export PATH=$LFS/tools/bin:$PATH
 export LD_LIBRARY_PATH=$LFS/usr/lib:$LD_LIBRARY_PATH
 

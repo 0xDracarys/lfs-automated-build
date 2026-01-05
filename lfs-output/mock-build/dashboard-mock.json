@@ -1,0 +1,72 @@
+{
+  "stats": {
+    "totalBuilds": 47,
+    "runningBuilds": 1,
+    "completedBuilds": 38,
+    "failedBuilds": 3,
+    "avgBuildTime_min": 48.5,
+    "successRate_percent": 95.7
+  },
+  "recentBuilds": [
+    {
+      "buildId": "LFS-001-SUBMITTED",
+      "userId": "user-shubham-bhasker",
+      "projectName": "LFS Build 001",
+      "status": "SUBMITTED",
+      "currentPackage": null,
+      "progress_percent": 0,
+      "startedAt": "2025-12-11T08:00:17.293Z",
+      "updatedAt": "2025-12-12T04:07:36.568Z",
+      "totalTime_sec": 1813,
+      "peakMemory_GB": 3.38
+    },
+    {
+      "buildId": "LFS-002-PENDING",
+      "userId": "user-shubham-bhasker",
+      "projectName": "LFS Build 002",
+      "status": "PENDING",
+      "currentPackage": null,
+      "progress_percent": 0,
+      "startedAt": "2025-12-11T17:49:35.077Z",
+      "updatedAt": "2025-12-12T04:07:36.568Z",
+      "totalTime_sec": 619,
+      "peakMemory_GB": 3.68
+    },
+    {
+      "buildId": "LFS-003-RUNNING",
+      "userId": "user-shubham-bhasker",
+      "projectName": "LFS Build 003",
+      "status": "RUNNING",
+      "currentPackage": "glibc-2.38",
+      "progress_percent": 67,
+      "startedAt": "2025-12-11T18:35:30.156Z",
+      "updatedAt": "2025-12-12T04:07:36.568Z",
+      "totalTime_sec": 1504,
+      "peakMemory_GB": 3.35
+    },
+    {
+      "buildId": "LFS-004-COMPLETED",
+      "userId": "user-shubham-bhasker",
+      "projectName": "LFS Build 004",
+      "status": "COMPLETED",
+      "currentPackage": null,
+      "progress_percent": 100,
+      "startedAt": "2025-12-11T08:34:51.659Z",
+      "updatedAt": "2025-12-12T04:07:36.568Z",
+      "totalTime_sec": 2910,
+      "peakMemory_GB": 5.14
+    },
+    {
+      "buildId": "LFS-005-FAILED",
+      "userId": "user-shubham-bhasker",
+      "projectName": "LFS Build 005",
+      "status": "FAILED",
+      "currentPackage": "gcc-13.2.0",
+      "progress_percent": 45,
+      "startedAt": "2025-12-11T19:45:22.034Z",
+      "updatedAt": "2025-12-12T04:07:36.568Z",
+      "totalTime_sec": 1040,
+      "peakMemory_GB": 5.15
+    }
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "status": "FAILED",
+  "currentPackage": "linux-api-headers-6.4.12",
+  "currentPackageIndex": 3,
+  "progress_percent": 11,
+  "startedAt": "2025-12-12T04:15:57.193Z",
+  "updatedAt": "2025-12-12T04:16:20.290Z",
+  "completedAt": "2025-12-12T04:16:20.290Z",
+  "totalTime_sec": 1038.0000000000002,
+  "peakMemory_GB": 6.55,
+  "errorMessage": "Compilation failed: gcc-13.2.0 - unrecognized command line option '-fstack-protector-strong'",
+  "artifactHash_SHA256": null,
+  "logs": [
+    {
+      "timestamp": "2025-12-12T04:15:57.211Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Build LFS-1765512957193-SIM queued"
+    },
+    {
+      "timestamp": "2025-12-12T04:15:59.212Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Build started"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:00.214Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:00.717Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:01.919Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Configure flags (DEPENDENCY CLOSURE):"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:01.920Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "./configure --prefix=/tools \\\n    --with-sysroot=$LFS \\\n    --target=$LFS_TGT \\\n    --disable-nls \\\n    --enable-gprofng=no \\\n    --disable-werror"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:01.922Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:04.723Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:04.723Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:05.024Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:05.327Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:05.630Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[ 67%] Linking C executable binutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:05.931Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "[100%] Built target binutils"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:05.932Z",
+      "level": "DEBUG",
+      "packageName": "binutils-2.41",
+      "message": "Peak memory: 6.55 GB"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:05.933Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:06.233Z",
+      "level": "INFO",
+      "packageName": "binutils-2.41",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:06.234Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:06.236Z",
+      "level": "SUCCESS",
+      "packageName": "binutils-2.41",
+      "message": "✓ Package completed in 4.3 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:06.238Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 1/18 packages (6%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:06.239Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:06.740Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:08.741Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Configure flags (--disable-shared for TCB):"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:08.742Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "./configure --target=$LFS_TGT \\\n    --prefix=/tools \\\n    --with-glibc-version=2.38 \\\n    --with-sysroot=$LFS \\\n    --with-newlib \\\n    --without-headers \\\n    --disable-nls \\\n    --disable-shared \\\n    --disable-multilib \\\n    --disable-threads \\\n    --disable-libatomic \\\n    --disable-libgomp \\\n    --disable-libquadmath \\\n    --disable-libssp \\\n    --disable-libvtv \\\n    --disable-libstdcxx \\\n    --enable-languages=c,c++"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:08.745Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:11.747Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:11.748Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:12.050Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:12.352Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:12.654Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[ 67%] Linking C executable gcc"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:12.955Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "[100%] Built target gcc"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:12.956Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:13.758Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:13.758Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:13.761Z",
+      "level": "SUCCESS",
+      "packageName": "gcc-13.2.0",
+      "message": "✓ Package completed in 12.7 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:13.762Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 2/18 packages (11%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:13.763Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:14.263Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:14.365Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:14.366Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:14.667Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:14.968Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.270Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[ 67%] Linking C executable linux-api-headers"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.571Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "[100%] Built target linux-api-headers"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.572Z",
+      "level": "SUCCESS",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Compilation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.775Z",
+      "level": "INFO",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Installing to /tools..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.776Z",
+      "level": "SUCCESS",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "Installation completed"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.778Z",
+      "level": "SUCCESS",
+      "packageName": "linux-api-headers-6.4.12",
+      "message": "✓ Package completed in 0.3 minutes"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.778Z",
+      "level": "INFO",
+      "packageName": "system",
+      "message": "Progress: 3/18 packages (17%)"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:15.780Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Starting build..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:16.780Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:17.281Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Running ./configure..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:18.282Z",
+      "level": "INFO",
+      "packageName": "gcc-13.2.0",
+      "message": "Compiling..."
+    },
+    {
+      "timestamp": "2025-12-12T04:16:20.285Z",
+      "level": "ERROR",
+      "packageName": "gcc-13.2.0",
+      "message": "gcc: error: unrecognized command line option '-fstack-protector-strong'"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:20.286Z",
+      "level": "ERROR",
+      "packageName": "gcc-13.2.0",
+      "message": "make[2]: *** [Makefile:234: main.o] Error 1"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:20.288Z",
+      "level": "ERROR",
+      "packageName": "gcc-13.2.0",
+      "message": "make[1]: *** [Makefile:456: all-recursive] Error 1"
+    },
+    {
+      "timestamp": "2025-12-12T04:16:20.289Z",
+      "level": "ERROR",
+      "packageName": "gcc-13.2.0",
+      "message": "make: *** [Makefile:789: all] Error 2"
+    }
+  ]
+}

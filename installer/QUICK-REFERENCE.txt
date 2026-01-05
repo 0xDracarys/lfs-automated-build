@@ -1,0 +1,78 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║    LFS Builder Self-Healing Pipeline - Quick Reference        ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+📦 BUILD COMMANDS
+─────────────────
+# Full automated build with self-healing
+.\master-build-orchestrator.ps1
+
+# Build + Deploy (dry-run)
+.\master-build-orchestrator.ps1 -FullPipeline -DryRun
+
+# Production deployment
+.\master-build-orchestrator.ps1 -Deploy
+
+# Force clean rebuild
+.\build-pipeline.ps1 -ForceRebuild
+
+🔍 VALIDATION & DIAGNOSTICS
+───────────────────────────
+# Pre-build asset check
+cd LFSInstaller; .\validate-build-assets.ps1
+
+# Analyze errors from logs
+.\analyze-and-fix-errors.ps1 -Verbose
+
+# Apply auto-fixes
+.\analyze-and-fix-errors.ps1 -ApplyFixes
+
+📂 OUTPUT LOCATIONS
+──────────────────
+Executable:  installer\LFSInstaller\publish\LFSBuilderSetup.exe
+Staging:     installer\staging\LFSBuilderSetup.exe
+Production:  installer\production\LFSBuilderSetup.exe
+Logs:        build-log-YYYYMMDD-HHMMSS.json
+Install Logs: %TEMP%\LFSInstaller\Logs\install-*.json
+
+✓ VALIDATION CHECKS
+───────────────────
+1. Exit code = 0
+2. File exists (MZ header verified)
+3. SHA-256 checksum matches
+4. Smoke test passes (launches without crash)
+5. Manifest validated = true
+
+🔧 SELF-HEALING PATTERNS
+────────────────────────
+Icon missing        → Auto-create/copy fallback
+NuGet restore fail  → Clear caches
+Build cache corrupt → Clean obj/bin
+Disk space low      → Clean temp files
+Admin rights needed → Manual intervention
+Nullability warnings → Expected, ignored
+
+🚀 DEPLOYMENT FLOW
+──────────────────
+Build → Checksum → Smoke Test → Stage → Validate → Deploy
+
+Safety: Dry-run first, then production
+Rollback: Automatic backups in production/backups/
+
+📊 MONITORING
+─────────────
+Check JSON logs for:
+- "Level": "Critical" → Build-breaking errors
+- "Level": "Error"    → Recoverable errors
+- "Level": "Warning"  → Non-critical issues
+
+🆘 TROUBLESHOOTING
+─────────────────────
+Build fails 3x → Check build-log-*.json for "Critical" entries
+Checksum mismatch → Re-run with -ForceRebuild
+Installer crashes → Check %TEMP%\LFSInstaller\Logs\
+Missing admin → Run as Administrator
+
+══════════════════════════════════════════════════════════════════

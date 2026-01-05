@@ -152,7 +152,7 @@ flowchart TB
     end
     
     Windows -.->|"wsl command invocation"| WSL
-    WSL -.->|"chroot pivot"| Chroot
+    WSL -.->|"chroot pivot"| Chroot 
     Chroot --> Timing
     
     style Windows fill:#E3F2FD
@@ -393,7 +393,7 @@ sequenceDiagram
 
 **Key Interactions:**
 1. Wizard validates before submission (FN-1)
-2. API creates Firestore document (builds collection)
+2. API cre ates Firestore document (builds collection)
 3. Firestore trigger fires Cloud Function
 4. Cloud Run Job executes build scripts
 5. Real-time updates via Firestore listeners (NFN-U1)

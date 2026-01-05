@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>lfs-icon.ico</ApplicationIcon>
+    <ApplicationIcon>animal_linux_penguin_2598.ico</ApplicationIcon>
     <AssemblyName>LFSBuilderSetup</AssemblyName>
     <Product>LFS Builder Installer</Product>
     <Company>LFS Automated Build</Company>

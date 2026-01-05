@@ -1,0 +1,6 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/alfs-bd1e0/lfs-test:v1', '-f', 'Dockerfile.test', '.']
+images:
+  - 'gcr.io/alfs-bd1e0/lfs-test:v1'
+timeout: 600s

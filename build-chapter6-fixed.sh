@@ -2,12 +2,12 @@
 # build-chapter6-fixed.sh - Build Chapter 6 temporary tools correctly
 set -e
 
-# Environment setup
-export LFS=/home/dracarys/lfs-local-build/mnt/lfs
-export LFS_TGT=x86_64-lfs-linux-gnu
-export LFS_TOOLS=/home/dracarys/lfs-test/mnt/lfs
+# Environment setup - Use standard LFS path or environment variable
+export LFS=${LFS:-/mnt/lfs}
+export LFS_TGT=${LFS_TGT:-x86_64-lfs-linux-gnu}
+export LFS_TOOLS=${LFS_TOOLS:-$LFS}
 export PATH=$LFS_TOOLS/tools/bin:/usr/bin:/bin:/usr/sbin:/sbin
-export MAKEFLAGS=-j12
+export MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
 
 # CRITICAL: Don't use LFS headers during cross-compilation!
 unset CFLAGS

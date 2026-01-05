@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 
-export LFS=/home/dracarys/lfs-local-build/mnt/lfs
-export LFS_TGT=x86_64-lfs-linux-gnu
+# Use standard LFS path or environment variable
+export LFS=${LFS:-/mnt/lfs}
+export LFS_TGT=${LFS_TGT:-x86_64-lfs-linux-gnu}
 export PATH=/tools/bin:/usr/bin:/bin:/usr/sbin:/sbin
-export MAKEFLAGS=-j12
+export MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
 
 cd $LFS/sources
 

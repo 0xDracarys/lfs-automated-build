@@ -1,6 +1,22 @@
-# Screenshot Capture System - Complete Index
+# THESIS-ISCS - Complete Documentation Index
 
-## 📚 Documentation Overview
+## 📚 Master Overview
+
+This folder contains the complete thesis documentation for the LFS Automated Build System bachelor's thesis, following Vilnius University ISCS methodological requirements.
+
+## 🆕 Latest Additions
+
+### Local Windows Installer Documentation (NEW!)
+→ **[05-software-implementation/local-installer/](05-software-implementation/local-installer/)**
+- Complete ISCS-compliant documentation for native Windows installer
+- 5-step wizard implementation details
+- Technical specifications with UML diagrams
+- Installation examples and logs
+- **Status**: 3 of 7 sections complete
+
+---
+
+## 📚 Documentation Structure Overview
 
 This folder contains a complete screenshot capture system designed for your LFS thesis. All screenshots can be captured **without running actual 45-minute builds** using the mock simulator.
 

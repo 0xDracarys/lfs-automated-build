@@ -44,21 +44,39 @@ const latestBuild: BuildInfo = {
 
 const downloadOptions: DownloadOption[] = [
   {
+    id: "installer",
+    title: "🚀 Windows Installer (NEW - EASIEST)",
+    description: "One-click native Windows installer with automated WSL2 setup",
+    icon: <Download className="w-8 h-8" />,
+    size: "184 KB",
+    format: ".exe",
+    recommended: true,
+    downloadUrl: "/downloads/LFSBuilderSetup.exe",
+    steps: [
+      "Download LFSBuilderSetup.exe (184 KB)",
+      "Right-click → Run as Administrator",
+      "Follow the 5-step installation wizard",
+      "Automatic WSL2 setup and LFS environment configuration",
+      "Desktop and Start Menu shortcuts created automatically",
+      "Launch 'LFS Builder' from Desktop when complete"
+    ]
+  },
+  {
     id: "tarball",
-    title: "🔥 Full LFS Toolchain (RECOMMENDED)",
+    title: "🔥 Full LFS Toolchain",
     description: "Complete 436 MB LFS build - Everything you need!",
     icon: <FileArchive className="w-8 h-8" />,
     size: "436 MB",
     format: ".tar.gz",
-    recommended: true,
+    recommended: false,
     downloadUrl: "https://firebasestorage.googleapis.com/v0/b/alfs-bd1e0.firebasestorage.app/o/lfs-12.0-toolchain.tar.gz?alt=media&token=1e9e0aed-ba72-4465-8fa2-b0ff5381a5c1",
     steps: [
       "Download the toolchain archive (436 MB)",
-      "Extract: tar -xzf lfs-12.0-toolchain.tar.gz or use 7-Zip on Windows",
-      "Contains the complete LFS build from Chapter 5",
-      "Includes: binutils, gcc, glibc, make, and all build utilities",
-      "Use for building additional LFS packages or learning",
-      "See Usage Guide for extraction instructions"
+      "Extract: tar -xzf lfs-12.0-toolchain.tar.gz (You will see 'tools' and 'usr' folders)",
+      "Download helper script: mount-lfs.ps1",
+      "Run mount-lfs.ps1 from the extracted folder",
+      "Follow prompts to mount into WSL and enter LFS shell",
+      "Build your packages!"
     ]
   },
   {
@@ -118,7 +136,7 @@ export default function DownloadsPage() {
 
   const handleDownload = (option: string) => {
     const selectedOpt = downloadOptions.find(opt => opt.id === option);
-    
+
     if (selectedOpt && selectedOpt.downloadUrl) {
       // Real download - open in new tab
       window.open(selectedOpt.downloadUrl, '_blank');
@@ -210,8 +228,8 @@ export default function DownloadsPage() {
         {/* Download Options */}
         <div className="max-w-6xl mx-auto mb-12">
           <h2 className="text-3xl font-bold mb-8 text-center">Choose Installation Method</h2>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
             {downloadOptions.map((option, index) => (
               <motion.div
                 key={option.id}
@@ -219,27 +237,29 @@ export default function DownloadsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.1 }}
                 onClick={() => setSelectedOption(option.id)}
-                className={`relative cursor-pointer rounded-2xl p-6 transition-all ${
-                  selectedOption === option.id
+                className={`relative cursor-pointer rounded-2xl p-6 transition-all ${option.recommended
+                  ? 'bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-2 border-green-500 ring-2 ring-green-500/50'
+                  : selectedOption === option.id
                     ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-500'
                     : 'bg-white/5 border border-white/10 hover:border-white/20'
-                }`}
+                  }`}
               >
                 {option.recommended && (
-                  <div className="absolute -top-3 -right-3 px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full text-xs font-bold">
-                    Recommended
+                  <div className="absolute -top-3 -right-3 px-4 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full text-xs font-bold shadow-lg shadow-green-500/50 animate-pulse">
+                    ⚡ RECOMMENDED
                   </div>
                 )}
-                
-                <div className={`mb-4 ${
+
+                <div className={`mb-4 ${option.recommended ? 'text-green-400' :
                   selectedOption === option.id ? 'text-blue-400' : 'text-gray-400'
-                }`}>
+                  }`}>
                   {option.icon}
                 </div>
-                
-                <h3 className="text-xl font-bold mb-2">{option.title}</h3>
+
+                <h3 className={`text-xl font-bold mb-2 ${option.recommended ? 'text-green-400' : ''
+                  }`}>{option.title}</h3>
                 <p className="text-sm text-gray-400 mb-4">{option.description}</p>
-                
+
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-500">{option.size}</span>
                   <span className="font-mono text-gray-500">{option.format}</span>
@@ -256,7 +276,7 @@ export default function DownloadsPage() {
               className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8"
             >
               <h3 className="text-2xl font-bold mb-6">Installation Steps for {selected.title}</h3>
-              
+
               <ol className="space-y-4 mb-8">
                 {selected.steps.map((step, index) => (
                   <li key={index} className="flex items-start gap-4">
@@ -285,6 +305,17 @@ export default function DownloadsPage() {
                   </>
                 )}
               </button>
+
+              {selected.id === "tarball" && (
+                <a
+                  href="/mount-lfs.ps1"
+                  download="mount-lfs.ps1"
+                  className="mt-4 w-full py-3 px-6 bg-gray-800 border border-gray-700 rounded-xl font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-all flex items-center justify-center gap-2"
+                >
+                  <Download className="w-5 h-5" />
+                  Download Helper Script (mount-lfs.ps1)
+                </a>
+              )}
             </motion.div>
           )}
         </div>
@@ -299,7 +330,7 @@ export default function DownloadsPage() {
             <p className="text-sm text-gray-400 mb-4">
               Complete guide for extracting and using the 436 MB toolchain on Windows, Linux, and macOS!
             </p>
-            <Link 
+            <Link
               href="/docs/toolchain-guide"
               className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 text-sm font-medium"
             >
@@ -315,7 +346,7 @@ export default function DownloadsPage() {
             <p className="text-sm text-gray-400 mb-4">
               Step-by-step instructions for using the ISO with VirtualBox or USB boot!
             </p>
-            <Link 
+            <Link
               href="/docs/usage"
               className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 text-sm font-medium"
             >

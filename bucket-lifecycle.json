@@ -6,7 +6,8 @@
           "type": "Delete"
         },
         "condition": {
-          "age": 30
+          "age": 7,
+          "matchesPrefix": ["builds/"]
         }
       }
     ]

@@ -1,0 +1,2432 @@
+{
+  "builds": {
+    "LFS-1765512563625-SIM": {
+      "buildId": "LFS-1765512563625-SIM",
+      "userId": "user-shubham-bhasker",
+      "projectName": "LFS Chapter 5 Build - Screenshot Demo",
+      "status": "COMPLETED",
+      "currentPackage": "sed-4.9 (Pass 2)",
+      "progress_percent": 100,
+      "startedAt": "2025-12-12T04:09:23.625Z",
+      "updatedAt": "2025-12-12T04:10:52.905Z",
+      "completedAt": "2025-12-12T04:10:52.905Z",
+      "totalTime_sec": 3342,
+      "peakMemory_GB": 6.8,
+      "config": {
+        "kernelVersion": "6.4.12",
+        "optimization": "O2",
+        "options": {
+          "includeKernel": true,
+          "includeNetwork": false,
+          "includeGlibcDev": true
+        }
+      },
+      "targetTriplet": "x86_64-lfs-linux-gnu",
+      "errorMessage": null,
+      "artifactHash_SHA256": "a7f2c8e4b9d1f3e6a8c2d5b7e9f1a3c5d7e9b1f3e5a7c9d1e3f5a7b9c1d3e5f7",
+      "artifactUrl": "gs://lfs-builds-bucket/LFS-1765512563625-SIM/lfs-chapter5.tar.gz"
+    }
+  },
+  "buildLogs": [
+    {
+      "logId": "LFS-1765512563625-SIM-log-0",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:23.634Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Build LFS-1765512563625-SIM submitted"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-1",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:23.636Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Project: LFS Chapter 5 Build - Screenshot Demo"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-2",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:23.636Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "LFS Version: 12.0"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-3",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:24.638Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Build queued, waiting for resources..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-4",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:26.641Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Build started!"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-5",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:26.642Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Initializing build environment..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-6",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:27.644Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "export LFS=/mnt/lfs"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-7",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:27.646Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "export LFS_TGT=x86_64-lfs-linux-gnu"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-8",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:27.647Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "export PATH=/tools/bin:/usr/bin:/bin"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-9",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:27.647Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "export MAKEFLAGS=\"-j12\""
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-10",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:27.648Z",
+      "packageName": "system",
+      "level": "SUCCESS",
+      "message": "Environment configured"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-11",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:28.648Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Creating directory structure..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-12",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:28.649Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "mkdir -pv $LFS/{bin,boot,etc,lib,lib64,sbin,usr,var,tools,sources}"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-13",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:28.649Z",
+      "packageName": "system",
+      "level": "SUCCESS",
+      "message": "Directory structure created"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-14",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:29.650Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Starting Chapter 5 toolchain build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-15",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:29.650Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Total packages: 18"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-16",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:29.651Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-17",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:30.152Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-18",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:31.353Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Configure flags (DEPENDENCY CLOSURE):"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-19",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:31.353Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "./configure --prefix=/tools \\\n    --with-sysroot=$LFS \\\n    --target=$LFS_TGT \\\n    --disable-nls \\\n    --enable-gprofng=no \\\n    --disable-werror"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-20",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:31.354Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-21",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:34.155Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-22",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:34.155Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-23",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:34.458Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-24",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:34.758Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-25",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.060Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable binutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-26",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.361Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "[100%] Built target binutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-27",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.362Z",
+      "packageName": "binutils-2.41",
+      "level": "DEBUG",
+      "message": "Peak memory: 6.75 GB"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-28",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.362Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-29",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.662Z",
+      "packageName": "binutils-2.41",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-30",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.663Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-31",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.663Z",
+      "packageName": "binutils-2.41",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 4.3 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-32",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.663Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 1/18 packages (6%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-33",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:35.664Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-34",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:36.165Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-35",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:38.166Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Configure flags (--disable-shared for TCB):"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-36",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:38.166Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "./configure --target=$LFS_TGT \\\n    --prefix=/tools \\\n    --with-glibc-version=2.38 \\\n    --with-sysroot=$LFS \\\n    --with-newlib \\\n    --without-headers \\\n    --disable-nls \\\n    --disable-shared \\\n    --disable-multilib \\\n    --disable-threads \\\n    --disable-libatomic \\\n    --disable-libgomp \\\n    --disable-libquadmath \\\n    --disable-libssp \\\n    --disable-libvtv \\\n    --disable-libstdcxx \\\n    --enable-languages=c,c++"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-37",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:38.167Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-38",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:41.168Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-39",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:53.294Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-40",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:53.601Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-41",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:53.904Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-42",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:54.204Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable gcc"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-43",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:54.505Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "[100%] Built target gcc"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-44",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:54.506Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-45",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.309Z",
+      "packageName": "gcc-13.2.0",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-46",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.310Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-47",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.310Z",
+      "packageName": "gcc-13.2.0",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 12.7 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-48",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.311Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 2/18 packages (11%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-49",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.311Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-50",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.812Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-51",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.913Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-52",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:55.914Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-53",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:56.216Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-54",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:56.517Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-55",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:56.818Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable linux-api-headers"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-56",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.118Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "[100%] Built target linux-api-headers"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-57",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.119Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-58",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.321Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-59",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.322Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-60",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.323Z",
+      "packageName": "linux-api-headers-6.4.12",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 0.3 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-61",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.325Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 3/18 packages (17%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-62",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.327Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-63",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:57.828Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-64",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:59.631Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "Configure flags (--without-bash-malloc):"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-65",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:59.632Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "./configure --prefix=/usr \\\n    --host=$LFS_TGT \\\n    --build=$(../scripts/config.guess) \\\n    --enable-kernel=4.14 \\\n    --with-headers=$LFS/usr/include \\\n    --without-bash-malloc \\\n    libc_cv_slibdir=/usr/lib"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-66",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:09:59.634Z",
+      "packageName": "glibc-2.38",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-67",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:02.635Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-68",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:02.636Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-69",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:02.942Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-70",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:03.243Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-71",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:03.544Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable glibc"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-72",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:03.845Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "[100%] Built target glibc"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-73",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:03.845Z",
+      "packageName": "glibc-2.38",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-74",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:04.846Z",
+      "packageName": "glibc-2.38",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-75",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:04.847Z",
+      "packageName": "glibc-2.38",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-76",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:04.847Z",
+      "packageName": "glibc-2.38",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 18.4 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-77",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:04.848Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 4/18 packages (22%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-78",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:04.848Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-79",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:05.348Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-80",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:05.848Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-81",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:05.849Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-82",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:07.650Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-83",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:07.651Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-84",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:07.954Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-85",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:08.255Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-86",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:08.557Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable libstdc++"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-87",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:08.858Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "[100%] Built target libstdc++"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-88",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:08.859Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-89",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.062Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-90",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.063Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-91",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.064Z",
+      "packageName": "libstdc++-13.2.0",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 2.5 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-92",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.067Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 5/18 packages (28%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-93",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.068Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-94",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.569Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-95",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.869Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-96",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:09.870Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-97",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:10.772Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-98",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:10.773Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-99",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:11.075Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-100",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:11.377Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-101",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:11.680Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable m4"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-102",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:11.980Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target m4"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-103",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:11.981Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-104",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.082Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-105",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.083Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-106",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.083Z",
+      "packageName": "m4-1.4.19 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 1.3 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-107",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.084Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 6/18 packages (33%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-108",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.085Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-109",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.586Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-110",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.986Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-111",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:12.987Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-112",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:14.189Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-113",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:14.190Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-114",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:14.491Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-115",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:14.791Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-116",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.095Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable ncurses"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-117",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.398Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target ncurses"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-118",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.399Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-119",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.599Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-120",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.600Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-121",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.601Z",
+      "packageName": "ncurses-6.4 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 1.8 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-122",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.601Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 7/18 packages (39%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-123",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:15.602Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-124",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:16.103Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-125",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:16.604Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-126",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:16.605Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-127",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:18.107Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-128",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:18.119Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-129",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:18.421Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-130",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:18.722Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-131",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.024Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable bash"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-132",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.324Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target bash"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-133",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.325Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-134",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.526Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-135",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.527Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-136",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.527Z",
+      "packageName": "bash-5.2.15 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 2.2 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-137",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.527Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 8/18 packages (44%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-138",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:19.528Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-139",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:20.029Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-140",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:20.630Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-141",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:20.631Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-142",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:22.734Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-143",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:22.735Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-144",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:23.036Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-145",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:23.338Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-146",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:23.639Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable coreutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-147",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:23.942Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target coreutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-148",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:23.943Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-149",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:24.246Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-150",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:24.246Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-151",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:24.247Z",
+      "packageName": "coreutils-9.3 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 3.0 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-152",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:24.247Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 9/18 packages (50%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-153",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:24.249Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-154",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:24.749Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-155",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:25.051Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-156",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:25.052Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-157",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:25.753Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-158",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:25.754Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-159",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:26.055Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-160",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:26.358Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-161",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:26.658Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable diffutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-162",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:26.959Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target diffutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-163",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:26.959Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-164",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.060Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-165",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.061Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-166",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.061Z",
+      "packageName": "diffutils-3.10 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 1.1 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-167",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.061Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 10/18 packages (56%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-168",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.062Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-169",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.565Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-170",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.769Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-171",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:27.769Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-172",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:28.170Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-173",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:28.171Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-174",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:28.472Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-175",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:28.773Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-176",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.073Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable file"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-177",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.374Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target file"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-178",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.375Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-179",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.475Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-180",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.476Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-181",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.476Z",
+      "packageName": "file-5.45 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 0.7 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-182",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.476Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 11/18 packages (61%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-183",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.477Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-184",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:29.978Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-185",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:30.381Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-186",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:30.382Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-187",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:31.385Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-188",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:31.386Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-189",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:31.687Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-190",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:31.988Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-191",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.291Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable findutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-192",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.591Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target findutils"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-193",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.591Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-194",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.793Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-195",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.794Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-196",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.795Z",
+      "packageName": "findutils-4.9.0 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 1.6 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-197",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.795Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 12/18 packages (67%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-198",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:32.797Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-199",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:33.300Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-200",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:33.601Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-201",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:33.601Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-202",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:34.402Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-203",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:34.403Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-204",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:34.704Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-205",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.005Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-206",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.308Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable gawk"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-207",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.609Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target gawk"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-208",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.610Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-209",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.710Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-210",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.711Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-211",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.711Z",
+      "packageName": "gawk-5.2.2 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 1.2 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-212",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.711Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 13/18 packages (72%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-213",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:35.712Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-214",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:36.214Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-215",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:36.515Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-216",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:36.515Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-217",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:37.216Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-218",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:37.217Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-219",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:37.521Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-220",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:37.823Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-221",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.124Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable grep"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-222",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.424Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target grep"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-223",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.425Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "DEBUG",
+      "message": "Peak memory: 6.80 GB"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-224",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.426Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-225",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.527Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-226",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.527Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-227",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.528Z",
+      "packageName": "grep-3.11 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 1.1 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-228",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.528Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 14/18 packages (78%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-229",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:38.529Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-230",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:39.031Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-231",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:39.233Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-232",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:39.234Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-233",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:39.735Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-234",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:39.735Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-235",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:40.036Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-236",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:40.337Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-237",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:40.641Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable gzip"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-238",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:40.943Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target gzip"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-239",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:40.943Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-240",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.044Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-241",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.044Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-242",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.045Z",
+      "packageName": "gzip-1.12 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 0.8 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-243",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.045Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 15/18 packages (83%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-244",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.047Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-245",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.547Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-246",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.849Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-247",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:41.850Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-248",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:42.651Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-249",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:42.652Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-250",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:42.953Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-251",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.255Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-252",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.556Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable make"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-253",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.858Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target make"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-254",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.859Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-255",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.959Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-256",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.959Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-257",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.960Z",
+      "packageName": "make-4.4.1 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 1.2 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-258",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.960Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 16/18 packages (89%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-259",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:43.961Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-260",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:44.462Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-261",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:44.664Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-262",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:44.665Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-263",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:45.066Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-264",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:45.067Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-265",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:45.369Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-266",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:45.671Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-267",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:45.972Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable patch"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-268",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.273Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target patch"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-269",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.274Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-270",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.375Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-271",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.375Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-272",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.376Z",
+      "packageName": "patch-2.7.6 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 0.7 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-273",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.377Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 17/18 packages (94%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-274",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.379Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "Starting build..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-275",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:46.882Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "Extracting source tarball..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-276",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:47.085Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "Running ./configure ./configure --prefix=/usr"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-277",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:47.085Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Configuration completed successfully"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-278",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:47.587Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "Compiling with -j12..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-279",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:47.587Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "[  1%] Building C object src/main.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-280",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:47.888Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 12%] Building C object src/utils.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-281",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.190Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 34%] Building C object lib/core.o"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-282",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.493Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "[ 67%] Linking C executable sed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-283",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.793Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "[100%] Built target sed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-284",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.794Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Compilation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-285",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.894Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "INFO",
+      "message": "Installing to /tools..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-286",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.895Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "Installation completed"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-287",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.895Z",
+      "packageName": "sed-4.9 (Pass 2)",
+      "level": "SUCCESS",
+      "message": "✓ Package completed in 0.8 minutes"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-288",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.896Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Progress: 18/18 packages (100%)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-289",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:48.897Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "All packages built successfully!"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-290",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:49.898Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Creating artifact archive..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-291",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:51.902Z",
+      "packageName": "system",
+      "level": "SUCCESS",
+      "message": "Artifact created: lfs-chapter5.tar.gz (4.2 GB)"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-292",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:51.902Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Calculating SHA256 hash..."
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-293",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:52.904Z",
+      "packageName": "system",
+      "level": "SUCCESS",
+      "message": "SHA256: a7f2c8e4b9d1f3e6a8c2d5b7e9f1a3c5d7e9b1f3e5a7c9d1e3f5a7b9c1d3e5f7"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-294",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:52.905Z",
+      "packageName": "system",
+      "level": "SUCCESS",
+      "message": "════════════════════════════════════════════════════════"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-295",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:52.906Z",
+      "packageName": "system",
+      "level": "SUCCESS",
+      "message": "           BUILD COMPLETED SUCCESSFULLY!"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-296",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:52.906Z",
+      "packageName": "system",
+      "level": "SUCCESS",
+      "message": "════════════════════════════════════════════════════════"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-297",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:52.907Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Total time: 55 minutes 42 seconds"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-298",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:52.907Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Peak memory: 6.8 GB"
+    },
+    {
+      "logId": "LFS-1765512563625-SIM-log-299",
+      "buildId": "LFS-1765512563625-SIM",
+      "timestamp": "2025-12-12T04:10:52.907Z",
+      "packageName": "system",
+      "level": "INFO",
+      "message": "Artifact hash: a7f2c8e4b9d1f3e6a8c2d5b7e9f1a3c5d7e9b1f3e5a7c9d1e3f5a7b9c1d3e5f7"
+    }
+  ]
+}

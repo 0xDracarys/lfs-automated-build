@@ -16,23 +16,27 @@ echo ""
 # SETUP ENVIRONMENT
 # ============================================================================
 
-TEST_DIR="$HOME/lfs-local-build"
-LFS_MNT="$TEST_DIR/mnt/lfs"
+# Use standard LFS path or custom test directory
+TEST_DIR="${LFS_BUILD_DIR:-$HOME/lfs-local-build}"
+LFS_MNT="${LFS:-/mnt/lfs}"
 LFS_SRC="$LFS_MNT/sources"
 
 echo "📁 Build Directory: $TEST_DIR"
+echo "📁 LFS Mount Point: $LFS_MNT"
 echo ""
 
-# Clean previous build
-if [ -d "$TEST_DIR" ]; then
+# Clean previous build (only if using custom TEST_DIR)
+if [ "$LFS_MNT" != "/mnt/lfs" ] && [ -d "$TEST_DIR" ]; then
     echo "⚠️  Cleaning previous build..."
     sudo rm -rf "$TEST_DIR"
     sudo rm -f /tools
 fi
 
 # Create directory structure
-mkdir -p "$TEST_DIR/mnt"
-mkdir -p "$LFS_MNT"
+if [ ! -d "$LFS_MNT" ]; then
+    mkdir -p "$(dirname $LFS_MNT)"
+    mkdir -p "$LFS_MNT"
+fi
 mkdir -p "$LFS_SRC"
 
 # Create complete LFS directory structure
@@ -41,8 +45,10 @@ mkdir -p "${LFS_MNT}/lib64"
 mkdir -p "${LFS_MNT}/usr"/{bin,lib,sbin,include}
 chmod a+wt "${LFS_SRC}"
 
-# Create /tools symlink
-sudo ln -sv "${LFS_MNT}/tools" /tools
+# Create /tools symlink if needed
+if [ ! -L "/tools" ]; then
+    sudo ln -sv "${LFS_MNT}/tools" /tools
+fi
 
 # Set LFS environment
 export LFS="${LFS_MNT}"

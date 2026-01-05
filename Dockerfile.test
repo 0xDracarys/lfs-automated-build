@@ -1,0 +1,21 @@
+FROM debian:bookworm-slim
+
+# Install minimal dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    coreutils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create directories
+RUN mkdir -p /app
+
+# Copy test script
+COPY test-entrypoint.sh /app/
+
+# Make executable
+RUN chmod +x /app/test-entrypoint.sh
+
+WORKDIR /app
+
+# Simple entrypoint that MUST work
+ENTRYPOINT ["/bin/bash", "/app/test-entrypoint.sh"]

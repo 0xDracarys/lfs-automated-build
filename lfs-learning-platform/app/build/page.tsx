@@ -1,14 +1,41 @@
 "use client";
 
-import { useState } from "react";
-import { Settings, Package, Terminal as TerminalIcon, CheckCircle, Clock, Zap, Download, Monitor, HardDrive, AlertTriangle, ExternalLink, Copy, Check, Wand2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Settings, Package, Terminal as TerminalIcon, CheckCircle, Clock, Zap, Download, Monitor, HardDrive, AlertTriangle, ExternalLink, Copy, Check, Wand2, LogIn } from "lucide-react";
 import Link from "next/link";
 import { DottedSurface } from "@/components/ui/dotted-surface";
 import { motion } from "framer-motion";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
+import CloudBuildForm from "@/components/cloud-build/CloudBuildForm";
+import BuildTicker from "@/components/BuildTicker";
 
 export default function BuildPage() {
   const [activeTab, setActiveTab] = useState<"download" | "local" | "cloud">("download");
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Monitor authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Handle Google Sign In
+  const handleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      console.error("Login error:", error);
+      alert("Failed to sign in. Please try again.");
+    }
+  };
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -23,7 +50,7 @@ export default function BuildPage() {
       <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
         {/* Header */}
         <div className="max-w-4xl mx-auto text-center mb-12">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-full mb-6"
@@ -31,8 +58,8 @@ export default function BuildPage() {
             <Package className="h-4 w-4 text-blue-400" />
             <span className="text-sm text-blue-400 font-medium">LFS Build System</span>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -40,8 +67,8 @@ export default function BuildPage() {
           >
             Get Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">Custom Linux</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -88,16 +115,15 @@ export default function BuildPage() {
             {[
               { id: "download", label: "Download Pre-built", icon: Download, color: "green" },
               { id: "local", label: "Build Locally", icon: Monitor, color: "blue" },
-              { id: "cloud", label: "Cloud Build", icon: Zap, color: "purple", badge: "Coming Soon" },
+              { id: "cloud", label: "Cloud Build", icon: Zap, color: "purple", badge: user ? undefined : "Login Required" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                  activeTab === tab.id
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === tab.id
                     ? `bg-${tab.color}-500/20 border-2 border-${tab.color}-500 text-${tab.color}-400`
                     : "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
-                }`}
+                  }`}
               >
                 <tab.icon className="h-5 w-5" />
                 {tab.label}
@@ -222,7 +248,7 @@ export default function BuildPage() {
                   <p className="text-gray-400">For advanced users who want to build from source</p>
                 </div>
               </div>
-              
+
               <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-6">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-5 w-5 text-yellow-400 shrink-0 mt-0.5" />
@@ -232,6 +258,68 @@ export default function BuildPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Windows Installer - Easiest Option */}
+            <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-2 border-green-500 rounded-2xl p-6 mb-8 relative">
+              <div className="absolute -top-3 -right-3 px-4 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full text-xs font-bold shadow-lg shadow-green-500/50 animate-pulse">
+                ⚡ EASIEST METHOD
+              </div>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-green-500/20 rounded-xl">
+                  <Download className="h-8 w-8 text-green-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-green-400 mb-2">Windows Installer (One-Click Setup)</h3>
+                  <p className="text-gray-300 mb-4">Native Windows installer with automated WSL2 setup, LFS environment configuration, and desktop shortcuts. No manual commands required!</p>
+
+                  <div className="grid md:grid-cols-2 gap-4 mb-4">
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-gray-300">Automatic WSL2 installation</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-gray-300">LFS environment setup</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-gray-300">Desktop & Start Menu shortcuts</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-gray-300">5-step wizard interface</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-gray-300">Prerequisites checking</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-gray-300">Size: Only 184 KB</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <a
+                    href="/downloads/LFSBuilderSetup.exe"
+                    download
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-green-500/50 transition-all"
+                  >
+                    <Download className="w-5 h-5" />
+                    Download LFSBuilderSetup.exe (184 KB)
+                  </a>
+                  <p className="text-xs text-gray-400 mt-2">Run as Administrator after download • SHA-256: 11F9A2DE9BA23938A27FACF32B3F486EBBA543D8CA466AFE1FFBF22380B0AFB3</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-white/10 my-8 pt-8">
+              <h3 className="text-xl font-bold mb-4 text-gray-400">Manual Build Instructions (Advanced)</h3>
+              <p className="text-gray-500 mb-6">For users who prefer manual control or want to customize the build process</p>
             </div>
 
             {/* Build Steps */}
@@ -328,50 +416,18 @@ export default function BuildPage() {
 
         {/* Cloud Build Tab */}
         {activeTab === "cloud" && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl mx-auto"
-          >
-            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-8 text-center">
-              <Zap className="h-16 w-16 text-purple-400 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold mb-4">Cloud Build Coming Soon</h2>
-              <p className="text-gray-400 max-w-xl mx-auto mb-8">
-                We are working on a cloud-based build system that will let you customize and build LFS without any local setup. Get notified when it launches!
-              </p>
-              
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6 max-w-md mx-auto mb-8">
-                <h3 className="font-semibold mb-4">Planned Features</h3>
-                <div className="space-y-3 text-left">
-                  {[
-                    "Custom kernel configuration",
-                    "Package selection",
-                    "Optimization options",
-                    "Email notifications",
-                    "Download when ready"
-                  ].map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle className="h-4 w-4 text-purple-400" />
-                      <span className="text-sm">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <p className="text-gray-500 mb-4">Meanwhile, download our pre-built LFS:</p>
-              <Link
-                href="/downloads"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl font-semibold hover:shadow-lg hover:shadow-green-500/30 transition-all"
-              >
-                <Download className="h-5 w-5" />
-                Download Pre-built LFS
-              </Link>
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <CloudBuildForm user={user} onLogin={handleLogin} />
             </div>
-          </motion.div>
+            <div className="lg:col-span-1">
+              <BuildTicker />
+            </div>
+          </div>
         )}
 
         {/* Info Cards */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}

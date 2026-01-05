@@ -2,12 +2,12 @@
 # build-minimal-bootable.sh - Automated build of 17 minimal packages for bootable LFS
 set -e
 
-# Initialize environment
-export LFS=/home/dracarys/lfs-local-build/mnt/lfs
-export LFS_TGT=x86_64-lfs-linux-gnu
-export LFS_TOOLS=/home/dracarys/lfs-test/mnt/lfs
+# Initialize environment - Use standard path or environment variable
+export LFS=${LFS:-/mnt/lfs}
+export LFS_TGT=${LFS_TGT:-x86_64-lfs-linux-gnu}
+export LFS_TOOLS=${LFS_TOOLS:-$LFS}
 export PATH=$LFS_TOOLS/tools/bin:/usr/bin:/bin:/usr/sbin:/sbin
-export MAKEFLAGS=-j12
+export MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
 
 # Create directories
 mkdir -p $LFS/sources
