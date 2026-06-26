@@ -30,23 +30,25 @@ function parseDoc(doc: any): Record<string, any> {
   return out;
 }
 
+import admin from "@/lib/firebase-admin";
+
 async function getGcloudToken(): Promise<string> {
-  // Try both 64-bit and 32-bit gcloud paths
-  const paths = [
-    `"C:\\Program Files (x86)\\Google\\Cloud SDK\\google-cloud-sdk\\bin\\gcloud.cmd"`,
-    `"C:\\Program Files\\Google\\Cloud SDK\\google-cloud-sdk\\bin\\gcloud.cmd"`,
-    "gcloud",
-  ];
-  for (const gcloud of paths) {
-    try {
-      const { stdout } = await execAsync(`${gcloud} auth print-access-token`);
-      const token = stdout.trim();
-      if (token) return token;
-    } catch {
-      // try next path
+  try {
+    const credential = admin.app().options.credential as any;
+    if (credential && typeof credential.getAccessToken === 'function') {
+      const tokenObj = await credential.getAccessToken();
+      return tokenObj.access_token;
     }
+    // Fallback if the credential object doesn't expose getAccessToken (e.g. some default credentials)
+    const { GoogleAuth } = require('google-auth-library');
+    const auth = new GoogleAuth({
+      scopes: ['https://www.googleapis.com/auth/cloud-platform']
+    });
+    const token = await auth.getAccessToken();
+    return token;
+  } catch (err: any) {
+    throw new Error(`Could not get gcloud access token: ${err.message}`);
   }
-  throw new Error("Could not get gcloud access token — run: gcloud auth login");
 }
 
 export async function GET(
