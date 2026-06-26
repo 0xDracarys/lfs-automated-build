@@ -9,8 +9,9 @@ import * as admin from 'firebase-admin';
 if (!admin.apps.length) {
   try {
     // Try to use service account credentials from environment
-    const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
-      ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
+    const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    const serviceAccount = serviceAccountStr
+      ? JSON.parse(serviceAccountStr.replace(/^\uFEFF/, '').trim())
       : undefined;
 
     if (serviceAccount && serviceAccount.private_key) {
