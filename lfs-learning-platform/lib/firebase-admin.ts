@@ -13,6 +13,10 @@ if (!admin.apps.length) {
       ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
       : undefined;
 
+    if (serviceAccount && serviceAccount.private_key) {
+      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+    }
+
     admin.initializeApp({
       credential: serviceAccount
         ? admin.credential.cert(serviceAccount)

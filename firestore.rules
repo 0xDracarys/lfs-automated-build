@@ -28,6 +28,11 @@ service cloud.firestore {
       
       // Only owner can delete their own build
       allow delete: if isOwner(resource.data.userId);
+      
+      // Allow authenticated users to read logs subcollection
+      match /logs/{logId} {
+        allow read: if isAuthenticated();
+      }
     }
     
     // Build logs collection - requires authentication

@@ -1,42 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
+import { LfsRunner } from "@/lib/lfs-runner";
 
-// Mock implementation - will be replaced with actual Firebase/Docker integration
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const buildId = `build_${Date.now()}`;
+    const buildId = `lfs_build_${Date.now()}`;
 
-    // Mock build data
-    const buildData = {
-      buildId,
-      status: "queued",
-      progress: 0,
-      currentPhase: "preparation",
-      currentStep: "Initializing build environment",
-      createdAt: new Date().toISOString(),
-      config: body.config || {
-        kernelVersion: "6.4.12",
-        optimization: "O2",
-        enableNetworking: true,
-        enableDebug: false,
-      },
-      logs: [
-        {
-          timestamp: new Date().toISOString(),
-          level: "info",
-          message: "Build queued successfully",
-          phase: "preparation",
-        },
-      ],
+    // Config from request or defaults
+    const config = body.config || {
+      kernelVersion: "6.4.12",
+      optimization: "O2",
+      enableNetworking: true,
+      enableDebug: false,
     };
 
-    // TODO: Store in Firestore
-    // TODO: Trigger Cloud Run build
+    // Initialize the build runner
+    const runner = new LfsRunner({
+      buildId,
+      config
+    });
 
-    // For now, simulate build progress with mock data
-    // In production, this would trigger your Docker container
+    // Start the build process (fire and forget for local dev)
+    // The runner will handle spawning the child process and logging
+    runner.startBuild().catch(err => {
+      console.error("Async build error:", err);
+    });
 
-    return NextResponse.json({ buildId, status: "queued" });
+    return NextResponse.json({
+      buildId,
+      status: "initializing",
+      message: "Build process started locally via LfsRunner"
+    });
   } catch (error) {
     console.error("Build trigger error:", error);
     return NextResponse.json(

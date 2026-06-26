@@ -40,6 +40,8 @@ RUN mkdir -p /mnt/lfs /mnt/lfs/sources /mnt/lfs/tools /output /app/helpers /app/
 COPY lfs-build.sh /app/
 COPY lfs-build-minimal.sh /app/
 COPY build-chapter6-fixed.sh /app/
+COPY lfs-chapter5-real.sh /app/
+COPY build-minimal-bootable.sh /app/
 COPY package-lfs-outputs.sh /app/
 COPY helpers/ /app/helpers/
 
@@ -47,7 +49,7 @@ COPY helpers/ /app/helpers/
 RUN cd /app/helpers && npm install --production
 
 # Make scripts executable
-RUN chmod +x /app/lfs-build.sh /app/lfs-build-minimal.sh /app/build-chapter6-fixed.sh /app/package-lfs-outputs.sh
+RUN chmod +x /app/*.sh
 
 # Set up environment
 ENV LFS=/mnt/lfs

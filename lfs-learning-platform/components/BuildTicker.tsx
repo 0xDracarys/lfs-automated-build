@@ -19,15 +19,26 @@ export default function BuildTicker() {
 
     const fetchBuilds = async () => {
         try {
-            // Use Firebase Function URL directly to avoid Next.js rewrites issues if any
-            // In production, this should benefit from a rewrite or env var
-            const response = await fetch("https://us-central1-alfs-bd1e0.cloudfunctions.net/getPublicBuilds");
+            // Fetch from local status API
+            const response = await fetch("/api/lfs/status");
             if (response.ok) {
                 const data = await response.json();
-                setBuilds(data.builds || []);
+                // Check if we have an active build
+                if (data.status !== "idle") {
+                    setBuilds([{
+                        id: data.buildId,
+                        projectName: "Local LFS Build",
+                        lfsVersion: data.config?.kernelVersion || "12.0",
+                        status: data.status,
+                        timestamp: data.updatedAt,
+                        duration: "Active"
+                    }]);
+                } else {
+                    setBuilds([]);
+                }
             }
         } catch (error) {
-            console.error("Failed to fetch public builds", error);
+            console.error("Failed to fetch local builds", error);
         } finally {
             setLoading(false);
         }

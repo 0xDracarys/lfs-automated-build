@@ -24,6 +24,16 @@ log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$BUILDLOG"
 }
 
+handle_error() {
+    log "❌ Build failed or script error encountered!"
+    if [ -f "$BUILDLOG" ]; then
+        echo "===== LAST 100 LINES OF BUILD LOG ====="
+        tail -n 100 "$BUILDLOG"
+        echo "======================================="
+    fi
+}
+trap 'handle_error' ERR
+
 download_if_needed() {
     local url=$1
     local filename=$(basename "$url")
@@ -92,21 +102,26 @@ download_if_needed "https://invisible-mirror.net/archives/ncurses/ncurses-6.4.ta
 extract_source "ncurses-6.4" "ncurses-6.4"
 cd "$LFS/sources/ncurses-6.4"
 log "Configuring Ncurses..."
-mkdir -p build
-cd build
-../configure --prefix=/usr \
-    --host=$LFS_TGT \
-    --build=$(../config.guess) \
-    --mandir=/usr/share/man \
-    --with-manpage-format=normal \
-    --with-shared \
-    --without-normal \
-    --with-cxx-shared \
-    --without-debug \
-    --without-ada \
-    --disable-stripping \
-    --enable-widec >> "$BUILDLOG" 2>&1
-log "Building Ncurses..."
+    sed -i s/mawk// configure
+    mkdir -p build
+    cd build
+    ../configure >> "$BUILDLOG" 2>&1
+    make -C include >> "$BUILDLOG" 2>&1
+    make -C progs tic >> "$BUILDLOG" 2>&1
+    cd ..
+    ./configure --prefix=/usr \
+        --host=$LFS_TGT \
+        --build=$(./config.guess) \
+        --mandir=/usr/share/man \
+        --with-manpage-format=normal \
+        --with-shared \
+        --without-normal \
+        --with-cxx-shared \
+        --without-debug \
+        --without-ada \
+        --disable-stripping \
+        --enable-widec >> "$BUILDLOG" 2>&1
+    log "Building Ncurses..."
 make -j12 >> "$BUILDLOG" 2>&1
 log "Installing Ncurses..."
 make DESTDIR=$LFS TIC_PATH=$(pwd)/build/progs/tic install >> "$BUILDLOG" 2>&1
@@ -337,11 +352,12 @@ cd "$LFS/sources"
 if [ ! -d "binutils-2.41" ]; then
     extract_source "binutils-2.41" "binutils-2.41"
 fi
-cd binutils-2.41
-rm -rf build-pass2
-mkdir -v build-pass2
-cd build-pass2
-log "Configuring Binutils Pass 2..."
+    cd binutils-2.41
+    sed '6009s/$add_dir//' -i ltmain.sh
+    rm -rf build-pass2
+    mkdir -v build-pass2
+    cd build-pass2
+    log "Configuring Binutils Pass 2..."
 ../configure \
     --prefix=/usr \
     --build=$(../config.guess) \
@@ -365,13 +381,31 @@ cd "$LFS/sources"
 if [ ! -d "gcc-13.2.0" ]; then
     extract_source "gcc-13.2.0" "gcc-13.2.0"
 fi
-cd gcc-13.2.0
-rm -rf build-pass2
-mkdir -v build-pass2
-cd build-pass2
-log "Configuring GCC Pass 2..."
-mkdir -pv $LFS_TGT/libgcc
-ln -s ../../../libgcc/gthr-posix.h $LFS_TGT/libgcc/gthr-default.h
+    cd gcc-13.2.0
+    
+    # Extract GCC prerequisites into GCC source directory
+    tar -xf ../mpfr-4.2.0.tar.xz 2>/dev/null || true
+    mv -v mpfr-4.2.0 mpfr 2>/dev/null || true
+    tar -xf ../gmp-6.3.0.tar.xz 2>/dev/null || true
+    mv -v gmp-6.3.0 gmp 2>/dev/null || true
+    tar -xf ../mpc-1.3.1.tar.gz 2>/dev/null || true
+    mv -v mpc-1.3.1 mpc 2>/dev/null || true
+    
+    # Fix for x86_64 architecture
+    case $(uname -m) in
+      x86_64)
+        sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
+      ;;
+    esac
+    
+    rm -rf build-pass2
+    mkdir -v build-pass2
+
+    sed '/thread_header =/s/@.*@/gthr-posix.h/' \
+        -i libgcc/Makefile.in libstdc++-v3/include/Makefile.in
+
+    cd build-pass2
+    log "Configuring GCC Pass 2..."
 ../configure \
     --build=$(../config.guess) \
     --host=$LFS_TGT \

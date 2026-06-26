@@ -809,6 +809,18 @@ exports.getBuildStatus = functions.https.onRequest(async (req, res) => {
         }
 
         const data = doc.data();
+        
+        // Fetch logs from subcollection
+        const logsSnapshot = await db.collection('builds').doc(buildId).collection('logs').orderBy('timestamp', 'asc').get();
+        const logs = logsSnapshot.docs.map(logDoc => {
+            const d = logDoc.data();
+            return {
+                timestamp: d.timestamp && typeof d.timestamp.toDate === 'function' ? d.timestamp.toDate().toISOString() : new Date().toISOString(),
+                level: (d.status === 'started' || d.status === 'completed' || d.status === 'success') ? 'success' : (d.status === 'failed' || d.status === 'error') ? 'error' : 'info',
+                message: d.message || '',
+                phase: d.stage || ''
+            };
+        });
 
         // Return public-safe data + specific user data if needed (but this is public endpoint)
         // Ideally should check auth token if returning sensitive data
@@ -818,8 +830,9 @@ exports.getBuildStatus = functions.https.onRequest(async (req, res) => {
             status: data.status,
             config: data.config || data.buildOptions || {}, // Fix for frontend crash
             progress: data.progress || 0,
+            currentPhase: data.currentPhase || data.currentStage || '',
             currentStage: data.currentStage,
-            logs: data.logs || [],
+            logs: logs,
             error: data.error,
             downloadUrls: data.downloadUrls,
             startedAt: data.startedAt,

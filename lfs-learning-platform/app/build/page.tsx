@@ -5,8 +5,9 @@ import { Settings, Package, Terminal as TerminalIcon, CheckCircle, Clock, Zap, D
 import Link from "next/link";
 import { DottedSurface } from "@/components/ui/dotted-surface";
 import { motion } from "framer-motion";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import CloudBuildForm from "@/components/cloud-build/CloudBuildForm";
 import BuildTicker from "@/components/BuildTicker";
 
@@ -16,14 +17,38 @@ export default function BuildPage() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Monitor authentication state
+  // Monitor authentication state and Queue
+  const [queueSize, setQueueSize] = useState<number | null>(null);
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    let unsubscribeQueue: (() => void) | null = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setAuthLoading(false);
+
+      // Cancel previous queue listener
+      if (unsubscribeQueue) {
+        unsubscribeQueue();
+        unsubscribeQueue = null;
+      }
+
+      // Only watch queue when user is authenticated (rules require auth)
+      if (currentUser) {
+        const q = query(collection(db, "builds"), where("status", "in", ["queued", "pending", "QUEUED", "PENDING"]));
+        unsubscribeQueue = onSnapshot(q, 
+          (snapshot) => setQueueSize(snapshot.size),
+          (err) => { console.warn("Queue listener error:", err.message); setQueueSize(null); }
+        );
+      } else {
+        setQueueSize(null);
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeQueue) unsubscribeQueue();
+    };
   }, []);
 
   // Handle Google Sign In
@@ -77,6 +102,25 @@ export default function BuildPage() {
             Choose how you want to get your Linux From Scratch system - download pre-built or build it yourself!
           </motion.p>
         </div>
+
+        {/* Queue Status Banner */}
+        {queueSize !== null && queueSize > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-4xl mx-auto mb-8 bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <Clock className="h-6 w-6 text-blue-400" />
+              <div>
+                <h4 className="text-white font-medium">Build Queue Active</h4>
+                <p className="text-sm text-blue-400">
+                  {queueSize} build{queueSize === 1 ? '' : 's'} waiting to be processed by the cloud system
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Installation Wizard CTA */}
         <motion.div

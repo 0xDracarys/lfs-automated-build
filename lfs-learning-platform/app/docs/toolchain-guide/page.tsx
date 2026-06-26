@@ -87,7 +87,7 @@ export default function ToolchainGuide() {
                 Right-click → <span className="text-white italic">Run with PowerShell</span>.
               </p>
               <div className="bg-black/60 p-3 rounded-lg border border-white/10 font-mono text-xs text-gray-300">
-                PS C:\LFS\> .\mount-lfs.ps1
+                {'PS C:\\LFS\\> .\\mount-lfs.ps1'}
               </div>
             </div>
 

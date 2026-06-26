@@ -14,9 +14,11 @@ interface LogEntry {
 interface LogViewerProps {
   logs: LogEntry[];
   autoScroll?: boolean;
+  buildId?: string;
+  logsSource?: string;
 }
 
-export default function LogViewer({ logs, autoScroll = true }: LogViewerProps) {
+export default function LogViewer({ logs, autoScroll = true, buildId, logsSource }: LogViewerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState<"all" | "info" | "warning" | "error" | "success">("all");
 
@@ -109,8 +111,26 @@ export default function LogViewer({ logs, autoScroll = true }: LogViewerProps) {
         className="h-[400px] overflow-y-auto bg-black font-mono text-sm p-4 space-y-2"
       >
         {filteredLogs.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            No logs to display
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-3 p-4">
+            <Terminal className="h-8 w-8 opacity-30" />
+            <p className="text-sm">
+              {logsSource === "none" || !logsSource
+                ? "No logs were written to Firestore for this build."
+                : "No logs to display for the current filter."}
+            </p>
+            {(logsSource === "none" || !logsSource) && (
+              <div className="text-center text-xs text-gray-600 space-y-1">
+                <p>The Cloud Run container writes logs to Google Cloud Logging.</p>
+                <a
+                  href={`https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_job%22%20AND%20resource.labels.job_name%3D%22lfs-builder%22;project=alfs-bd1e0`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline"
+                >
+                  View Live Logs in Cloud Console →
+                </a>
+              </div>
+            )}
           </div>
         ) : (
           filteredLogs.map((log, index) => (

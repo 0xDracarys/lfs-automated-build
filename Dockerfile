@@ -105,11 +105,12 @@ FROM nodejs-setup AS app-files
 WORKDIR /app
 
 # Cache busting: Change this value to force rebuild of this layer
-ARG CACHE_BUST=20251107-v19-REMOVE-EARLY-ENV-VARS
+ARG CACHE_BUST=20260621-v20-ADD-CHAPTER6-SCRIPT
 RUN echo "Cache bust: $CACHE_BUST"
 
 COPY lfs-build.sh ./lfs-build.sh
 COPY lfs-chapter5-real.sh ./lfs-chapter5-real.sh
+COPY build-minimal-bootable.sh ./build-minimal-bootable.sh
 COPY helpers/ ./helpers/
 
 RUN set -ex && \
@@ -118,9 +119,11 @@ RUN set -ex && \
     ls -lah /app/helpers/ && \
     test -f /app/lfs-build.sh && \
     test -f /app/lfs-chapter5-real.sh && \
+    test -f /app/build-minimal-bootable.sh && \
     chmod +x /app/lfs-chapter5-real.sh && \
+    chmod +x /app/build-minimal-bootable.sh && \
     echo "--- Build script timestamps ---" && \
-    ls -l /app/lfs-build.sh /app/lfs-chapter5-real.sh && \
+    ls -l /app/lfs-build.sh /app/lfs-chapter5-real.sh /app/build-minimal-bootable.sh && \
     echo "--- Checking for parse_config function ---" && \
     (grep -A 5 "parse_config()" /app/lfs-build.sh | head -n 10 || echo "Function not found") && \
     echo "✅ LAYER 5 SUCCESS: Application files verified"

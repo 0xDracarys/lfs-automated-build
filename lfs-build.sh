@@ -393,6 +393,21 @@ chapter_5_toolchain() {
     
     # Record start
     write_firestore_log "chapter5" "started" "Starting Chapter 5: Building temporary tools" || true
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Start background log streamer so the web UI shows live progress
+    # ────────────────────────────────────────────────────────────────────────
+    STREAMER_PID=""
+    if [ -f "${SCRIPT_DIR}/helpers/log-streamer.js" ] && command -v node &>/dev/null; then
+        log_info "Starting background log streamer..."
+        node "${SCRIPT_DIR}/helpers/log-streamer.js" \
+            "${BUILD_ID}" "${PROJECT_ID}" "${LOG_FILE}" \
+            >> /tmp/streamer.log 2>&1 &
+        STREAMER_PID=$!
+        log_info "Log streamer started (PID ${STREAMER_PID})"
+    else
+        log_info "Log streamer not available — skipping"
+    fi
     
     # ========================================================================
     # ALWAYS DO REAL BUILD - NO MORE PLACEHOLDERS!
@@ -472,6 +487,13 @@ chapter_5_toolchain() {
             main
             local result=$?
             
+        # ── Stop log streamer ──────────────────────────────────────────────
+            if [ -n "${STREAMER_PID}" ]; then
+                kill "${STREAMER_PID}" 2>/dev/null || true
+                wait "${STREAMER_PID}" 2>/dev/null || true
+                log_info "Log streamer stopped"
+            fi
+
             if [ $result -eq 0 ]; then
                 log_info "✅ Chapter 5 REAL build completed successfully"
                 write_firestore_log "chapter5" "completed" "Chapter 5: Real toolchain construction completed" || true
@@ -482,6 +504,10 @@ chapter_5_toolchain() {
                 return $result
             fi
         else
+            # Stop streamer on error path too
+            if [ -n "${STREAMER_PID}" ]; then
+                kill "${STREAMER_PID}" 2>/dev/null || true
+            fi
             log_error "❌ Real build script not found: ${SCRIPT_DIR}/lfs-chapter5-real.sh"
             log_error "Cannot proceed with real build!"
             return 1
@@ -527,34 +553,26 @@ chapter_6_chroot() {
         log_info "Created mount directory: $LFS_MNT"
     fi
     
-    log_info "LFS Chapter 6 - Building system software"
-    log_info "  Step 1: Creating directory structure..."
-    echo "  [PLACEHOLDER] Creating filesystem hierarchy..."
-    sleep 1  # Simulate work
+    log_info "LFS Chapter 6 - Building temporary tools"
     
-    log_info "  Step 2: Installing core utilities..."
-    echo "  [PLACEHOLDER] Building Gettext..."
-    sleep 1  # Simulate work
-    echo "  [PLACEHOLDER] Building Patch..."
-    sleep 1  # Simulate work
-    
-    log_info "  Step 3: Installing development tools..."
-    echo "  [PLACEHOLDER] Building Glibc (final)..."
-    sleep 2  # Simulate work
-    echo "  [PLACEHOLDER] Building GCC (final)..."
-    sleep 2  # Simulate work
-    
-    log_info "  Step 4: Installing system utilities..."
-    echo "  [PLACEHOLDER] Building man-db..."
-    sleep 1  # Simulate work
-    echo "  [PLACEHOLDER] Building tar..."
-    sleep 1  # Simulate work
-    echo "  [PLACEHOLDER] Building gzip..."
-    sleep 1  # Simulate work
-    
-    log_info "  Step 5: Installing package management..."
-    echo "  [PLACEHOLDER] Building Make..."
-    sleep 1  # Simulate work
+    if [ -f "${SCRIPT_DIR}/build-minimal-bootable.sh" ]; then
+        log_info "Executing real Chapter 6 build script (build-minimal-bootable)..."
+        
+        # Execute script with environment variables
+        export LFS="${LFS_MNT}"
+        export LFS_TGT="${LFS_TGT}"
+        export MAKEFLAGS="${MAKEFLAGS}"
+        
+        if bash "${SCRIPT_DIR}/build-minimal-bootable.sh"; then
+            log_info "Chapter 6 script completed successfully"
+        else
+            log_error "Chapter 6 script failed"
+            return 1
+        fi
+    else
+        log_error "build-minimal-bootable.sh not found in ${SCRIPT_DIR}"
+        return 1
+    fi
     
     log_info "Chapter 6 completed successfully"
     write_firestore_log "chapter6" "completed" "Chapter 6: System software installation completed"
@@ -571,13 +589,162 @@ chapter_7_bootloader() {
     # Record start
     write_firestore_log "chapter7" "started" "Starting Chapter 7: System configuration and bootloader"
     
-    log_info "  Step 1: Configuring system settings..."
-    echo "  [PLACEHOLDER] Setting up hostname..."
-    sleep 1
+    log_info "  Step 1: Configuring system settings and standard directories..."
     
-    log_info "  Step 2: Installing bootloader..."
-    echo "  [PLACEHOLDER] Installing GRUB..."
-    sleep 1
+    # Create standard symlinks for LFS 12.0 / WSL compatibility
+    rm -rf "${LFS_MNT}/bin" "${LFS_MNT}/lib" "${LFS_MNT}/sbin" || true
+    ln -sfn usr/bin "${LFS_MNT}/bin"
+    ln -sfn usr/lib "${LFS_MNT}/lib"
+    ln -sfn usr/sbin "${LFS_MNT}/sbin"
+    
+    # Create required system files for WSL
+    log_info "Creating /etc/passwd and /etc/group..."
+    mkdir -p "${LFS_MNT}/etc"
+    cat > "${LFS_MNT}/etc/passwd" << "EOF"
+root:x:0:0:root:/root:/bin/bash
+EOF
+    cat > "${LFS_MNT}/etc/group" << "EOF"
+root:x:0:
+EOF
+
+    log_info "Creating WSL configuration (/etc/wsl.conf)..."
+    cat > "${LFS_MNT}/etc/wsl.conf" << "EOF"
+[user]
+default=root
+
+[boot]
+systemd=false
+EOF
+
+    log_info "Creating network configuration..."
+    echo "lfs-custom" > "${LFS_MNT}/etc/hostname"
+    cat > "${LFS_MNT}/etc/hosts" << "EOF"
+127.0.0.1  localhost
+::1        localhost
+127.0.1.1  lfs-custom.localdomain lfs-custom
+EOF
+
+    log_info "  Step 2: Finishing system configuration..."
+    # We do not install GRUB because WSL does not use GRUB.
+    log_info "Skipping GRUB as this build is tailored for WSL / Container environments."
+    
+    # ========================================================================
+    # Step 3: Custom LFS Welcome Experience (neofetch banner, prompt, help)
+    # ========================================================================
+    log_info "  Step 3: Installing custom LFS welcome banner and shell config..."
+    
+    mkdir -p "${LFS_MNT}/root"
+    
+    # --- Welcome banner (neofetch-style) ---
+    cat > "${LFS_MNT}/etc/lfs-welcome.sh" << 'WELCOME_EOF'
+#!/bin/bash
+RST='\033[0m'; BOLD='\033[1m'; DIM='\033[2m'
+G='\033[1;32m'; Y='\033[1;33m'; B='\033[1;34m'; C='\033[1;36m'; W='\033[1;37m'
+
+echo ""
+echo -e "${B}        .--.${RST}"
+echo -e "${B}       |o_o |${RST}    ${W}${BOLD}Linux From Scratch 12.0${RST}"
+echo -e "${B}       |:_/ |${RST}    ${DIM}Cloud-Built Custom System${RST}"
+echo -e "${B}      //   \\ \\${RST}"
+echo -e "${B}     (|     | )${RST}   ${G}✓${RST} ${DIM}Built by Sam's LFS Pipeline${RST}"
+echo -e "${B}    /'\\_   _/\`\\${RST}   ${G}✓${RST} ${DIM}Google Cloud Run (8 vCPU)${RST}"
+echo -e "${B}    \\___)=(___/${RST}   ${G}✓${RST} ${DIM}Compiled entirely from source${RST}"
+echo ""
+
+KERNEL=$(uname -r 2>/dev/null || echo "unknown")
+ARCH=$(uname -m 2>/dev/null || echo "x86_64")
+HOSTNAME=$(cat /etc/hostname 2>/dev/null || echo "lfs-custom")
+SHELL_VER=$(bash --version 2>/dev/null | head -1 | sed 's/.*version //' | cut -d' ' -f1 || echo "5.2")
+MEM_TOTAL=$(grep MemTotal /proc/meminfo 2>/dev/null | awk '{printf "%.0f MB", $2/1024}' || echo "N/A")
+MEM_FREE=$(grep MemAvailable /proc/meminfo 2>/dev/null | awk '{printf "%.0f MB", $2/1024}' || echo "N/A")
+CPU_MODEL=$(grep "model name" /proc/cpuinfo 2>/dev/null | head -1 | sed 's/.*: //' | sed 's/(R)//g; s/(TM)//g' | xargs || echo "N/A")
+NCPU=$(nproc 2>/dev/null || grep -c processor /proc/cpuinfo 2>/dev/null || echo "?")
+GCC_VER=$(gcc --version 2>/dev/null | head -1 | sed 's/.*) //' || echo "N/A")
+PKG_COUNT=$(ls /usr/bin 2>/dev/null | wc -l || echo "?")
+
+echo -e "  ${C}${BOLD}${HOSTNAME}${RST}"
+echo -e "  ${DIM}──────────────────────────${RST}"
+echo -e "  ${Y}OS${RST}        ${W}LFS 12.0 (Custom)${RST}"
+echo -e "  ${Y}Kernel${RST}    ${W}${KERNEL}${RST}"
+echo -e "  ${Y}Arch${RST}      ${W}${ARCH}${RST}"
+echo -e "  ${Y}Shell${RST}     ${W}Bash ${SHELL_VER}${RST}"
+echo -e "  ${Y}GCC${RST}       ${W}${GCC_VER}${RST}"
+echo -e "  ${Y}CPU${RST}       ${W}${CPU_MODEL} (${NCPU} cores)${RST}"
+echo -e "  ${Y}Memory${RST}    ${W}${MEM_FREE} free / ${MEM_TOTAL} total${RST}"
+echo -e "  ${Y}Packages${RST}  ${W}${PKG_COUNT} (in /usr/bin)${RST}"
+echo ""
+echo -e "  ${DIM}Type ${W}help${RST}${DIM} to see available commands${RST}"
+echo ""
+echo -e "  \033[40m  \033[41m  \033[42m  \033[43m  \033[44m  \033[45m  \033[46m  \033[47m  ${RST}"
+echo -e "  \033[100m  \033[101m  \033[102m  \033[103m  \033[104m  \033[105m  \033[106m  \033[107m  ${RST}"
+echo ""
+WELCOME_EOF
+    chmod +x "${LFS_MNT}/etc/lfs-welcome.sh"
+    
+    # --- /etc/profile ---
+    cat > "${LFS_MNT}/etc/profile" << 'PROFILE_EOF'
+export PATH=/usr/bin:/usr/sbin:/bin:/sbin
+export PS1='\[\033[1;36m\]lfs\[\033[0m\]:\[\033[1;34m\]\w\[\033[0m\]\$ '
+export TERM=xterm-256color
+export LANG=C
+export HOME=/root
+cd /root
+if [ -f /etc/lfs-welcome.sh ]; then
+  source /etc/lfs-welcome.sh
+fi
+PROFILE_EOF
+
+    # --- /root/.bashrc ---
+    cat > "${LFS_MNT}/root/.bashrc" << 'BASHRC_EOF'
+export PS1='\[\033[1;36m\]lfs\[\033[0m\]:\[\033[1;34m\]\w\[\033[0m\]\$ '
+export PATH=/usr/bin:/usr/sbin:/bin:/sbin
+export TERM=xterm-256color
+alias ll='ls -la --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias cls='clear'
+BASHRC_EOF
+
+    # --- help command ---
+    cat > "${LFS_MNT}/usr/bin/help" << 'HELP_EOF'
+#!/bin/bash
+echo ''
+echo -e '\033[1;36m  Available Commands:\033[0m'
+echo -e '\033[1;33m  ─────────────────────────────\033[0m'
+echo -e '  \033[1;32mls\033[0m         List directory contents'
+echo -e '  \033[1;32mcat\033[0m        Display file contents'
+echo -e '  \033[1;32mgcc\033[0m        GNU C Compiler 13.2.0'
+echo -e '  \033[1;32mmake\033[0m       Build automation tool'
+echo -e '  \033[1;32mbash\033[0m       GNU Bourne Again Shell'
+echo -e '  \033[1;32mgrep\033[0m       Search text patterns'
+echo -e '  \033[1;32mfind\033[0m       Search for files'
+echo -e '  \033[1;32msed\033[0m        Stream editor'
+echo -e '  \033[1;32mgawk\033[0m       Pattern scanning tool'
+echo -e '  \033[1;32mtar\033[0m        Archive utility'
+echo -e '  \033[1;32mgzip\033[0m       Compression utility'
+echo -e '  \033[1;32mpatch\033[0m      Apply patches to files'
+echo -e '  \033[1;32mdiff\033[0m       Compare files'
+echo -e '  \033[1;32mxz\033[0m         XZ compression'
+echo ''
+echo -e '  \033[1;33mSystem Info:\033[0m'
+echo -e '  \033[1;32muname -a\033[0m   System information'
+echo -e '  \033[1;32mcat /etc/lfs-release\033[0m  LFS version info'
+echo ''
+HELP_EOF
+    chmod +x "${LFS_MNT}/usr/bin/help"
+    
+    # --- /etc/lfs-release (build metadata) ---
+    cat > "${LFS_MNT}/etc/lfs-release" << RELEASE_EOF
+LFS_VERSION=12.0
+BUILD_DATE=$(date +%Y-%m-%d)
+BUILD_ID=${BUILD_ID}
+BUILDER=Google Cloud Run (8 vCPU, 32 GB RAM)
+PIPELINE=Sams LFS Automated Builder
+KERNEL=6.4.12
+GCC=13.2.0
+RELEASE_EOF
+    
+    log_info "  Welcome banner, prompt, and help command installed"
     
     log_info "Chapter 7 completed successfully"
     write_firestore_log "chapter7" "completed" "Chapter 7: System configuration completed"

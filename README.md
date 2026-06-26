@@ -1,6 +1,6 @@
 # Linux From Scratch - Automated Build System
 
-A complete platform for building Linux From Scratch (LFS 12.0) with an interactive learning frontend and professional Windows installer.
+A complete platform for building Linux From Scratch (LFS 12.0) with an interactive learning frontend, automated Google Cloud Run build pipeline, and multiple download formats (WSL tarball, bootable ISO, Windows installer).
 
 **Live Site:** https://lfs-by-sam.netlify.app
 
@@ -274,23 +274,38 @@ Expected output should show: `/lib64/ld-linux-x86-64.so.2`
 
 ```
 lfs-automated/
-├── lfs-learning-platform/    # Next.js frontend
+├── lfs-learning-platform/    # Next.js frontend (interactive learning & downloads)
 │   ├── app/                  # App router pages
 │   ├── components/           # React components
 │   ├── data/                 # Lesson content
 │   └── lib/                  # Utilities
 ├── helpers/                  # Build helper scripts
-├── lfs-build.sh             # Main build script
-├── lfs-chapter5-real.sh     # Chapter 5 toolchain
+├── lfs-build.sh             # Main automated cloud build script
+├── lfs-chapter5-real.sh     # Chapter 5 toolchain build
+├── build-minimal-bootable.sh # Chapter 6: 17-package minimal system
+├── Dockerfile               # Cloud builder container image
+├── docker-entrypoint.sh     # Container entry point
 └── README.md                # This file
 ```
+
+## Build Artifacts
+
+The cloud pipeline produces the following artifacts:
+
+| Artifact | Format | Size | Use Case |
+| --- | --- | --- | --- |
+| LFS System Tarball | `.tar.gz` | ~196 MB | Import into WSL2 on Windows |
+| Bootable ISO | `.iso` | ~136 MB | Boot in VirtualBox, VMware, or real hardware |
+| Full Toolchain | `.tar.gz` | ~436 MB | Continue building additional LFS packages |
+| Windows Installer | `.exe` | ~184 KB | One-click WSL2 setup with desktop shortcuts |
 
 ## Tech Stack
 
 - **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS 4, Framer Motion
 - **Backend:** Firebase (Auth, Firestore, Functions), Google Vertex AI
+- **Cloud Build:** Google Cloud Run Jobs (8 vCPU, 32 GB RAM, ~30 min builds)
+- **Storage:** Google Cloud Storage (`gs://alfs-bd1e0-builds/`)
 - **Deployment:** Netlify (frontend)
-- **Cloud Build System:** Coming Soon (Google Cloud Run integration planned)
 - **LFS Version:** 12.0 (Kernel 6.4.12)
 
 ## License

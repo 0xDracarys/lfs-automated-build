@@ -91,6 +91,7 @@ declare -A LFS_PACKAGES=(
     ["gcc"]="gcc-13.2.0.tar.xz"
     ["linux-headers"]="linux-6.4.12.tar.xz"
     ["glibc"]="glibc-2.38.tar.xz"
+    ["glibc-fhs-patch"]="glibc-2.38-fhs-1.patch"
     
     # GCC prerequisites (must be in GCC source directory)
     ["mpfr"]="mpfr-4.2.0.tar.xz"
@@ -193,7 +194,7 @@ build_binutils_pass1() {
     
     # Configure for cross-compilation (matching reference repo)
     ../configure \
-        --prefix=/tools \
+        --prefix=$LFS/tools \
         --with-sysroot=$LFS \
         --target=$LFS_TGT \
         --disable-nls \
@@ -201,8 +202,8 @@ build_binutils_pass1() {
         --disable-werror
     
     # Build and install
-    make -j$(nproc)
-    make install
+    make -j$(nproc) || exit 1
+    make install || exit 1
     
     # Cleanup
     cd "$src_dir"
@@ -254,7 +255,7 @@ build_gcc_pass1() {
     # Configure for cross-compilation (matching reference approach)
     ../configure \
         --target=$LFS_TGT \
-        --prefix=/tools \
+        --prefix=$LFS/tools \
         --with-glibc-version=2.38 \
         --with-sysroot=$LFS \
         --with-newlib \
@@ -264,6 +265,7 @@ build_gcc_pass1() {
         --disable-nls \
         --disable-shared \
         --disable-multilib \
+        --disable-decimal-float \
         --disable-threads \
         --disable-libatomic \
         --disable-libgomp \
@@ -274,13 +276,13 @@ build_gcc_pass1() {
         --enable-languages=c,c++
     
     # Build and install
-    make -j$(nproc)
-    make install
+    make -j$(nproc) || exit 1
+    make install || exit 1
     
     # Create limits.h (required by glibc)
     cd ..
     cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
-      $(dirname $($LFS_TGT-gcc -print-libgcc-file-name))/install-tools/include/limits.h
+      $(dirname $($LFS_TGT-gcc -print-libgcc-file-name))/include/limits.h || exit 1
     
     # Cleanup
     cd "$src_dir"
@@ -307,7 +309,7 @@ install_linux_headers() {
     make mrproper
     
     # Build headers
-    make headers
+    make headers || exit 1
     
     # Clean up test files
     find usr/include -type f ! -name '*.h' -delete
@@ -347,6 +349,9 @@ build_glibc() {
         ;;
     esac
     
+    # Apply FHS patch (required for LFS 12.0)
+    patch -Np1 -i ../glibc-2.38-fhs-1.patch
+    
     # Create build directory
     rm -rf build
     mkdir -v build
@@ -360,13 +365,13 @@ build_glibc() {
         --prefix=/usr \
         --host=$LFS_TGT \
         --build=$(../scripts/config.guess) \
-        --enable-kernel=3.2 \
+        --enable-kernel=4.14 \
         --with-headers=$LFS/usr/include \
-        libc_cv_slibdir=/lib
+        libc_cv_slibdir=/usr/lib
     
     # Build and install
-    make -j$(nproc)
-    make DESTDIR=$LFS install
+    make -j$(nproc) || exit 1
+    make DESTDIR=$LFS install || exit 1
     
     # Fix the linker paths
     sed '/RTLDLIST=/s@/usr@@g' -i $LFS/usr/bin/ldd
@@ -379,82 +384,46 @@ build_glibc() {
     cd "$src_dir"
     rm -rf glibc-2.38
     
-    echo "✅ Glibc completed"
-}
-    
-    # Fix up the installation
-    sed '/RTLDLIST=/s@/usr@@g' -i /lfs/usr/bin/ldd
-    
-    cd "$src_dir"
-    rm -rf glibc-2.38
-    
-    echo "✅ Glibc completed"
 }
 
-build_gcc_pass2() {
-    echo "🔨 Building GCC (Pass 2)..."
+build_libstdcxx() {
+    echo "🔨 Building Libstdc++..."
     
     local src_dir="${LFS_SRC}"
     cd "$src_dir"
     
-    # Extract GCC (reuse from Pass 1 or extract fresh)
+    # Extract GCC if not present
     if [ ! -d "gcc-13.2.0" ]; then
         tar -xf gcc-13.2.0.tar.xz
     fi
     cd gcc-13.2.0
-    
-    # Extract GCC prerequisites (if not already done)
-    [ ! -d mpfr ] && tar -xf ../mpfr-4.2.0.tar.xz && mv mpfr-4.2.0 mpfr
-    [ ! -d gmp ] && tar -xf ../gmp-6.3.0.tar.xz && mv gmp-6.3.0 gmp
-    [ ! -d mpc ] && tar -xf ../mpc-1.3.1.tar.gz && mv mpc-1.3.1 mpc
-    
-    # Fix for x86_64
-    case $(uname -m) in
-      x86_64)
-        sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
-      ;;
-    esac
     
     # Create fresh build directory
     rm -rf build
     mkdir -v build
     cd build
     
-    # Configure GCC Pass 2 (with working C library)
-    # CRITICAL: Use $LFS variable, not hardcoded /lfs
-    ../configure \
-        --build=$(../config.guess) \
-        --host=$LFS_TGT \
-        --target=$LFS_TGT \
-        LDFLAGS_FOR_TARGET=-L$PWD/$LFS_TGT/libgcc \
-        --prefix=/usr \
-        --with-build-sysroot=$LFS \
-        --enable-default-pie \
-        --enable-default-ssp \
-        --disable-nls \
-        --disable-multilib \
-        --disable-libatomic \
-        --disable-libgomp \
-        --disable-libquadmath \
-        --disable-libssp \
-        --disable-libvtv \
-        --enable-languages=c,c++
+    ../libstdc++-v3/configure           \
+        --host=$LFS_TGT                 \
+        --build=$(../config.guess)      \
+        --prefix=/usr                   \
+        --disable-multilib              \
+        --disable-nls                   \
+        --disable-libstdcxx-pch         \
+        --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/13.2.0
     
     # Build and install
-    make -j$(nproc)
-    make DESTDIR=$LFS install
+    make -j$(nproc) || exit 1
+    make DESTDIR=$LFS install || exit 1
     
-    # Create cc symlink
-    ln -sv gcc $LFS/usr/bin/cc
-    
-    echo "  Verifying GCC Pass 2 installation..."
-    ls -la $LFS/usr/bin/ | grep -E "gcc|g\+\+|cc"
+    # Remove libtool files
+    rm -v $LFS/usr/lib/lib{stdc++,stdc++fs,supc++}.la || true
     
     # Cleanup
     cd "$src_dir"
     rm -rf gcc-13.2.0
     
-    echo "✅ GCC (Pass 2) completed"
+    echo "✅ Libstdc++ completed"
 }
 
 # Main execution
@@ -527,7 +496,7 @@ main() {
     build_gcc_pass1
     install_linux_headers
     build_glibc
-    build_gcc_pass2
+    build_libstdcxx
     
     echo ""
     echo "╔════════════════════════════════════════════════════════╗"

@@ -4,13 +4,23 @@ import dynamic from "next/dynamic";
 import { DottedSurface } from "@/components/ui/dotted-surface";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Terminal, Download, Cpu, Layers, ChevronRight, Code, Zap, Rocket, BookOpen } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  Terminal, Download, Cpu, Layers, ChevronRight, Code, Zap,
+  Rocket, BookOpen, Cloud, ArrowRight, Sparkles, Shield, Box
+} from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 
-const Penguin3D = dynamic(() => import('@/components/ui/penguin-3d'), {
+const Penguin3D = dynamic(() => import("@/components/ui/penguin-3d"), {
   ssr: false,
-  loading: () => <div className="w-full h-full flex items-center justify-center"><div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div></div>
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500" />
+    </div>
+  ),
 });
+
+/* ──────── data ──────── */
 
 const features = [
   {
@@ -46,13 +56,78 @@ const stats = [
   { value: "2-6h", label: "Build Time" },
 ];
 
+/* ──────── typing animation ──────── */
+
+const terminalLines = [
+  { prefix: "$ ", text: "export LFS=/mnt/lfs", delay: 0 },
+  { prefix: "$ ", text: "export LFS_TGT=$(uname -m)-lfs-linux-gnu", delay: 600 },
+  { prefix: "$ ", text: "cd $LFS/sources", delay: 1200 },
+  { prefix: "$ ", text: "tar -xf binutils-2.41.tar.xz", delay: 1800 },
+  { prefix: "$ ", text: "cd binutils-2.41 && mkdir build", delay: 2400 },
+  { prefix: "$ ", text: "../configure --prefix=/tools \\", delay: 3000 },
+  { prefix: "  ", text: "--with-sysroot=$LFS \\", delay: 3200 },
+  { prefix: "  ", text: "--target=$LFS_TGT", delay: 3400 },
+  { prefix: "$ ", text: "make && make install", delay: 3800 },
+  { prefix: "# ", text: "Toolchain ready ✓", delay: 4400, isComment: true },
+];
+
+function TypingTerminal() {
+  const [visibleLines, setVisibleLines] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+
+  useEffect(() => {
+    if (!inView) return;
+    const timers: NodeJS.Timeout[] = [];
+    terminalLines.forEach((line, i) => {
+      timers.push(setTimeout(() => setVisibleLines(i + 1), line.delay));
+    });
+    return () => timers.forEach(clearTimeout);
+  }, [inView]);
+
+  return (
+    <div ref={ref} className="p-6 rounded-2xl bg-[#0d0d14] border border-white/[0.06] font-mono text-sm shadow-2xl">
+      <div className="flex items-center gap-2 mb-4 pb-4 border-b border-white/[0.06]">
+        <div className="w-3 h-3 rounded-full bg-red-500/80" />
+        <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+        <div className="w-3 h-3 rounded-full bg-green-500/80" />
+        <span className="ml-2 text-gray-600 text-xs">terminal — bash</span>
+      </div>
+      <div className="space-y-1.5 text-gray-300 min-h-[220px]">
+        {terminalLines.slice(0, visibleLines).map((line, i) => (
+          <motion.p
+            key={i}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2 }}
+            className={line.isComment ? "text-gray-600 mt-3" : ""}
+          >
+            <span className="text-green-400">{line.prefix}</span>
+            {line.text}
+          </motion.p>
+        ))}
+        {visibleLines < terminalLines.length && inView && (
+          <span className="inline-block w-2 h-4 bg-green-400 animate-pulse" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ──────── main component ──────── */
+
 export default function LFSLandingPage() {
   return (
-    <div className="relative w-full min-h-screen bg-black text-white">
-      {/* Dotted Surface Background */}
-      <DottedSurface className="opacity-40" />
+    <div className="relative w-full min-h-screen bg-[#0a0a0f] text-white">
+      <DottedSurface className="opacity-30" />
 
-      {/* Hero Section */}
+      {/* Ambient glow blobs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-blue-600/[0.06] blur-[140px]" />
+        <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] rounded-full bg-violet-600/[0.05] blur-[120px]" />
+      </div>
+
+      {/* ──────── Hero ──────── */}
       <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 pt-20 overflow-visible">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <motion.div
@@ -69,8 +144,7 @@ export default function LFSLandingPage() {
               </span>
             </div>
 
-            {/* Title */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
               <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
                 Linux From
               </span>
@@ -81,7 +155,7 @@ export default function LFSLandingPage() {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl leading-relaxed">
-              Build your own Linux system from source code. Master kernel compilation, 
+              Build your own Linux system from source code. Master kernel compilation,
               toolchain building, and system configuration.
             </p>
 
@@ -89,38 +163,46 @@ export default function LFSLandingPage() {
             <div className="flex flex-wrap gap-4 mb-16">
               <Link
                 href="/learn"
-                className="group px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-105 flex items-center gap-2"
+                className="group px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-blue-500/40 hover:scale-[1.03] flex items-center gap-2"
               >
                 Start Learning
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
-                href="/commands"
-                className="px-8 py-4 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 transition-all hover:scale-105"
-              >
-                View Commands
-              </Link>
-              <Link
                 href="/downloads"
-                className="px-8 py-4 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 transition-all hover:scale-105 flex items-center gap-2"
+                className="group px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-violet-600/20 to-fuchsia-600/20 hover:from-violet-600/30 hover:to-fuchsia-600/30 text-white border border-violet-500/30 hover:border-violet-500/50 transition-all duration-300 hover:scale-[1.03] flex items-center gap-2"
               >
                 <Download className="w-5 h-5" />
-                Download ISO
+                Download
+                <Sparkles className="w-4 h-4 text-violet-400" />
+              </Link>
+              <Link
+                href="/build"
+                className="group px-8 py-4 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.03] flex items-center gap-2"
+              >
+                <Cloud className="w-5 h-5" />
+                Cloud Build
               </Link>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl">
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center md:text-left">
+              {stats.map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
+                  className="text-center md:text-left"
+                >
                   <div className="text-3xl md:text-4xl font-bold text-white">{stat.value}</div>
                   <div className="text-sm text-gray-500">{stat.label}</div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* 3D Penguin - Right Side */}
+          {/* 3D Penguin */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -138,7 +220,7 @@ export default function LFSLandingPage() {
           transition={{ delay: 1, duration: 0.5 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2"
         >
-          <div className="w-6 h-10 rounded-full border-2 border-gray-600 flex justify-center pt-2">
+          <div className="w-6 h-10 rounded-full border-2 border-gray-700 flex justify-center pt-2">
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
@@ -148,7 +230,7 @@ export default function LFSLandingPage() {
         </motion.div>
       </section>
 
-      {/* Features Section */}
+      {/* ──────── Features ──────── */}
       <section className="relative py-32 px-6 md:px-12 lg:px-20">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -174,12 +256,14 @@ export default function LFSLandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all"
+                className="group p-6 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-white/15 hover:bg-white/[0.06] transition-all duration-300"
               >
-                <div className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br",
-                  feature.color
-                )}>
+                <div
+                  className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br",
+                    feature.color
+                  )}
+                >
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -190,7 +274,7 @@ export default function LFSLandingPage() {
         </div>
       </section>
 
-      {/* Build Process Section */}
+      {/* ──────── Build Process (animated terminal) ──────── */}
       <section className="relative py-32 px-6 md:px-12 lg:px-20 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -208,7 +292,7 @@ export default function LFSLandingPage() {
                 Cross-Compilation Toolchain
               </h2>
               <p className="text-xl text-gray-400 mb-8">
-                Build a self-contained toolchain isolated from your host system. 
+                Build a self-contained toolchain isolated from your host system.
                 This ensures reproducible builds and teaches you how compilers work.
               </p>
               <div className="space-y-4">
@@ -227,32 +311,74 @@ export default function LFSLandingPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="p-6 rounded-2xl bg-gray-900/80 border border-white/10 font-mono text-sm">
-                <div className="flex items-center gap-2 mb-4 pb-4 border-b border-white/10">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
-                  <span className="ml-2 text-gray-500">terminal</span>
+              <TypingTerminal />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ──────── Cloud Build CTA ──────── */}
+      <section className="relative py-24 px-6 md:px-12 lg:px-20">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-900/20 via-fuchsia-900/10 to-transparent p-10 md:p-14"
+          >
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 mb-4">
+                  <Cloud className="w-4 h-4 text-violet-400" />
+                  <span className="text-sm text-violet-400">Cloud Pipeline</span>
                 </div>
-                <div className="space-y-2 text-gray-300">
-                  <p><span className="text-green-400">$</span> export LFS=/mnt/lfs</p>
-                  <p><span className="text-green-400">$</span> export LFS_TGT=$(uname -m)-lfs-linux-gnu</p>
-                  <p><span className="text-green-400">$</span> cd $LFS/sources</p>
-                  <p><span className="text-green-400">$</span> tar -xf binutils-2.41.tar.xz</p>
-                  <p><span className="text-green-400">$</span> cd binutils-2.41 && mkdir build</p>
-                  <p><span className="text-green-400">$</span> ../configure --prefix=/tools \</p>
-                  <p className="pl-4">--with-sysroot=$LFS \</p>
-                  <p className="pl-4">--target=$LFS_TGT</p>
-                  <p><span className="text-green-400">$</span> make && make install</p>
-                  <p className="text-gray-500 mt-4"># Toolchain ready ✓</p>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  Build on Google Cloud
+                </h2>
+                <p className="text-gray-400 mb-6">
+                  Our automated pipeline compiles the entire LFS system on Google Cloud Run
+                  with 8 vCPUs and 32 GB RAM. Just click build and download the result.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/build"
+                    className="group px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-500/30 transition-all flex items-center gap-2"
+                  >
+                    Start Cloud Build
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <Link
+                    href="/downloads"
+                    className="px-6 py-3 border border-white/10 rounded-xl font-semibold hover:bg-white/5 transition-all flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Latest
+                  </Link>
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: <Cpu className="w-5 h-5" />, label: "8 vCPUs", sub: "Cloud Run" },
+                  { icon: <Box className="w-5 h-5" />, label: "32 GB RAM", sub: "Per build" },
+                  { icon: <Shield className="w-5 h-5" />, label: "Automated", sub: "CI/CD" },
+                  { icon: <Zap className="w-5 h-5" />, label: "~30 min", sub: "Build time" },
+                ].map((s) => (
+                  <div
+                    key={s.label}
+                    className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.06]"
+                  >
+                    <div className="text-violet-400 mb-2">{s.icon}</div>
+                    <div className="font-bold">{s.label}</div>
+                    <div className="text-xs text-gray-500">{s.sub}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* ──────── CTA ──────── */}
       <section className="relative py-32 px-6 md:px-12 lg:px-20">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -296,13 +422,13 @@ export default function LFSLandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-20 py-12 px-6 border-t border-white/10 bg-black/80">
+      {/* ──────── Footer ──────── */}
+      <footer className="relative z-20 py-12 px-6 border-t border-white/[0.06] bg-[#0a0a0f]/80">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <h3 className="text-xl font-bold flex items-center gap-2">
               <Terminal className="w-5 h-5 text-blue-400" />
-              Sam's LFS
+              Sam&apos;s LFS
             </h3>
             <p className="text-gray-500 text-sm">Linux From Scratch 12.0 Learning Platform</p>
           </div>
