@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { admin, db } from "@/lib/firebase-admin";
+import admin, { adminDb } from "@/lib/firebase-admin";
 
 /**
  * POST /api/cloud-build
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    const docRef = await db.collection("builds").add(buildData);
+    const docRef = await adminDb.collection("builds").add(buildData);
 
     return NextResponse.json({
       success: true,
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user has any active builds (INITIALIZING, PENDING, or RUNNING)
-    const snapshot = await db.collection("builds")
+    const snapshot = await adminDb.collection("builds")
       .where("userId", "==", userId)
       .where("status", "in", ["INITIALIZING", "PENDING", "RUNNING"])
       .limit(1)
