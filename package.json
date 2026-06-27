@@ -4,7 +4,7 @@
   "description": "Automated Linux From Scratch compilation using Firebase and Cloud Run",
   "main": "index.js",
   "engines": {
-    "node": "18"
+    "node": "24.x"
   },
   "scripts": {
     "serve": "firebase emulators:start",
