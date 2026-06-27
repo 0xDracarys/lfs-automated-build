@@ -1,42 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
+import { admin, db } from "@/lib/firebase-admin";
 
 /**
  * POST /api/cloud-build
- * Proxy endpoint that delegates to Cloud Function
- * The actual authentication and build creation happens in the Cloud Function
+ * Authenticates user and creates a new build document in Firestore.
+ * This triggers the onBuildSubmitted Cloud Function.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const authHeader = request.headers.get("authorization");
     
-    if (!authHeader) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: "Unauthorized - No authentication token provided" },
         { status: 401 }
       );
     }
 
-    // Forward request to Firebase Cloud Function
-    // The Cloud Function will handle authentication and build creation
-    const functionUrl = `https://us-central1-alfs-bd1e0.cloudfunctions.net/triggerCloudBuild`;
-    
-    const response = await fetch(functionUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": authHeader,
-      },
-      body: JSON.stringify(body),
-    });
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      return NextResponse.json(data, { status: response.status });
+    const token = authHeader.split('Bearer ')[1];
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(token);
+    } catch (e) {
+      return NextResponse.json({ error: "Unauthorized - Invalid token" }, { status: 401 });
     }
 
-    return NextResponse.json(data);
+    const buildData = {
+      ...body,
+      userId: decodedToken.uid, // Override with authenticated UID
+      email: decodedToken.email,
+      status: "INITIALIZING",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    const docRef = await db.collection("builds").add(buildData);
+
+    return NextResponse.json({
+      success: true,
+      buildId: docRef.id,
+      message: "Build submitted successfully"
+    });
 
   } catch (error: any) {
     console.error("Cloud build error:", error);
@@ -66,10 +70,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // For now, return no active build
-    // The Cloud Function will handle the actual check
+    // Check if user has any active builds (INITIALIZING, PENDING, or RUNNING)
+    const snapshot = await db.collection("builds")
+      .where("userId", "==", userId)
+      .where("status", "in", ["INITIALIZING", "PENDING", "RUNNING"])
+      .limit(1)
+      .get();
+
     return NextResponse.json({
-      hasActiveBuild: false,
+      hasActiveBuild: !snapshot.empty,
+      activeBuildId: snapshot.empty ? null : snapshot.docs[0].id
     });
 
   } catch (error: any) {
