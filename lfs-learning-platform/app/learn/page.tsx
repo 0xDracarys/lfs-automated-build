@@ -32,9 +32,7 @@ export default function LearnPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-black relative overflow-hidden">
-        <DottedSurface className="opacity-20" />
-        
+      <div className="min-h-screen bg-transparent relative overflow-hidden pt-24 pb-20">
         <div className="relative z-10 container mx-auto px-4 py-8">
           <EnhancedModuleList modules={modules} />
         </div>

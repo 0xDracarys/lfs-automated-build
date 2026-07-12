@@ -15,7 +15,7 @@ const Penguin3D = dynamic(() => import("@/components/ui/penguin-3d"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500" />
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
     </div>
   ),
 });
@@ -24,28 +24,24 @@ const Penguin3D = dynamic(() => import("@/components/ui/penguin-3d"), {
 
 const features = [
   {
-    icon: <Layers className="w-6 h-6" />,
+    icon: <Layers className="w-6 h-6 text-primary" />,
     title: "Cross-Toolchain",
     description: "Build Binutils, GCC, and Glibc from source",
-    color: "from-blue-500 to-cyan-500",
   },
   {
-    icon: <Cpu className="w-6 h-6" />,
+    icon: <Cpu className="w-6 h-6 text-primary" />,
     title: "Kernel 6.4.12",
     description: "Compile and configure the Linux kernel",
-    color: "from-purple-500 to-pink-500",
   },
   {
-    icon: <Code className="w-6 h-6" />,
+    icon: <Code className="w-6 h-6 text-primary" />,
     title: "100+ Packages",
     description: "Build every component from source code",
-    color: "from-green-500 to-emerald-500",
   },
   {
-    icon: <Zap className="w-6 h-6" />,
+    icon: <Zap className="w-6 h-6 text-primary" />,
     title: "Optimized System",
     description: "Create a minimal, fast Linux system",
-    color: "from-orange-500 to-red-500",
   },
 ];
 
@@ -86,216 +82,165 @@ function TypingTerminal() {
   }, [inView]);
 
   return (
-    <div ref={ref} className="p-6 rounded-2xl bg-[#0d0d14] border border-white/[0.06] font-mono text-sm shadow-2xl">
-      <div className="flex items-center gap-2 mb-4 pb-4 border-b border-white/[0.06]">
+    <div ref={ref} className="p-6 rounded-2xl bg-nav-button/60 border border-white/[0.08] font-mono text-sm shadow-2xl backdrop-blur-md">
+      <div className="flex items-center gap-2 mb-4 pb-4 border-b border-white/[0.08]">
         <div className="w-3 h-3 rounded-full bg-red-500/80" />
         <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
         <div className="w-3 h-3 rounded-full bg-green-500/80" />
-        <span className="ml-2 text-gray-600 text-xs">terminal — bash</span>
+        <span className="ml-2 text-muted-foreground text-xs">terminal — bash</span>
       </div>
-      <div className="space-y-1.5 text-gray-300 min-h-[220px]">
+      <div className="space-y-1.5 text-foreground/90 min-h-[220px]">
         {terminalLines.slice(0, visibleLines).map((line, i) => (
           <motion.p
             key={i}
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.2 }}
-            className={line.isComment ? "text-gray-600 mt-3" : ""}
+            className={line.isComment ? "text-primary/70 mt-3" : ""}
           >
-            <span className="text-green-400">{line.prefix}</span>
+            <span className="text-primary">{line.prefix}</span>
             {line.text}
           </motion.p>
         ))}
         {visibleLines < terminalLines.length && inView && (
-          <span className="inline-block w-2 h-4 bg-green-400 animate-pulse" />
+          <span className="inline-block w-2 h-4 bg-primary animate-pulse" />
         )}
       </div>
     </div>
   );
 }
 
+import InteractiveBlockWall from "@/components/ui/interactive-block-wall";
+
 /* ──────── main component ──────── */
 
 export default function LFSLandingPage() {
   return (
-    <div className="relative w-full min-h-screen bg-[#0a0a0f] text-white">
-      <DottedSurface className="opacity-30" />
+    <div className="relative w-full min-h-screen text-foreground font-sora">
+      {/* ──────── Hero Section (Full-screen, content anchored bottom-left) ──────── */}
+      <section className="relative min-h-screen flex items-end overflow-hidden">
+        {/* Dark overlay so bottom-left content remains legible while allowing mouse interaction */}
+        <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-transparent to-transparent z-[1] pointer-events-none" />
 
-      {/* Ambient glow blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-blue-600/[0.06] blur-[140px]" />
-        <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] rounded-full bg-violet-600/[0.05] blur-[120px]" />
-      </div>
-
-      {/* ──────── Hero ──────── */}
-      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 pt-20 overflow-visible">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center md:text-left"
+        {/* Content container anchored bottom-left */}
+        <div className="relative z-10 pointer-events-none w-full max-w-[90%] sm:max-w-md lg:max-w-3xl px-6 md:px-12 pb-14 md:pb-16 pt-32">
+          {/* Heading */}
+          <h1
+            className="opacity-0 animate-fade-up text-[clamp(2.75rem,7vw,5.5rem)] font-bold leading-[1.05] tracking-[-0.05em] text-foreground mb-2 md:mb-4 uppercase"
+            style={{ animationDelay: "0.2s" }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8">
-              <Terminal className="w-4 h-4 text-blue-400" />
-              <span className="text-sm font-medium text-blue-400 tracking-wider uppercase">
-                LFS 12.0
-              </span>
-            </div>
+            LINUX FROM <span className="text-primary">SCRATCH</span>
+          </h1>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
-              <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-                Linux From
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-                Scratch
-              </span>
-            </h1>
-
-            <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl leading-relaxed">
-              Build your own Linux system from source code. Master kernel compilation,
-              toolchain building, and system configuration.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 mb-16">
-              <Link
-                href="/learn"
-                className="group px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-blue-500/40 hover:scale-[1.03] flex items-center gap-2"
-              >
-                Start Learning
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/downloads"
-                className="group px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-violet-600/20 to-fuchsia-600/20 hover:from-violet-600/30 hover:to-fuchsia-600/30 text-white border border-violet-500/30 hover:border-violet-500/50 transition-all duration-300 hover:scale-[1.03] flex items-center gap-2"
-              >
-                <Download className="w-5 h-5" />
-                Download
-                <Sparkles className="w-4 h-4 text-violet-400" />
-              </Link>
-              <Link
-                href="/build"
-                className="group px-8 py-4 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.03] flex items-center gap-2"
-              >
-                <Cloud className="w-5 h-5" />
-                Cloud Build
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl">
-              {stats.map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + i * 0.1 }}
-                  className="text-center md:text-left"
-                >
-                  <div className="text-3xl md:text-4xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-gray-500">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* 3D Penguin */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="hidden lg:block w-full h-[700px] xl:h-[800px] 2xl:h-[900px]"
+          {/* Subheading */}
+          <p
+            className="opacity-0 animate-fade-up text-foreground/80 text-[clamp(1.125rem,2.25vw,1.75rem)] font-light mb-3 md:mb-6"
+            style={{ animationDelay: "0.4s" }}
           >
-            <Penguin3D />
-          </motion.div>
-        </div>
+            Build your own custom Linux system from source code.
+          </p>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <div className="w-6 h-10 rounded-full border-2 border-gray-700 flex justify-center pt-2">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-1.5 h-1.5 rounded-full bg-blue-400"
-            />
+          {/* Description */}
+          <p
+            className="opacity-0 animate-fade-up text-muted-foreground text-[clamp(0.875rem,1.4vw,1.15rem)] font-light mb-6 md:mb-8 max-w-2xl"
+            style={{ animationDelay: "0.55s" }}
+          >
+            Master Linux kernel compilation, cross-toolchain architecture, and system configuration. Build Binutils, GCC, and over 100+ packages from scratch with an interactive, step-by-step learning platform.
+          </p>
+
+          {/* Two CTA Buttons */}
+          <div
+            className="opacity-0 animate-fade-up flex flex-wrap items-center gap-4 font-bold pointer-events-auto"
+            style={{ animationDelay: "0.7s" }}
+          >
+            <Link
+              href="/learn"
+              className="bg-primary text-primary-foreground px-6 py-3.5 md:px-8 md:py-4 text-sm rounded-sm uppercase tracking-wider cursor-pointer hover:brightness-110 transition-all active:scale-[0.97]"
+            >
+              Start Learning
+            </Link>
+            <Link
+              href="/downloads"
+              className="bg-white text-background px-6 py-3.5 md:px-8 md:py-4 text-sm rounded-sm uppercase tracking-wider cursor-pointer hover:brightness-90 transition-all active:scale-[0.97]"
+            >
+              Download LFS 12.0
+            </Link>
           </div>
-        </motion.div>
+
+          {/* Trust line */}
+          <p
+            className="opacity-0 animate-fade-up text-muted-foreground/60 text-xs font-light mt-5 md:mt-6 uppercase tracking-wider"
+            style={{ animationDelay: "0.85s" }}
+          >
+            LFS Version 12.0 • Linux Kernel 6.4.12 • 100+ Packages Compiled From Source
+          </p>
+        </div>
+      </section>
+
+      {/* ──────── Stats Ribbon ──────── */}
+      <section className="relative z-10 py-12 px-6 md:px-12 lg:px-20 border-y border-white/[0.08] bg-nav-button/40 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+          {stats.map((stat, i) => (
+            <div key={stat.label} className="text-center md:text-left">
+              <div className="text-3xl md:text-4xl font-bold text-foreground font-mono">
+                {stat.value}
+              </div>
+              <div className="text-xs uppercase tracking-widest text-primary mt-1">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* ──────── Features ──────── */}
-      <section className="relative py-32 px-6 md:px-12 lg:px-20">
+      <section className="relative py-28 px-6 md:px-12 lg:px-20">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Build Everything From Source
+          <div className="text-center mb-16">
+            <span className="text-xs font-mono uppercase tracking-widest text-primary px-3 py-1 rounded bg-primary/10 border border-primary/20 mb-4 inline-block">
+              Core Architecture
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 uppercase tracking-tight">
+              Build Everything <span className="text-primary">From Source</span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Learn how every component of a Linux system works by compiling it yourself
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto font-light">
+              Learn how every component of a Linux system works by compiling it yourself from the ground up
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
+            {features.map((feature) => (
+              <div
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group p-6 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-white/15 hover:bg-white/[0.06] transition-all duration-300"
+                className="group p-6 rounded-xl bg-nav-button/30 border border-white/[0.08] hover:border-primary/40 hover:bg-nav-button/60 transition-all duration-300"
               >
-                <div
-                  className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br",
-                    feature.color
-                  )}
-                >
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </motion.div>
+                <h3 className="text-lg font-semibold mb-2 tracking-tight">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground font-light">{feature.description}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ──────── Build Process (animated terminal) ──────── */}
-      <section className="relative py-32 px-6 md:px-12 lg:px-20 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent">
+      <section className="relative py-28 px-6 md:px-12 lg:px-20 border-t border-white/[0.06] bg-nav-button/20">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="grid lg:grid-cols-2 gap-12 items-center"
-          >
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 mb-6">
-                <span className="text-sm text-green-400">Chapter 5-8</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary/10 border border-primary/20 mb-6">
+                <span className="text-xs font-mono text-primary uppercase tracking-widest">Chapters 5-8</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Cross-Compilation Toolchain
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 uppercase tracking-tight">
+                Cross-Compilation <span className="text-primary">Toolchain</span>
               </h2>
-              <p className="text-xl text-gray-400 mb-8">
+              <p className="text-base md:text-lg text-muted-foreground font-light mb-8">
                 Build a self-contained toolchain isolated from your host system.
-                This ensures reproducible builds and teaches you how compilers work.
+                This ensures reproducible builds and teaches you how compilers and linkers work under the hood.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-4 font-mono text-sm">
                 {[
                   { name: "Binutils 2.41", desc: "Assembler and linker" },
                   { name: "GCC 13.2.0", desc: "C/C++ compiler (2 passes)" },
@@ -303,9 +248,9 @@ export default function LFSLandingPage() {
                   { name: "Libstdc++", desc: "C++ Standard Library" },
                 ].map((item) => (
                   <div key={item.name} className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-green-400" />
-                    <span className="font-medium">{item.name}</span>
-                    <span className="text-gray-500">— {item.desc}</span>
+                    <div className="w-2 h-2 rounded-full bg-primary" />
+                    <span className="font-semibold text-foreground">{item.name}</span>
+                    <span className="text-muted-foreground">— {item.desc}</span>
                   </div>
                 ))}
               </div>
@@ -313,43 +258,38 @@ export default function LFSLandingPage() {
             <div className="relative">
               <TypingTerminal />
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ──────── Cloud Build CTA ──────── */}
       <section className="relative py-24 px-6 md:px-12 lg:px-20">
         <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-900/20 via-fuchsia-900/10 to-transparent p-10 md:p-14"
-          >
+          <div className="rounded-2xl border border-primary/30 bg-nav-button/40 p-8 md:p-14">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 mb-4">
-                  <Cloud className="w-4 h-4 text-violet-400" />
-                  <span className="text-sm text-violet-400">Cloud Pipeline</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary/10 border border-primary/20 mb-4">
+                  <Cloud className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-mono text-primary uppercase tracking-widest">Cloud Pipeline</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Build on Google Cloud
+                <h2 className="text-2xl md:text-4xl font-bold mb-4 uppercase tracking-tight">
+                  Build on <span className="text-primary">Google Cloud</span>
                 </h2>
-                <p className="text-gray-400 mb-6">
-                  Our automated pipeline compiles the entire LFS system on Google Cloud Run
-                  with 8 vCPUs and 32 GB RAM. Just click build and download the result.
+                <p className="text-sm md:text-base text-muted-foreground font-light mb-6">
+                  Our automated pipeline compiles the entire LFS system on cloud infrastructure
+                  with 8 vCPUs and 32 GB RAM. Click build and download your ready system.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <Link
                     href="/build"
-                    className="group px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-500/30 transition-all flex items-center gap-2"
+                    className="px-6 py-3 bg-primary text-primary-foreground rounded-sm font-semibold uppercase text-xs tracking-wider hover:brightness-110 transition-all flex items-center gap-2"
                   >
                     Start Cloud Build
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4" />
                   </Link>
                   <Link
                     href="/downloads"
-                    className="px-6 py-3 border border-white/10 rounded-xl font-semibold hover:bg-white/5 transition-all flex items-center gap-2"
+                    className="px-6 py-3 border border-white/10 rounded-sm font-semibold uppercase text-xs tracking-wider hover:bg-white/5 transition-all flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" />
                     Download Latest
@@ -365,82 +305,72 @@ export default function LFSLandingPage() {
                 ].map((s) => (
                   <div
                     key={s.label}
-                    className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.06]"
+                    className="p-4 rounded-xl bg-nav-button/40 border border-white/[0.08]"
                   >
-                    <div className="text-violet-400 mb-2">{s.icon}</div>
-                    <div className="font-bold">{s.label}</div>
-                    <div className="text-xs text-gray-500">{s.sub}</div>
+                    <div className="text-primary mb-2">{s.icon}</div>
+                    <div className="font-bold text-sm uppercase tracking-wider">{s.label}</div>
+                    <div className="text-xs text-muted-foreground font-light">{s.sub}</div>
                   </div>
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ──────── CTA ──────── */}
-      <section className="relative py-32 px-6 md:px-12 lg:px-20">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-cyan-900/20 p-12 text-center"
-          >
-            <div className="relative z-10">
-              <Rocket className="w-12 h-12 mx-auto mb-6 text-blue-400" />
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Ready to Build Your Own Linux?
-              </h2>
-              <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-                Start with our interactive learning modules or jump straight into the commands
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/learn"
-                  className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all"
-                >
-                  Start Learning
-                </Link>
-                <Link
-                  href="/commands"
-                  className="px-8 py-4 border border-white/20 rounded-xl font-semibold hover:bg-white/10 transition-all"
-                >
-                  View All Commands
-                </Link>
-                <Link
-                  href="/docs"
-                  className="px-8 py-4 border border-white/20 rounded-xl font-semibold hover:bg-white/10 transition-all flex items-center justify-center gap-2"
-                >
-                  <BookOpen className="w-5 h-5" />
-                  Documentation
-                </Link>
-              </div>
-            </div>
-          </motion.div>
+      <section className="relative py-28 px-6 md:px-12 lg:px-20 border-t border-white/[0.06]">
+        <div className="max-w-4xl mx-auto text-center">
+          <Rocket className="w-10 h-10 mx-auto mb-6 text-primary" />
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 uppercase tracking-tight">
+            Ready to Build Your <span className="text-primary">Custom Linux</span>?
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground font-light mb-8 max-w-2xl mx-auto">
+            Start with our interactive learning modules or jump straight into the command terminal
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/learn"
+              className="px-8 py-4 bg-primary text-primary-foreground rounded-sm font-semibold uppercase text-xs tracking-wider hover:brightness-110 transition-all"
+            >
+              Start Learning
+            </Link>
+            <Link
+              href="/commands"
+              className="px-8 py-4 border border-white/20 rounded-sm font-semibold uppercase text-xs tracking-wider hover:bg-white/10 transition-all"
+            >
+              View All Commands
+            </Link>
+            <Link
+              href="/docs"
+              className="px-8 py-4 border border-white/20 rounded-sm font-semibold uppercase text-xs tracking-wider hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+            >
+              <BookOpen className="w-4 h-4" />
+              Documentation
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* ──────── Footer ──────── */}
-      <footer className="relative z-20 py-12 px-6 border-t border-white/[0.06] bg-[#0a0a0f]/80">
+      <footer className="relative z-20 py-10 px-6 border-t border-white/[0.08] bg-hero-bg">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              <Terminal className="w-5 h-5 text-blue-400" />
-              Sam&apos;s LFS
+            <h3 className="text-lg font-bold uppercase tracking-wider flex items-center gap-2">
+              <Terminal className="w-4 h-4 text-primary" />
+              Linux From Scratch
             </h3>
-            <p className="text-gray-500 text-sm">Linux From Scratch 12.0 Learning Platform</p>
+            <p className="text-muted-foreground text-xs font-light mt-1">LFS 12.0 Interactive Learning Platform</p>
           </div>
-          <div className="flex gap-6 text-sm text-gray-400">
-            <Link href="/learn" className="hover:text-white transition-colors">Learn</Link>
-            <Link href="/commands" className="hover:text-white transition-colors">Commands</Link>
-            <Link href="/docs" className="hover:text-white transition-colors">Docs</Link>
-            <Link href="/downloads" className="hover:text-white transition-colors">Downloads</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+          <div className="flex gap-8 text-xs uppercase tracking-widest text-muted-foreground">
+            <Link href="/learn" className="hover:text-foreground transition-colors">Learn</Link>
+            <Link href="/commands" className="hover:text-foreground transition-colors">Commands</Link>
+            <Link href="/docs" className="hover:text-foreground transition-colors">Docs</Link>
+            <Link href="/downloads" className="hover:text-foreground transition-colors">Downloads</Link>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+

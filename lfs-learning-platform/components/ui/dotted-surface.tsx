@@ -28,7 +28,7 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0xffffff, 2000, 10000);
+    scene.fog = new THREE.Fog(0x141414, 2000, 10000);
 
     const camera = new THREE.PerspectiveCamera(
       60,
@@ -44,12 +44,11 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
     });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(scene.fog.color, 0);
+    renderer.setClearColor(0x000000, 0);
 
     containerRef.current.appendChild(renderer.domElement);
 
     // Create particles
-    const particles: THREE.Points[] = [];
     const positions: number[] = [];
     const colors: number[] = [];
 
@@ -64,11 +63,8 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 
         positions.push(x, y, z);
 
-        if (theme === 'dark') {
-          colors.push(200, 200, 200);
-        } else {
-          colors.push(0, 0, 0);
-        }
+        // Vivid terminal green glowing floats (0.0 to 1.0)
+        colors.push(0.1 + (ix / AMOUNTX) * 0.3, 0.85, 0.35 + (iy / AMOUNTY) * 0.3);
       }
     }
 
@@ -80,10 +76,10 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 
     // Create material
     const material = new THREE.PointsMaterial({
-      size: 8,
+      size: 10,
       vertexColors: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.9,
       sizeAttenuation: true,
     });
 

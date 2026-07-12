@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Sora, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/ui/navigation";
 import Providers from "@/components/providers/Providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -14,9 +15,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import InteractiveBlockWall from "@/components/ui/interactive-block-wall";
+
 export const metadata: Metadata = {
-  title: "Sam's LFS - Build Your Own Linux System",
-  description: "Master Linux by building it from the ground up. Learn kernel compilation, networking tools, and system development with hands-on experience.",
+  title: "Linux From Scratch - Build Your Own Custom Linux System",
+  description: "Master Linux by building it from the ground up. Learn kernel compilation, toolchain building, and system configuration with interactive experience.",
 };
 
 export default function RootLayout({
@@ -27,16 +30,26 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${sora.variable} ${geistMono.variable} font-sora antialiased bg-hero-bg text-foreground min-h-screen relative selection:bg-primary/30 selection:text-primary`}
         suppressHydrationWarning
       >
         <Providers>
-          <Navigation />
-          <div className="pt-16">
-            {children}
+          {/* Global Interactive 3D Block Wall Background */}
+          <div className="fixed inset-0 z-0 pointer-events-auto">
+            <InteractiveBlockWall />
+            <div className="absolute inset-0 bg-black/45 pointer-events-none" />
+          </div>
+
+          {/* Page Content */}
+          <div className="relative z-10 pointer-events-none [&_*]:pointer-events-auto">
+            <Navigation />
+            <main className="min-h-screen">
+              {children}
+            </main>
           </div>
         </Providers>
       </body>
     </html>
   );
 }
+

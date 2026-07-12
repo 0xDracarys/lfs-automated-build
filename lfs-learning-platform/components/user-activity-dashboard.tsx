@@ -146,55 +146,55 @@ export default function UserActivityDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
+    <div className="bg-transparent p-6 font-sora text-foreground">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-          <Activity className="w-8 h-8 text-blue-400" />
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 flex items-center gap-3 uppercase tracking-tight">
+          <Activity className="w-8 h-8 text-primary" />
           User Learning Activity Dashboard
         </h1>
-        <p className="text-slate-400">Real-time monitoring of student progress and engagement</p>
+        <p className="text-gray-400 font-light">Real-time monitoring of student progress and engagement across LFS modules</p>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-gradient-to-br from-blue-900/50 to-slate-900 border border-blue-700/50 rounded-lg p-6">
+        <div className="bg-black/65 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/50 transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-400 text-sm">Total Learning Time Today</p>
-              <p className="text-3xl font-bold text-blue-400 mt-2">{formatTime(stats.totalTimeToday)}</p>
+              <p className="text-gray-400 text-xs uppercase tracking-wider font-semibold">Learning Time Today</p>
+              <p className="text-3xl font-bold text-white mt-2">{formatTime(stats.totalTimeToday)}</p>
             </div>
-            <Clock className="w-12 h-12 text-blue-500/30" />
+            <Clock className="w-10 h-10 text-primary opacity-40" />
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-900/50 to-slate-900 border border-purple-700/50 rounded-lg p-6">
+        <div className="bg-black/65 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/50 transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-400 text-sm">Modules In Progress</p>
-              <p className="text-3xl font-bold text-purple-400 mt-2">{stats.modulesInProgress}</p>
+              <p className="text-gray-400 text-xs uppercase tracking-wider font-semibold">Modules In Progress</p>
+              <p className="text-3xl font-bold text-white mt-2">{stats.modulesInProgress}</p>
             </div>
-            <BookOpen className="w-12 h-12 text-purple-500/30" />
+            <BookOpen className="w-10 h-10 text-primary opacity-40" />
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-pink-900/50 to-slate-900 border border-pink-700/50 rounded-lg p-6">
+        <div className="bg-black/65 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/50 transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-400 text-sm">Lessons Completed</p>
-              <p className="text-3xl font-bold text-pink-400 mt-2">{stats.lessonsCompleted}</p>
+              <p className="text-gray-400 text-xs uppercase tracking-wider font-semibold">Lessons Completed</p>
+              <p className="text-3xl font-bold text-white mt-2">{stats.lessonsCompleted}</p>
             </div>
-            <CheckCircle2 className="w-12 h-12 text-pink-500/30" />
+            <CheckCircle2 className="w-10 h-10 text-primary opacity-40" />
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-900/50 to-slate-900 border border-amber-700/50 rounded-lg p-6">
+        <div className="bg-black/65 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/50 transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-400 text-sm">Current Streak</p>
-              <p className="text-3xl font-bold text-amber-400 mt-2">{stats.streak} days</p>
+              <p className="text-gray-400 text-xs uppercase tracking-wider font-semibold">Average Quiz Score</p>
+              <p className="text-3xl font-bold text-primary mt-2">{stats.averageScore}%</p>
             </div>
-            <Zap className="w-12 h-12 text-amber-500/30" />
+            <Award className="w-10 h-10 text-primary opacity-40" />
           </div>
         </div>
       </div>

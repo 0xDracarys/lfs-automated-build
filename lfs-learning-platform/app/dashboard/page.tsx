@@ -93,32 +93,32 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <main className="min-h-screen bg-black text-white relative overflow-hidden">
-        <DottedSurface className="opacity-20" />
-        
+      <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-20 font-sora">
         {/* Tab Navigation */}
-        <div className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+        <div className="border-b border-white/10 bg-black/60 backdrop-blur-xl relative z-10">
           <div className="container mx-auto px-4">
             <div className="flex gap-4">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`px-6 py-4 font-medium transition-all border-b-2 ${
+                className={`px-6 py-4 font-bold text-xs uppercase tracking-wider transition-all border-b-2 flex items-center gap-2 ${
                   activeTab === 'overview'
-                    ? 'border-green-500 text-green-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-400 hover:text-white'
                 }`}
               >
-                📊 Overview
+                <Target className="w-4 h-4" />
+                <span>Overview</span>
               </button>
               <button
                 onClick={() => setActiveTab('activity')}
-                className={`px-6 py-4 font-medium transition-all border-b-2 ${
+                className={`px-6 py-4 font-bold text-xs uppercase tracking-wider transition-all border-b-2 flex items-center gap-2 ${
                   activeTab === 'activity'
-                    ? 'border-blue-500 text-blue-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-400 hover:text-white'
                 }`}
               >
-                👥 User Activity
+                <Activity className="w-4 h-4" />
+                <span>User Activity</span>
               </button>
             </div>
           </div>
@@ -140,53 +140,53 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-6 backdrop-blur-sm hover:scale-105 transition-transform">
+            <div className="bg-black/65 border border-white/10 rounded-2xl p-6 backdrop-blur-xl hover:border-primary/50 transition-all">
               <div className="flex items-center justify-between mb-4">
-                <CheckCircle className="h-10 w-10 text-green-400" />
-                <div className="flex items-center gap-1 text-green-400 text-sm">
+                <CheckCircle className="h-10 w-10 text-primary" />
+                <div className="flex items-center gap-1 text-primary text-sm font-semibold">
                   <ArrowUp className="h-4 w-4" />
                   <span>+5</span>
                 </div>
               </div>
-              <div className="text-3xl font-bold mb-1">{stats?.progress?.lessonsCompleted || 0}</div>
-              <div className="text-sm text-gray-400">Lessons Completed</div>
+              <div className="text-3xl font-bold mb-1 text-white">{stats?.progress?.lessonsCompleted || 0}</div>
+              <div className="text-xs uppercase tracking-wider text-gray-400 font-semibold">Lessons Completed</div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-2xl p-6 backdrop-blur-sm hover:scale-105 transition-transform">
+            <div className="bg-black/65 border border-white/10 rounded-2xl p-6 backdrop-blur-xl hover:border-primary/50 transition-all">
               <div className="flex items-center justify-between mb-4">
-                <Terminal className="h-10 w-10 text-blue-400" />
-                <div className="flex items-center gap-1 text-blue-400 text-sm">
+                <Terminal className="h-10 w-10 text-primary" />
+                <div className="flex items-center gap-1 text-primary text-sm font-semibold">
                   <ArrowUp className="h-4 w-4" />
                   <span>+12</span>
                 </div>
               </div>
-              <div className="text-3xl font-bold mb-1">{stats?.progress?.commandsTried || 0}</div>
-              <div className="text-sm text-gray-400">Commands Tried</div>
+              <div className="text-3xl font-bold mb-1 text-white">{stats?.progress?.commandsTried || 0}</div>
+              <div className="text-xs uppercase tracking-wider text-gray-400 font-semibold">Commands Tried</div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-6 backdrop-blur-sm hover:scale-105 transition-transform">
+            <div className="bg-black/65 border border-white/10 rounded-2xl p-6 backdrop-blur-xl hover:border-primary/50 transition-all">
               <div className="flex items-center justify-between mb-4">
-                <Clock className="h-10 w-10 text-purple-400" />
-                <div className="flex items-center gap-1 text-purple-400 text-sm">
+                <Clock className="h-10 w-10 text-primary" />
+                <div className="flex items-center gap-1 text-primary text-sm font-semibold">
                   <ArrowUp className="h-4 w-4" />
                   <span>+2h</span>
                 </div>
               </div>
-              <div className="text-3xl font-bold mb-1">
+              <div className="text-3xl font-bold mb-1 text-white">
                 {Math.floor((stats?.progress?.totalTimeSpent || 0) / 60)}h {(stats?.progress?.totalTimeSpent || 0) % 60}m
               </div>
-              <div className="text-sm text-gray-400">Total Study Time</div>
+              <div className="text-xs uppercase tracking-wider text-gray-400 font-semibold">Total Study Time</div>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-6 backdrop-blur-sm hover:scale-105 transition-transform">
+            <div className="bg-black/65 border border-white/10 rounded-2xl p-6 backdrop-blur-xl hover:border-primary/50 transition-all">
               <div className="flex items-center justify-between mb-4">
-                <Flame className="h-10 w-10 text-orange-400" />
-                <div className="flex items-center gap-1 text-orange-400 text-sm">
+                <Flame className="h-10 w-10 text-primary" />
+                <div className="flex items-center gap-1 text-primary text-sm font-semibold">
                   <Calendar className="h-4 w-4" />
                 </div>
               </div>
-              <div className="text-3xl font-bold mb-1">{streak} days</div>
-              <div className="text-sm text-gray-400">Current Streak</div>
+              <div className="text-3xl font-bold mb-1 text-white">{streak} days</div>
+              <div className="text-xs uppercase tracking-wider text-gray-400 font-semibold">Current Streak</div>
             </div>
           </div>
 

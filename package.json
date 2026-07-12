@@ -7,13 +7,14 @@
     "node": "24.x"
   },
   "scripts": {
+    "dev": "cd lfs-learning-platform && npm run dev",
     "serve": "firebase emulators:start",
     "build": "npm run build:functions",
     "build:functions": "cd functions && npm run build",
     "deploy": "firebase deploy",
     "deploy:functions": "firebase deploy --only functions",
     "deploy:hosting": "firebase deploy --only hosting",
-    "start": "node functions/index.js"
+    "start": "cd lfs-learning-platform && npm run dev"
   },
   "keywords": [
     "lfs",

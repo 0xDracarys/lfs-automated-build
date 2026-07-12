@@ -10,15 +10,25 @@ export default function DocsPage() {
 
   const docCategories = [
     {
+      title: "Internal Engineering Notes",
+      icon: <FileText className="h-5 w-5 text-primary" />,
+      gradient: "from-green-500 to-emerald-500",
+      docs: [
+        { title: "System Architecture Overview", description: "Internal engineering notes on Sentinel AI LFS pipeline", slug: "system-overview" },
+        { title: "Cloud Build Orchestration", description: "Google Cloud Build container engineering & telemetry", slug: "cloud-build" },
+        { title: "Data Roles & Architecture", description: "Security roles, database rules, and important URLs", slug: "data-roles-architecture" }
+      ]
+    },
+    {
       title: "Getting Started",
-      icon: <Zap className="h-5 w-5" />,
+      icon: <Zap className="h-5 w-5 text-primary" />,
       gradient: "from-blue-500 to-cyan-500",
       docs: [
         { title: "Introduction to LFS", description: "What is Linux From Scratch and why build it?", slug: "introduction" },
         { title: "System Requirements", description: "Hardware and software prerequisites", slug: "requirements" },
         { title: "Preparation", description: "Setting up your build environment", slug: "preparation" },
         { title: "Quick Start Guide", description: "Build your first LFS system in 5 steps", slug: "quickstart" },
-        { title: "📖 How to Use Downloads", description: "Beginner-friendly guide for using LFS ISO files", slug: "usage" }
+        { title: "How to Use Downloads", description: "Beginner-friendly guide for using LFS ISO files", slug: "usage" }
       ]
     },
     {
@@ -95,12 +105,9 @@ export default function DocsPage() {
   })).filter(category => category.docs.length > 0);
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* Background */}
-        <DottedSurface className="opacity-20" />
-
-        {/* Hero Section */}
-        <section className="pt-12 pb-12 px-6">
+    <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-20 font-sora">
+      {/* Hero Section */}
+      <section className="pt-12 pb-12 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">

@@ -191,9 +191,9 @@ echo "Stage ${currentStage.id} complete!"
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+      <main className="min-h-screen bg-transparent text-white flex items-center justify-center font-sora">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
           <p className="text-gray-400">Loading wizard...</p>
         </div>
       </main>
@@ -201,7 +201,7 @@ echo "Stage ${currentStage.id} complete!"
   }
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
+    <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-20 font-sora">
       <DottedSurface className="opacity-20" />
 
       {/* Header */}

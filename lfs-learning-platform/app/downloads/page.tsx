@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   Download, HardDrive, Box, CheckCircle, FileArchive, Info,
   ExternalLink, Cloud, Server, Cpu, Shield, Terminal,
@@ -149,12 +149,12 @@ const downloads: DownloadCard[] = [
 
 /* ───────────────────────── helpers ───────────────────────── */
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
@@ -183,12 +183,10 @@ export default function DownloadsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0f] text-white selection:bg-violet-500/30">
+    <main className="min-h-screen bg-transparent text-white selection:bg-primary/30">
       {/* Ambient glow blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-violet-600/[0.07] blur-[120px]" />
-        <div className="absolute top-1/3 right-0 w-[500px] h-[500px] rounded-full bg-fuchsia-600/[0.05] blur-[100px]" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-600/[0.06] blur-[100px]" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/[0.07] blur-[120px]" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-20">

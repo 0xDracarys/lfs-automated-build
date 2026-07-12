@@ -9,7 +9,7 @@ export default function ContactPage() {
 
   if (state.succeeded) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+      <div className="min-h-screen bg-transparent text-white flex items-center justify-center px-6 pt-20 pb-20 font-sora">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -32,7 +32,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-20 px-6">
+    <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6 font-sora">
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

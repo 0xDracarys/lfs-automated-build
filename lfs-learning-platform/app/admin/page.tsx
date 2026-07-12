@@ -1,16 +1,12 @@
-import AdminDashboard from '@/components/admin-dashboard';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
+'use client';
 
-export const metadata = {
-  title: 'Admin Dashboard | LFS Learning Platform',
-  description: 'Monitor learning platform statistics and analytics',
-};
+import AdminDashboard from '@/components/admin-dashboard';
+import AdminRoute from '@/components/auth/AdminRoute';
 
 export default function AdminPage() {
-  // TODO: Add admin role check before rendering
   return (
-    <ProtectedRoute>
+    <AdminRoute>
       <AdminDashboard />
-    </ProtectedRoute>
+    </AdminRoute>
   );
 }

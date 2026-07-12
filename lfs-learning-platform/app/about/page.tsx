@@ -6,10 +6,7 @@ import { DottedSurface } from "@/components/ui/dotted-surface";
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
-        {/* Background */}
-        <DottedSurface className="opacity-20" />
-
+    <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-20 font-sora">
         {/* Hero Section */}
         <section className="pt-12 pb-20 px-6">
         <div className="container mx-auto max-w-4xl">

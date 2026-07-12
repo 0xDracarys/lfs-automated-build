@@ -183,8 +183,7 @@ Note: This is a simulated environment.`,
 
   return (
     <ProtectedRoute>
-      <main className="min-h-screen bg-black text-white relative overflow-hidden">
-        <DottedSurface className="opacity-20" />
+      <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-10 font-sora">
         
         <div className="relative z-10 pt-8 px-6 pb-6 h-[calc(100vh-64px)] flex flex-col">
           <div className="container mx-auto max-w-6xl flex-1 flex flex-col min-h-0">

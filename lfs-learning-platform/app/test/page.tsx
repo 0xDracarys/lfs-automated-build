@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getAuth } from 'firebase/auth';
+import { Terminal, CheckCircle2, Play, RefreshCw, AlertCircle } from 'lucide-react';
 
 export default function TestPage() {
   const [loading, setLoading] = useState(false);
@@ -25,19 +26,18 @@ export default function TestPage() {
       const functions = getFunctions();
       const testBuildComplete = httpsCallable(functions, 'testBuildComplete');
 
-      console.log('🧪 Starting test build...');
+      console.log('Starting test build...');
       const response = await testBuildComplete({
         config: {
-          kernelVersion: '6.4.12',
-          optimization: 'O2'
+          testMode: true,
+          timestamp: new Date().toISOString()
         }
       });
 
-      console.log('✅ Test completed:', response.data);
+      console.log('Test completed successfully:', response.data);
       setResult(response.data);
-
     } catch (err: any) {
-      console.error('❌ Test failed:', err);
+      console.error('Test failed:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -45,103 +45,83 @@ export default function TestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen bg-transparent pt-24 pb-20 px-4 font-sora text-white">
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            🧪 Cloud Build Testing
-          </h1>
-          <p className="text-gray-600 mb-8">
-            Test the complete build pipeline including email notifications (logs only)
+        <div className="bg-black/65 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-8">
+          <div className="flex items-center gap-3 mb-2">
+            <Terminal className="w-8 h-8 text-primary" />
+            <h1 className="text-3xl font-bold text-white uppercase tracking-tight">
+              Cloud Build Testing Pipeline
+            </h1>
+          </div>
+          <p className="text-gray-400 mb-8 font-light">
+            Test the complete build pipeline including event triggers and Firestore state changes
           </p>
 
           <div className="space-y-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h2 className="font-semibold text-blue-900 mb-2">What this tests:</h2>
-              <ul className="space-y-1 text-sm text-blue-800">
-                <li>✅ Firestore document creation</li>
-                <li>✅ Status updates (RUNNING → SUCCESS)</li>
-                <li>✅ Email notification trigger</li>
-                <li>✅ Download URL generation</li>
-                <li>✅ Cloud Functions logging</li>
+            <div className="bg-black/40 border border-white/10 rounded-xl p-5">
+              <h2 className="font-bold text-primary text-sm uppercase tracking-wider mb-3">Verification Checklist:</h2>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
+                  <span>Firestore document creation & logging</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
+                  <span>Status updates (RUNNING to SUCCESS)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
+                  <span>Event notification trigger validation</span>
+                </li>
               </ul>
             </div>
 
             <button
               onClick={runTest}
               disabled={loading}
-              className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition-colors ${
+              className={`w-full py-4 px-6 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                 loading 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-blue-600 hover:bg-blue-700'
+                  ? 'bg-white/10 text-gray-400 cursor-not-allowed border border-white/10' 
+                  : 'bg-primary text-black hover:bg-primary/90 shadow-lg shadow-primary/20'
               }`}
             >
-              {loading ? '🔄 Running Test...' : '▶️ Run Test Build'}
+              {loading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Running Test Pipeline...</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Run Test Build</span>
+                </>
+              )}
             </button>
 
             {result && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h3 className="font-semibold text-green-900 mb-2">✅ Test Successful!</h3>
-                <div className="text-sm text-green-800 space-y-2">
-                  <p><strong>Build ID:</strong> <code className="bg-green-100 px-2 py-1 rounded">{result.buildId}</code></p>
+              <div className="bg-black/60 border border-primary/40 rounded-xl p-5">
+                <div className="flex items-center gap-2 text-primary font-bold mb-2">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span>Test Successful!</span>
+                </div>
+                <div className="text-sm text-gray-300 space-y-2">
+                  <p><strong>Build ID:</strong> <code className="bg-primary/10 text-primary px-2 py-0.5 rounded font-mono text-xs">{result.buildId}</code></p>
                   <p><strong>Message:</strong> {result.message}</p>
-                  <p className="text-xs mt-3">{result.tip}</p>
-                  
-                  <div className="mt-4 pt-4 border-t border-green-300">
-                    <p className="font-semibold mb-2">Next Steps:</p>
-                    <ol className="list-decimal list-inside space-y-1 text-xs">
-                      <li>Open <a href="https://console.firebase.google.com/project/alfs-bd1e0/functions/logs" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Firebase Console Logs</a></li>
-                      <li>Look for "[TEST MODE] Email notification triggered"</li>
-                      <li>Check the email content in the logs</li>
-                      <li>View build in <a href="/dashboard" className="text-blue-600 underline">Dashboard</a></li>
-                    </ol>
-                  </div>
+                  <p className="text-xs text-gray-400 mt-2">{result.tip}</p>
                 </div>
               </div>
             )}
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h3 className="font-semibold text-red-900 mb-2">❌ Test Failed</h3>
-                <p className="text-sm text-red-800">{error}</p>
-                {error.includes('sign in') && (
-                  <p className="text-xs text-red-700 mt-2">
-                    Please <a href="/auth/signin" className="underline">sign in</a> first.
-                  </p>
-                )}
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-5">
+                <div className="flex items-center gap-2 text-red-400 font-bold mb-2">
+                  <AlertCircle className="w-5 h-5" />
+                  <span>Test Error</span>
+                </div>
+                <p className="text-sm text-red-300">{error}</p>
               </div>
             )}
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-900 mb-2">📋 Testing Checklist:</h3>
-              <div className="space-y-2 text-sm text-gray-700">
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-2" disabled checked />
-                  <span>Email function logs to console (not sent)</span>
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-2" disabled checked />
-                  <span>Creates Firestore build document</span>
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-2" disabled checked />
-                  <span>Updates status RUNNING → SUCCESS</span>
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-2" disabled checked />
-                  <span>Generates mock download URLs</span>
-                </label>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h3 className="font-semibold text-yellow-900 mb-2">⚠️ Note:</h3>
-              <p className="text-sm text-yellow-800">
-                Email sending is in TEST MODE - emails will be logged to Cloud Functions console 
-                but not actually sent. To enable real emails, uncomment the code in 
-                <code className="bg-yellow-100 px-2 py-1 rounded mx-1">sendBuildCompleteEmail</code> function.
-              </p>
-            </div>
           </div>
         </div>
       </div>

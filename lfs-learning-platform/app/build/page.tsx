@@ -69,9 +69,7 @@ export default function BuildPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
-      <DottedSurface className="opacity-20" />
-
+    <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-24 pb-20 font-sora">
       <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
         {/* Header */}
         <div className="max-w-4xl mx-auto text-center mb-12">

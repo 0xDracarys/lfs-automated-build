@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -16,6 +16,8 @@
     "@google-cloud/vertexai": "^1.10.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
+    "@splinetool/react-spline": "^4.1.0",
+    "@splinetool/runtime": "^1.12.98",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",

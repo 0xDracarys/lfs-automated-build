@@ -10,9 +10,10 @@ if (!admin.apps.length) {
   try {
     // Try to use service account credentials from environment
     const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-    const serviceAccount = serviceAccountStr
-      ? JSON.parse(serviceAccountStr.replace(/^\uFEFF/, '').trim())
-      : undefined;
+    const cleanStr = serviceAccountStr 
+        ? serviceAccountStr.replace(/^\uFEFF/, '').trim().replace(/^['"]|['"]$/g, '')
+        : undefined;
+    const serviceAccount = cleanStr ? JSON.parse(cleanStr) : undefined;
 
     if (serviceAccount && serviceAccount.private_key) {
       serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');

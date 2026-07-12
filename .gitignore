@@ -1,51 +1,56 @@
-# Docker build
-*.log
+# OS Files
 .DS_Store
-node_modules/
-.env
-.env.local
+Thumbs.db
 *.swp
 *.swo
 *~
 
-# Firebase
-.firebase/
+# Package managers
+node_modules/
+package-lock.json.local
+
+# Logs
+*.log
 firebase-debug.log
 firebase-functions-debug.log
-.firebaserc
 
-# Build outputs
-/build/
-/dist/
+# Build & Cache directories
 .next/
 out/
+dist/
+/build/
+.netlify/
+.vercel/
 
-# IDEs
+# Firebase configuration
+.firebase/
+.firebaserc
+
+# Large binary / ISO files
+*.tar.*
+*.iso
+*.zip
+ngrok
+ngrok-*.tgz
+
+# LFS Build specific directories
+/lfs/
+/tools/
+/sources/
+lfs-output/
+
+# IDE configurations
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
 
-# OS
-.DS_Store
-Thumbs.db
-
-# LFS build artifacts
-/lfs/
-/tools/
-/sources/
-*.tar.*
-*.iso
-*.tar.gz
-*.tar.xz
-*.zip
-
-# Large binary files
-lfs-12.0-latest.iso
-lfs-linux.iso
-lfs-toolchain-*.tar.gz
-ngrok
-ngrok-*.tgz
-
-# Local Netlify folder
-.netlify
+# Secrets & Local Configurations (DO NOT COMMIT)
+.env*
+.env.local
+.env.production.local
+.mcp.json
+.gemini/
+functions/service-account.json
+service-account.json
+credentials.json

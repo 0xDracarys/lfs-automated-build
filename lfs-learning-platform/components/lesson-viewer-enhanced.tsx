@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Clock, BookOpen, Award, MessageSquare, Zap, Lightbulb, HelpCircle, CheckCircle2 } from 'lucide-react';
-import { Lesson, FAQ, InterestingFact, FunFact, QuizQuestion } from '@/lib/types/learning';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Clock, BookOpen, Award, MessageSquare, Zap, Lightbulb, 
+  HelpCircle, CheckCircle2, Terminal, Code2, Copy, Check, ChevronRight 
+} from 'lucide-react';
+import { Lesson } from '@/lib/types/learning';
 
 interface EnhancedLessonViewerProps {
   lesson: Lesson;
@@ -23,6 +25,13 @@ export default function EnhancedLessonViewer({
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: number }>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedCode(text);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
 
   const handleQuizAnswer = (questionId: string, answerIndex: number) => {
     if (!quizSubmitted) {
@@ -47,140 +56,173 @@ export default function EnhancedLessonViewer({
   const answeredCount = Object.keys(selectedAnswers).length;
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      {/* Lesson Header - Enhanced */}
-      <div className="mb-8 p-8 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-2xl text-white shadow-xl">
-        <div className="flex items-start justify-between mb-4">
+    <div className="w-full max-w-6xl mx-auto font-sora text-foreground">
+      {/* Lesson Hero Card */}
+      <div className="mb-8 p-8 bg-black/70 backdrop-blur-xl border border-primary/40 rounded-2xl shadow-xl relative overflow-hidden">
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-6">
           <div className="flex-1">
-            <h1 className="text-4xl font-bold mb-2">{lesson.title}</h1>
-            <p className="text-blue-50 text-lg">{lesson.description}</p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs uppercase tracking-wider font-semibold mb-3">
+              <Terminal className="w-3.5 h-3.5" />
+              <span>Interactive LFS Lesson</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 uppercase tracking-tight">{lesson.title}</h1>
+            <p className="text-gray-300 text-base sm:text-lg font-light leading-relaxed">{lesson.description}</p>
           </div>
           <button
             onClick={onAIChatOpen}
-            className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg flex items-center gap-2 text-white transition-all"
+            className="px-5 py-3 bg-primary/10 border border-primary/30 hover:bg-primary text-primary hover:text-black font-bold text-xs uppercase tracking-wider rounded-xl flex items-center gap-2 transition-all shrink-0"
           >
-            <MessageSquare className="w-5 h-5" />
-            <span>Ask AI</span>
+            <MessageSquare className="w-4 h-4" />
+            <span>Ask AI Assistant</span>
           </button>
         </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-          <div className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded-lg">
-            <div className="flex items-center gap-2 text-blue-100 text-sm">
-              <Clock className="w-4 h-4" />
+
+        {/* Lesson Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-white/10">
+          <div className="bg-black/60 border border-white/10 px-4 py-3 rounded-xl">
+            <div className="flex items-center gap-2 text-gray-400 text-xs uppercase tracking-wider">
+              <Clock className="w-4 h-4 text-primary" />
               Duration
             </div>
-            <p className="text-2xl font-bold text-white mt-1">{lesson.duration}m</p>
+            <p className="text-2xl font-bold text-white mt-1">{lesson.duration} mins</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded-lg">
-            <div className="flex items-center gap-2 text-blue-100 text-sm">
-              <HelpCircle className="w-4 h-4" />
+          <div className="bg-black/60 border border-white/10 px-4 py-3 rounded-xl">
+            <div className="flex items-center gap-2 text-gray-400 text-xs uppercase tracking-wider">
+              <HelpCircle className="w-4 h-4 text-primary" />
               FAQs
             </div>
             <p className="text-2xl font-bold text-white mt-1">{lesson.faqs.length}</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded-lg">
-            <div className="flex items-center gap-2 text-blue-100 text-sm">
-              <Lightbulb className="w-4 h-4" />
-              Fun Facts
+          <div className="bg-black/60 border border-white/10 px-4 py-3 rounded-xl">
+            <div className="flex items-center gap-2 text-gray-400 text-xs uppercase tracking-wider">
+              <Lightbulb className="w-4 h-4 text-primary" />
+              Key Facts
             </div>
             <p className="text-2xl font-bold text-white mt-1">{lesson.funFacts.length}</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded-lg">
-            <div className="flex items-center gap-2 text-blue-100 text-sm">
-              <Award className="w-4 h-4" />
-              Quiz
+          <div className="bg-black/60 border border-white/10 px-4 py-3 rounded-xl">
+            <div className="flex items-center gap-2 text-gray-400 text-xs uppercase tracking-wider">
+              <Award className="w-4 h-4 text-primary" />
+              Quiz Questions
             </div>
             <p className="text-2xl font-bold text-white mt-1">{lesson.quiz.length}</p>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      {/* Interactive Tabs */}
+      <div className="flex flex-wrap gap-2 mb-8">
         {(['content', 'faqs', 'facts', 'quiz'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
               activeTab === tab
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                ? 'bg-primary text-black shadow-lg shadow-primary/20'
+                : 'bg-black/60 border border-white/10 text-gray-300 hover:border-primary/50'
             }`}
           >
-            {tab === 'content' && 'Content'}
-            {tab === 'faqs' && `FAQs (${lesson.faqs.length})`}
-            {tab === 'facts' && `Fun Facts (${lesson.funFacts.length})`}
-            {tab === 'quiz' && `Quiz (${lesson.quiz.length})`}
+            {tab === 'content' && '📖 Lesson Content'}
+            {tab === 'faqs' && `❓ FAQs (${lesson.faqs.length})`}
+            {tab === 'facts' && `💡 Quick Facts (${lesson.funFacts.length})`}
+            {tab === 'quiz' && `🏆 Knowledge Quiz (${lesson.quiz.length})`}
           </button>
         ))}
       </div>
 
-      {/* Content Tab */}
+      {/* Main Lesson Content Tab */}
       {activeTab === 'content' && (
         <div className="space-y-6">
-          <Card className="bg-slate-800 border-slate-700">
-            <CardContent className="pt-6">
-              <div className="prose prose-invert max-w-none">
-                <div 
-                  className="space-y-6 text-slate-200 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: lesson.content }}
-                />
-
-                {/* Code Examples */}
-                {lesson.codeExamples && lesson.codeExamples.length > 0 && (
-                  <div className="mt-8 space-y-6">
-                    <h2 className="text-2xl font-bold text-white mt-8">Code Examples</h2>
-                    {lesson.codeExamples.map((example, idx) => (
-                      <div key={idx} className="bg-slate-900 rounded-lg border border-slate-600 overflow-hidden">
-                        <div className="bg-slate-950 px-4 py-3 border-b border-slate-600">
-                          <h4 className="font-mono text-sm text-green-400">{example.title}</h4>
-                        </div>
-                        <pre className="p-4 overflow-x-auto">
-                          <code className="text-sm text-green-300">{example.code}</code>
-                        </pre>
-                      </div>
-                    ))}
-                  </div>
+          <Card className="bg-black/65 backdrop-blur-xl border-white/10 text-white">
+            <CardHeader className="border-b border-white/10 pb-6">
+              <CardTitle className="text-2xl font-bold uppercase tracking-tight flex items-center gap-3">
+                <BookOpen className="w-6 h-6 text-primary" />
+                Lesson Walkthrough & Theory
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed space-y-4">
+                {typeof lesson.content === 'string' ? (
+                  <p>{lesson.content}</p>
+                ) : (
+                  lesson.content
                 )}
               </div>
+
+              {/* Interactive Code / Command Examples */}
+              {lesson.codeExamples && lesson.codeExamples.length > 0 && (
+                <div className="mt-8 space-y-4">
+                  <h3 className="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    <Code2 className="w-5 h-5 text-primary" />
+                    Interactive Command Reference
+                  </h3>
+                  {lesson.codeExamples.map((example, idx) => (
+                    <div key={idx} className="bg-black/80 rounded-xl border border-white/10 overflow-hidden">
+                      <div className="bg-black/60 px-4 py-3 border-b border-white/10 flex items-center justify-between">
+                        <span className="font-mono text-xs text-primary font-semibold">{example.title}</span>
+                        <button
+                          onClick={() => handleCopy(example.code)}
+                          className="px-2.5 py-1 rounded bg-white/5 hover:bg-primary/20 text-gray-300 hover:text-primary transition-colors flex items-center gap-1.5 text-xs font-mono"
+                        >
+                          {copiedCode === example.code ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-primary" />
+                              <span className="text-primary">COPIED</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>COPY</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <pre className="p-4 overflow-x-auto font-mono text-xs sm:text-sm text-gray-200">
+                        <code>{example.code}</code>
+                      </pre>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
+
+          {/* Mark Complete Action */}
+          <div className="flex justify-end">
+            <button
+              onClick={onComplete}
+              className="px-8 py-4 rounded-xl bg-primary text-black font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center gap-2"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Mark Lesson Complete</span>
+            </button>
+          </div>
         </div>
       )}
 
-      {/* FAQs Tab - Interactive Q&A Format */}
+      {/* FAQs Tab */}
       {activeTab === 'faqs' && (
         <div className="space-y-3">
-          <div className="text-sm text-slate-400 mb-4">
-            {lesson.faqs.length} frequently asked questions
-          </div>
           {lesson.faqs.map((faq, idx) => (
             <div
               key={idx}
-              className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden hover:border-slate-600 transition-colors"
+              className="bg-black/65 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden hover:border-primary/40 transition-colors"
             >
               <button
                 onClick={() => setExpandedFAQ(expandedFAQ === idx.toString() ? null : idx.toString())}
-                className="w-full p-4 text-left flex items-start justify-between gap-4 hover:bg-slate-700/50 transition-colors"
+                className="w-full p-5 text-left flex items-start justify-between gap-4 hover:bg-white/5 transition-colors"
               >
-                <div className="flex items-start gap-3 flex-1">
-                  <HelpCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-white font-medium">{faq.question}</span>
+                <div className="flex items-start gap-3.5">
+                  <HelpCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <span className="text-white font-semibold">{faq.question}</span>
                 </div>
-                <span className="text-slate-400">{expandedFAQ === idx.toString() ? '−' : '+'}</span>
+                <span className="text-primary font-bold">{expandedFAQ === idx.toString() ? '−' : '+'}</span>
               </button>
-              
+
               {expandedFAQ === idx.toString() && (
-                <div className="px-4 pb-4 pt-2 border-t border-slate-700 bg-slate-900/50">
-                  <div className="text-slate-200 leading-relaxed ml-8">{faq.answer}</div>
-                  <button
-                    onClick={onAIChatOpen}
-                    className="mt-3 text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    Ask AI more about this
-                  </button>
+                <div className="px-5 pb-5 pt-3 border-t border-white/10 bg-black/40 text-gray-300 text-sm leading-relaxed">
+                  <p>{faq.answer}</p>
                 </div>
               )}
             </div>
@@ -188,44 +230,35 @@ export default function EnhancedLessonViewer({
         </div>
       )}
 
-      {/* Fun Facts Tab */}
+      {/* Facts Tab */}
       {activeTab === 'facts' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {lesson.funFacts.map((fact, idx) => (
-            <Card key={idx} className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700 hover:border-slate-600 transition-colors">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-3">
-                  <Lightbulb className="w-6 h-6 text-yellow-500 flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="text-slate-200 leading-relaxed">{typeof fact === 'string' ? fact : fact.fact}</p>
-                    <button
-                      onClick={onAIChatOpen}
-                      className="mt-3 text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                    >
-                      <MessageSquare className="w-3 h-3" />
-                      Learn more
-                    </button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div key={idx} className="bg-black/65 backdrop-blur-xl border border-white/10 hover:border-primary/40 rounded-xl p-6 transition-all">
+              <div className="flex items-start gap-3.5">
+                <Lightbulb className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  {typeof fact === 'string' ? fact : fact.fact}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       )}
 
-      {/* Quiz Tab - Interactive Q&A Format */}
+      {/* Quiz Tab */}
       {activeTab === 'quiz' && (
         <div className="space-y-6">
-          <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4 flex items-center justify-between">
+          <div className="bg-black/65 backdrop-blur-xl border border-primary/30 rounded-xl p-5 flex items-center justify-between">
             <div>
-              <p className="text-blue-200 font-medium">Question Progress</p>
-              <p className="text-sm text-blue-300">{answeredCount} of {lesson.quiz.length} answered</p>
+              <p className="text-primary font-bold text-sm uppercase tracking-wider">Quiz Progress</p>
+              <p className="text-xs text-gray-300 mt-0.5">
+                {answeredCount} of {lesson.quiz.length} questions answered
+              </p>
             </div>
-            <div className="text-right">
-              {quizSubmitted && (
-                <div className="text-2xl font-bold text-blue-400">{quizScore}%</div>
-              )}
-            </div>
+            {quizSubmitted && (
+              <div className="text-3xl font-extrabold text-primary">{quizScore}%</div>
+            )}
           </div>
 
           {lesson.quiz.map((question, qIdx) => {
@@ -233,95 +266,44 @@ export default function EnhancedLessonViewer({
             const isCorrect = isAnswered && selectedAnswers[question.id] === question.correctAnswer;
 
             return (
-              <Card key={qIdx} className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors">
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-700 text-slate-300 font-semibold flex-shrink-0">
-                      Q{qIdx + 1}
-                    </div>
-                    <p className="text-white font-medium flex-1">{question.question}</p>
+              <div key={qIdx} className="bg-black/65 backdrop-blur-xl border border-white/10 rounded-xl p-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                    Q{qIdx + 1}
                   </div>
+                  <p className="text-white font-bold text-base flex-1">{question.question}</p>
+                </div>
 
-                  <div className="space-y-2 ml-11">
-                    {question.options.map((option, optIdx) => {
-                      const isSelected = selectedAnswers[question.id] === optIdx;
-                      const showCorrect = quizSubmitted && optIdx === question.correctAnswer;
-                      const showIncorrect = quizSubmitted && isSelected && !isCorrect;
-
-                      return (
-                        <button
-                          key={optIdx}
-                          onClick={() => handleQuizAnswer(question.id, optIdx)}
-                          disabled={quizSubmitted}
-                          className={`w-full p-3 rounded-lg text-left transition-all flex items-center gap-3 ${
-                            showCorrect
-                              ? 'bg-green-900/50 border border-green-600 text-green-200'
-                              : showIncorrect
-                              ? 'bg-red-900/50 border border-red-600 text-red-200'
-                              : isSelected
-                              ? 'bg-blue-600 border border-blue-500 text-white'
-                              : 'bg-slate-700 border border-slate-600 text-slate-200 hover:bg-slate-600'
-                          }`}
-                        >
-                          <div
-                            className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                              isSelected ? 'border-current bg-current' : 'border-current'
-                            }`}
-                          >
-                            {isSelected && <CheckCircle2 className="w-4 h-4 text-inherit" />}
-                          </div>
-                          <span>{option}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {quizSubmitted && isAnswered && (
-                    <div className="mt-3 ml-11 text-sm">
-                      {isCorrect ? (
-                        <p className="text-green-300">✓ Correct!</p>
-                      ) : (
-                        <div>
-                          <p className="text-red-300">✗ Incorrect</p>
-                          <p className="text-slate-400 mt-1">Correct answer: {question.options[question.correctAnswer]}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                <div className="space-y-2.5 ml-11">
+                  {question.options.map((option, optIdx) => {
+                    const isSelected = selectedAnswers[question.id] === optIdx;
+                    return (
+                      <button
+                        key={optIdx}
+                        onClick={() => handleQuizAnswer(question.id, optIdx)}
+                        className={`w-full text-left p-3.5 rounded-xl border text-sm transition-all flex items-center justify-between ${
+                          isSelected
+                            ? 'bg-primary/20 border-primary text-white font-semibold'
+                            : 'bg-black/40 border-white/10 text-gray-300 hover:border-white/30'
+                        }`}
+                      >
+                        <span>{option}</span>
+                        {isSelected && <CheckCircle2 className="w-4 h-4 text-primary" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
 
-          <div className="flex gap-3">
-            {!quizSubmitted ? (
-              <button
-                onClick={() => setQuizSubmitted(true)}
-                disabled={answeredCount === 0}
-                className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-colors"
-              >
-                Submit Quiz ({answeredCount}/{lesson.quiz.length})
-              </button>
-            ) : (
-              <div className="flex-1 grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => {
-                    setSelectedAnswers({});
-                    setQuizSubmitted(false);
-                  }}
-                  className="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 rounded-lg transition-colors"
-                >
-                  Retake
-                </button>
-                <button
-                  onClick={onComplete}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  <CheckCircle2 className="w-5 h-5" />
-                  Done
-                </button>
-              </div>
-            )}
+          <div className="flex justify-end pt-4">
+            <button
+              onClick={() => setQuizSubmitted(true)}
+              className="px-8 py-3.5 rounded-xl bg-primary text-black font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all"
+            >
+              Submit Quiz Answers
+            </button>
           </div>
         </div>
       )}

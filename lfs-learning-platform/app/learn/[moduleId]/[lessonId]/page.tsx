@@ -102,12 +102,12 @@ export default function LessonPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 py-8">
+      <div className="min-h-screen bg-transparent pt-24 pb-20 font-sora">
         {/* Breadcrumb */}
         <div className="max-w-6xl mx-auto px-6 mb-6">
           <Link
-            href={`/learn/${moduleId}`}
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+            href={`/learn`}
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors text-sm font-semibold uppercase tracking-wider"
           >
             <ChevronLeft className="w-5 h-5" />
             Back to {module?.title}

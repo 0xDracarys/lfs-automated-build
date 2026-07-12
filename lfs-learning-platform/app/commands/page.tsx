@@ -410,8 +410,7 @@ export default function CommandsPage() {
 
   return (
     <ProtectedRoute>
-      <main className="min-h-screen bg-black text-white relative overflow-hidden">
-        <DottedSurface className="opacity-20" />
+      <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-20 font-sora">
       
         {/* Hero Section */}
         <section className="relative pt-32 pb-12 px-6">

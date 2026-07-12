@@ -75,26 +75,24 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
-      <DottedSurface className="opacity-20" />
-        
+    <main className="min-h-screen bg-transparent text-white relative overflow-hidden font-sora">
         <div className="relative z-10 flex items-center justify-center min-h-screen px-6 py-12">
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold mb-2">
-              <Terminal className="h-8 w-8 text-green-400" />
-              <span>Sam's LFS</span>
+              <Terminal className="h-8 w-8 text-primary" />
+              <span>LFS Platform</span>
             </Link>
-            <p className="text-gray-400">Welcome back! Log in to continue</p>
+            <p className="text-gray-400 font-light">Welcome back! Log in to continue</p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8">
-            <h1 className="text-3xl font-bold mb-6 text-center">Log In</h1>
+          <div className="bg-black/65 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
+            <h1 className="text-2xl font-bold mb-6 text-center uppercase tracking-tight">Log In</h1>
 
             {error && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
                 {error}
               </div>
             )}
@@ -102,17 +100,17 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
                   <input
                     type="email"
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-500/20 transition-colors"
+                    className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors text-white placeholder:text-gray-500"
                     placeholder="you@example.com"
                     required
                   />
@@ -121,17 +119,17 @@ export default function LoginPage() {
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium mb-2">
+                <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
                   <input
                     type="password"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-500/20 transition-colors"
+                    className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors text-white placeholder:text-gray-500"
                     placeholder="••••••••"
                     required
                   />
@@ -142,7 +140,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-primary text-black rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -160,8 +158,8 @@ export default function LoginPage() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/10"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-black/50 text-gray-400">Or continue with</span>
+              <div className="relative flex justify-center text-xs uppercase tracking-wider">
+                <span className="px-4 bg-black/65 text-gray-400">Or continue with</span>
               </div>
             </div>
 
@@ -169,7 +167,7 @@ export default function LoginPage() {
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="w-full py-3 border border-white/10 rounded-lg font-semibold hover:bg-white/5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              className="w-full py-3 border border-white/10 rounded-xl font-semibold hover:bg-white/5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-sm"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -183,7 +181,7 @@ export default function LoginPage() {
             {/* Signup Link */}
             <p className="text-center text-sm text-gray-400 mt-6">
               Do not have an account?{" "}
-              <Link href="/auth/signup" className="text-green-400 hover:text-green-300 font-semibold">
+              <Link href="/auth/signup" className="text-primary hover:underline font-semibold">
                 Sign up
               </Link>
             </p>
