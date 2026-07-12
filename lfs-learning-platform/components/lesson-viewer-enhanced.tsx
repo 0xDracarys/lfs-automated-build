@@ -142,13 +142,117 @@ export default function EnhancedLessonViewer({
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
-              <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed space-y-4">
+              {/* Lesson Content with rich HTML rendering */}
+              <div className="space-y-4">
                 {typeof lesson.content === 'string' ? (
-                  <p>{lesson.content}</p>
+                  <div
+                    className="lesson-prose"
+                    dangerouslySetInnerHTML={{ __html: lesson.content }}
+                    style={{
+                      color: '#d1d5db',
+                      lineHeight: '1.85',
+                      fontSize: '0.97rem',
+                    }}
+                  />
                 ) : (
                   lesson.content
                 )}
               </div>
+              <style>{`
+                .lesson-prose h1, .lesson-prose h2, .lesson-prose h3, .lesson-prose h4 {
+                  color: #ffffff;
+                  font-weight: 700;
+                  letter-spacing: -0.01em;
+                  margin-top: 2rem;
+                  margin-bottom: 0.75rem;
+                  padding-bottom: 0.4rem;
+                  border-bottom: 1px solid rgba(74,222,128,0.15);
+                }
+                .lesson-prose h2 {
+                  font-size: 1.25rem;
+                  color: #4ade80;
+                  text-transform: uppercase;
+                  letter-spacing: 0.04em;
+                }
+                .lesson-prose h3 {
+                  font-size: 1.05rem;
+                  color: #86efac;
+                }
+                .lesson-prose p {
+                  margin-bottom: 1rem;
+                  color: #d1d5db;
+                }
+                .lesson-prose ul, .lesson-prose ol {
+                  margin: 0.75rem 0 1rem 1.5rem;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 0.4rem;
+                }
+                .lesson-prose ul { list-style: none; padding-left: 0; margin-left: 0; }
+                .lesson-prose ul li {
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 0.6rem;
+                  color: #d1d5db;
+                  padding: 0.5rem 0.75rem;
+                  background: rgba(74,222,128,0.04);
+                  border: 1px solid rgba(74,222,128,0.1);
+                  border-radius: 0.5rem;
+                }
+                .lesson-prose ul li::before {
+                  content: '▶';
+                  color: #4ade80;
+                  font-size: 0.6rem;
+                  margin-top: 0.35rem;
+                  flex-shrink: 0;
+                }
+                .lesson-prose ol { list-style: decimal; padding-left: 1.5rem; }
+                .lesson-prose ol li { color: #d1d5db; padding: 0.2rem 0; }
+                .lesson-prose strong {
+                  color: #4ade80;
+                  font-weight: 700;
+                }
+                .lesson-prose em { color: #86efac; font-style: italic; }
+                .lesson-prose code {
+                  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+                  background: rgba(0,0,0,0.5);
+                  color: #4ade80;
+                  padding: 0.15em 0.45em;
+                  border-radius: 0.35rem;
+                  font-size: 0.85em;
+                  border: 1px solid rgba(74,222,128,0.2);
+                }
+                .lesson-prose pre {
+                  background: #0a0a0a;
+                  border: 1px solid rgba(74,222,128,0.2);
+                  border-radius: 0.75rem;
+                  padding: 1.25rem 1.5rem;
+                  overflow-x: auto;
+                  margin: 1.25rem 0;
+                }
+                .lesson-prose pre code {
+                  background: none;
+                  border: none;
+                  padding: 0;
+                  color: #86efac;
+                  font-size: 0.88rem;
+                }
+                .lesson-prose a {
+                  color: #4ade80;
+                  text-decoration: underline;
+                  text-underline-offset: 3px;
+                }
+                .lesson-prose blockquote {
+                  border-left: 3px solid #4ade80;
+                  margin: 1.25rem 0;
+                  padding: 0.75rem 1.25rem;
+                  background: rgba(74,222,128,0.05);
+                  border-radius: 0 0.5rem 0.5rem 0;
+                  color: #9ca3af;
+                  font-style: italic;
+                }
+              `}</style>
+
 
               {/* Interactive Code / Command Examples */}
               {lesson.codeExamples && lesson.codeExamples.length > 0 && (
