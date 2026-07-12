@@ -5,8 +5,8 @@ services:
     plan: free
     region: oregon
     rootDir: lfs-learning-platform
-    buildCommand: npm install --include=dev && npm run build && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static
-    startCommand: node .next/standalone/server.js
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm run start
     envVars:
       - key: NODE_ENV
         value: production
