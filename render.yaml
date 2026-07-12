@@ -2,6 +2,7 @@ services:
   - type: web
     name: lfs-learning-platform
     runtime: node
+    plan: free
     region: oregon
     rootDir: lfs-learning-platform
     buildCommand: npm install && npm run build
