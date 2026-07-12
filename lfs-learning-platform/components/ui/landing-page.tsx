@@ -117,75 +117,70 @@ import InteractiveBlockWall from "@/components/ui/interactive-block-wall";
 export default function LFSLandingPage() {
   return (
     <div className="relative w-full min-h-screen text-foreground font-sora">
-      {/* ──────── Hero Section (Full-screen, content anchored bottom-left) ──────── */}
+      {/* ──────── Hero Section ──────── */}
       <section className="relative min-h-screen flex items-end overflow-hidden">
-        {/* Dark overlay so bottom-left content remains legible while allowing mouse interaction */}
         <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-transparent to-transparent z-[1] pointer-events-none" />
 
-        {/* Content container anchored bottom-left */}
-        <div className="relative z-10 pointer-events-none w-full max-w-[90%] sm:max-w-md lg:max-w-3xl px-6 md:px-12 pb-14 md:pb-16 pt-32">
-          {/* Heading */}
+        {/* Content — bottom-anchored, full-width on mobile */}
+        <div className="relative z-10 pointer-events-none w-full px-5 sm:px-8 md:px-12 pb-10 sm:pb-14 md:pb-16 pt-28 max-w-full lg:max-w-3xl">
           <h1
-            className="opacity-0 animate-fade-up text-[clamp(2.75rem,7vw,5.5rem)] font-bold leading-[1.05] tracking-[-0.05em] text-foreground mb-2 md:mb-4 uppercase"
+            className="opacity-0 animate-fade-up text-[clamp(2.2rem,8vw,5.5rem)] font-bold leading-[1.05] tracking-[-0.04em] text-foreground mb-2 md:mb-4 uppercase"
             style={{ animationDelay: "0.2s" }}
           >
             LINUX FROM <span className="text-primary">SCRATCH</span>
           </h1>
 
-          {/* Subheading */}
           <p
-            className="opacity-0 animate-fade-up text-foreground/80 text-[clamp(1.125rem,2.25vw,1.75rem)] font-light mb-3 md:mb-6"
+            className="opacity-0 animate-fade-up text-foreground/80 text-[clamp(1rem,2.5vw,1.75rem)] font-light mb-3 md:mb-6"
             style={{ animationDelay: "0.4s" }}
           >
             Build your own custom Linux system from source code.
           </p>
 
-          {/* Description */}
           <p
-            className="opacity-0 animate-fade-up text-muted-foreground text-[clamp(0.875rem,1.4vw,1.15rem)] font-light mb-6 md:mb-8 max-w-2xl"
+            className="opacity-0 animate-fade-up text-muted-foreground text-[clamp(0.8rem,1.4vw,1.1rem)] font-light mb-6 md:mb-8 max-w-2xl"
             style={{ animationDelay: "0.55s" }}
           >
-            Master Linux kernel compilation, cross-toolchain architecture, and system configuration. Build Binutils, GCC, and over 100+ packages from scratch with an interactive, step-by-step learning platform.
+            Master Linux kernel compilation, cross-toolchain architecture, and system configuration. Build Binutils, GCC, and over 100+ packages from scratch.
           </p>
 
-          {/* Two CTA Buttons */}
+          {/* CTA Buttons — stack on tiny screens */}
           <div
-            className="opacity-0 animate-fade-up flex flex-wrap items-center gap-4 font-bold pointer-events-auto"
+            className="opacity-0 animate-fade-up flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-3 font-bold pointer-events-auto"
             style={{ animationDelay: "0.7s" }}
           >
             <Link
               href="/learn"
-              className="bg-primary text-primary-foreground px-6 py-3.5 md:px-8 md:py-4 text-sm rounded-sm uppercase tracking-wider cursor-pointer hover:brightness-110 transition-all active:scale-[0.97]"
+              className="bg-primary text-primary-foreground text-center px-6 py-3.5 text-sm rounded-sm uppercase tracking-wider cursor-pointer hover:brightness-110 transition-all active:scale-[0.97]"
             >
               Start Learning
             </Link>
             <Link
               href="/downloads"
-              className="bg-white text-background px-6 py-3.5 md:px-8 md:py-4 text-sm rounded-sm uppercase tracking-wider cursor-pointer hover:brightness-90 transition-all active:scale-[0.97]"
+              className="bg-white text-background text-center px-6 py-3.5 text-sm rounded-sm uppercase tracking-wider cursor-pointer hover:brightness-90 transition-all active:scale-[0.97]"
             >
               Download LFS 12.0
             </Link>
           </div>
 
-          {/* Trust line */}
           <p
-            className="opacity-0 animate-fade-up text-muted-foreground/60 text-xs font-light mt-5 md:mt-6 uppercase tracking-wider"
+            className="opacity-0 animate-fade-up text-muted-foreground/60 text-[10px] sm:text-xs font-light mt-5 uppercase tracking-wider"
             style={{ animationDelay: "0.85s" }}
           >
-            LFS Version 12.0 • Linux Kernel 6.4.12 • 100+ Packages Compiled From Source
+            LFS Version 12.0 • Linux Kernel 6.4.12 • 100+ Packages
           </p>
         </div>
       </section>
 
       {/* ──────── Stats Ribbon ──────── */}
-      <section className="relative z-10 py-12 px-6 md:px-12 lg:px-20 border-y border-white/[0.08] bg-nav-button/40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="relative z-10 py-8 sm:py-12 px-5 sm:px-8 md:px-12 lg:px-20 border-y border-white/[0.08] bg-nav-button/40 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-8">
           {stats.map((stat, i) => (
-            <div key={stat.label} className="text-center md:text-left">
-              <div className="text-3xl md:text-4xl font-bold text-foreground font-mono">
+            <div key={stat.label} className="text-center">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-mono">
                 {stat.value}
               </div>
-              <div className="text-xs uppercase tracking-widest text-primary mt-1">
+              <div className="text-[10px] sm:text-xs uppercase tracking-widest text-primary mt-1">
                 {stat.label}
               </div>
             </div>
@@ -194,30 +189,30 @@ export default function LFSLandingPage() {
       </section>
 
       {/* ──────── Features ──────── */}
-      <section className="relative py-28 px-6 md:px-12 lg:px-20">
+      <section className="relative py-16 sm:py-24 md:py-28 px-5 sm:px-8 md:px-12 lg:px-20">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16">
             <span className="text-xs font-mono uppercase tracking-widest text-primary px-3 py-1 rounded bg-primary/10 border border-primary/20 mb-4 inline-block">
               Core Architecture
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 uppercase tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 uppercase tracking-tight">
               Build Everything <span className="text-primary">From Source</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto font-light">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto font-light">
               Learn how every component of a Linux system works by compiling it yourself from the ground up
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="group p-6 rounded-xl bg-nav-button/30 border border-white/[0.08] hover:border-primary/40 hover:bg-nav-button/60 transition-all duration-300"
+                className="group p-5 sm:p-6 rounded-xl bg-nav-button/30 border border-white/[0.08] hover:border-primary/40 hover:bg-nav-button/60 transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors">
+                <div className="w-11 h-11 rounded-lg flex items-center justify-center mb-4 bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-semibold mb-2 tracking-tight">{feature.title}</h3>
+                <h3 className="text-base font-semibold mb-2 tracking-tight">{feature.title}</h3>
                 <p className="text-sm text-muted-foreground font-light">{feature.description}</p>
               </div>
             ))}
@@ -226,9 +221,9 @@ export default function LFSLandingPage() {
       </section>
 
       {/* ──────── Build Process (animated terminal) ──────── */}
-      <section className="relative py-28 px-6 md:px-12 lg:px-20 border-t border-white/[0.06] bg-nav-button/20">
+      <section className="relative py-16 sm:py-24 md:py-28 px-5 sm:px-8 md:px-12 lg:px-20 border-t border-white/[0.06] bg-nav-button/20">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary/10 border border-primary/20 mb-6">
                 <span className="text-xs font-mono text-primary uppercase tracking-widest">Chapters 5-8</span>
@@ -263,7 +258,7 @@ export default function LFSLandingPage() {
       </section>
 
       {/* ──────── Cloud Build CTA ──────── */}
-      <section className="relative py-24 px-6 md:px-12 lg:px-20">
+      <section className="relative py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-12 lg:px-20">
         <div className="max-w-5xl mx-auto">
           <div className="rounded-2xl border border-primary/30 bg-nav-button/40 p-8 md:p-14">
             <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -319,7 +314,7 @@ export default function LFSLandingPage() {
       </section>
 
       {/* ──────── CTA ──────── */}
-      <section className="relative py-28 px-6 md:px-12 lg:px-20 border-t border-white/[0.06]">
+      <section className="relative py-16 sm:py-24 md:py-28 px-5 sm:px-8 md:px-12 lg:px-20 border-t border-white/[0.06]">
         <div className="max-w-4xl mx-auto text-center">
           <Rocket className="w-10 h-10 mx-auto mb-6 text-primary" />
           <h2 className="text-3xl md:text-5xl font-bold mb-6 uppercase tracking-tight">
@@ -353,16 +348,16 @@ export default function LFSLandingPage() {
       </section>
 
       {/* ──────── Footer ──────── */}
-      <footer className="relative z-20 py-10 px-6 border-t border-white/[0.08] bg-hero-bg">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <h3 className="text-lg font-bold uppercase tracking-wider flex items-center gap-2">
+      <footer className="relative z-20 py-8 sm:py-10 px-5 sm:px-8 border-t border-white/[0.08] bg-hero-bg">
+        <div className="max-w-6xl mx-auto flex flex-col gap-5 items-center text-center md:flex-row md:justify-between md:text-left">
+          <div>
+            <h3 className="text-base font-bold uppercase tracking-wider flex items-center justify-center md:justify-start gap-2">
               <Terminal className="w-4 h-4 text-primary" />
               Linux From Scratch
             </h3>
             <p className="text-muted-foreground text-xs font-light mt-1">LFS 12.0 Interactive Learning Platform</p>
           </div>
-          <div className="flex gap-8 text-xs uppercase tracking-widest text-muted-foreground">
+          <div className="flex flex-wrap justify-center md:justify-end gap-5 sm:gap-8 text-xs uppercase tracking-widest text-muted-foreground">
             <Link href="/learn" className="hover:text-foreground transition-colors">Learn</Link>
             <Link href="/commands" className="hover:text-foreground transition-colors">Commands</Link>
             <Link href="/docs" className="hover:text-foreground transition-colors">Docs</Link>

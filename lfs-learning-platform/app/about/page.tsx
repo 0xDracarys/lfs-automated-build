@@ -6,15 +6,15 @@ import { DottedSurface } from "@/components/ui/dotted-surface";
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-20 font-sora">
+    <main className="min-h-screen bg-transparent text-white relative overflow-hidden pt-20 pb-16 font-sora">
         {/* Hero Section */}
-        <section className="pt-12 pb-20 px-6">
+        <section className="pt-10 sm:pt-12 pb-12 sm:pb-20 px-5 sm:px-6">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <div className="text-center mb-10 sm:mb-16">
+            <h1 className="text-[clamp(2rem,6vw,4.5rem)] font-bold mb-4 sm:mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
               About Linux From Scratch
             </h1>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto">
               A passion project to demystify Linux and empower developers to truly understand the system they work with every day
             </p>
           </div>
@@ -22,9 +22,9 @@ export default function AboutPage() {
       </section>
 
       {/* The Story */}
-      <section className="py-20 px-6">
+      <section className="py-12 sm:py-20 px-5 sm:px-6">
         <div className="container mx-auto max-w-4xl">
-          <div className="grid md:grid-cols-2 gap-12 mb-20">
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-12 mb-12 sm:mb-20">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
                 <BookOpen className="h-4 w-4 text-blue-400" />
@@ -70,14 +70,14 @@ export default function AboutPage() {
       </section>
 
       {/* What We Have Built */}
-      <section className="py-20 px-6 bg-gradient-to-b from-black via-blue-950/10 to-black">
+      <section className="py-12 sm:py-20 px-5 sm:px-6 bg-gradient-to-b from-black via-blue-950/10 to-black">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">What We Have Built</h2>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">What We Have Built</h2>
             <p className="text-gray-400">A complete learning ecosystem for Linux education</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {[
               {
                 icon: <Code className="h-8 w-8" />,
@@ -120,10 +120,10 @@ export default function AboutPage() {
       </section>
 
       {/* Core Values */}
-      <section className="py-20 px-6">
+      <section className="py-12 sm:py-20 px-5 sm:px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Our Core Values</h2>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">Our Core Values</h2>
             <p className="text-gray-400">What drives everything we do</p>
           </div>
 
@@ -164,18 +164,18 @@ export default function AboutPage() {
       </section>
 
       {/* The Creator */}
-      <section className="py-20 px-6 bg-gradient-to-b from-black via-purple-950/10 to-black">
+      <section className="py-12 sm:py-20 px-5 sm:px-6 bg-gradient-to-b from-black via-purple-950/10 to-black">
         <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Meet The Creator</h2>
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">Meet The Creator</h2>
             <p className="text-gray-400">The person behind LFS Builder</p>
           </div>
 
-          <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-8 md:p-12 backdrop-blur-sm">
+          <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-5 sm:p-8 md:p-12 backdrop-blur-sm">
             {/* Author Profile */}
-            <div className="flex flex-col md:flex-row gap-8 items-start mb-8">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-center sm:items-start mb-8">
               <div className="shrink-0">
-                <div className="h-32 w-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-5xl font-bold">
+                <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-4xl sm:text-5xl font-bold">
                   SB
                 </div>
               </div>
@@ -270,10 +270,10 @@ export default function AboutPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="py-20 px-6">
+      <section className="py-12 sm:py-20 px-5 sm:px-6">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Built With Modern Tech</h2>
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">Built With Modern Tech</h2>
             <p className="text-gray-400">The tools powering this platform</p>
           </div>
 
@@ -294,11 +294,11 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6">
+      <section className="py-12 sm:py-20 px-5 sm:px-6">
         <div className="container mx-auto max-w-4xl">
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 p-12 text-center backdrop-blur-sm">
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 p-8 sm:p-12 text-center backdrop-blur-sm">
             <div className="relative z-10">
-              <h2 className="text-4xl font-bold mb-6">Ready to Start Your Journey?</h2>
+              <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6">Ready to Start Your Journey?</h2>
               <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
                 Join thousands of learners building Linux systems from scratch
               </p>

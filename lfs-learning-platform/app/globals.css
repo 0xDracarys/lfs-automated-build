@@ -53,9 +53,16 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
-  body {
+  html, body {
     @apply bg-hero-bg text-foreground font-sans antialiased;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
   }
 }
 

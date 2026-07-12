@@ -32,7 +32,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6 font-sora">
+    <div className="min-h-screen bg-transparent text-white pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 font-sora">
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -40,25 +40,25 @@ export default function ContactPage() {
           transition={{ duration: 0.6 }}
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-5">
               <Mail className="w-4 h-4 text-blue-400" />
-              <span className="text-sm font-medium text-blue-400 tracking-wider uppercase">
+              <span className="text-xs sm:text-sm font-medium text-blue-400 tracking-wider uppercase">
                 Get in Touch
               </span>
             </div>
-            <h1 className="text-5xl font-bold mb-4">
+            <h1 className="text-[clamp(2rem,6vw,3.5rem)] font-bold mb-3 sm:mb-4 leading-tight">
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
                 Contact Us
               </span>
             </h1>
-            <p className="text-xl text-gray-400">
+            <p className="text-base sm:text-xl text-gray-400">
               Have questions about LFS? Need help with your build? We are here to assist you.
             </p>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Field */}
               <div>
@@ -146,21 +146,15 @@ export default function ContactPage() {
           </div>
 
           {/* Additional Info */}
-          <div className="mt-12 text-center">
-            <p className="text-gray-400 mb-4">
+          <div className="mt-8 sm:mt-12 text-center">
+            <p className="text-gray-400 mb-4 text-sm sm:text-base">
               You can also reach us through our community channels
             </p>
-            <div className="flex justify-center gap-4">
-              <a
-                href="/docs"
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
-              >
+            <div className="flex flex-col xs:flex-row justify-center gap-3 sm:gap-4">
+              <a href="/docs" className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-sm text-center">
                 Documentation
               </a>
-              <a
-                href="/learn"
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
-              >
+              <a href="/learn" className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-sm text-center">
                 Learning Modules
               </a>
             </div>
