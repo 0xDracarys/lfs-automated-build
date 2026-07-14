@@ -3,6 +3,13 @@ import { adminDb, adminAuth } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 
 /**
+ * VulnBox build cost constants
+ * These must stay in sync with VulnBoxWizard.tsx
+ */
+const BASE_CREDITS = 50; // granted to new users
+const BUILD_COST   = 35; // flat cost per build regardless of output formats
+
+/**
  * POST /api/vulnbox
  *
  * Queues a new VulnBox build in the `vulnbox_builds` Firestore collection.
@@ -30,43 +37,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Box name is required" }, { status: 400 });
     }
 
-    // ── Check credits ─────────────────────────────────────────────────────
-    const userRef = adminDb.collection("users").doc(userId);
+    // ── Check credits ─────────────────────────────────────────────────────────
+    const userRef  = adminDb.collection("users").doc(userId);
     const userSnap = await userRef.get();
     const userData = userSnap.data() ?? {};
-    const currentCredits: number = userData.vulnboxCredits ?? 0;
+    const currentCredits: number = userData.vulnboxCredits ?? BASE_CREDITS;
 
-    const formatsCount = (config.output?.outputFormats ?? ["iso"]).length;
-    if (currentCredits < formatsCount) {
+    if (currentCredits < BUILD_COST) {
       return NextResponse.json(
-        { error: `Insufficient credits. Need ${formatsCount}, have ${currentCredits}. Contact admin to top up.` },
+        { error: `Insufficient credits. Need ${BUILD_COST}, have ${currentCredits}. Contact admin to top up.` },
         { status: 402 }
       );
     }
 
-    // ── Write to Firestore (new, isolated collection) ─────────────────────
+    // ── Write to Firestore (isolated vulnbox_builds collection) ──────────────
     const docRef = await adminDb.collection("vulnbox_builds").add({
       userId,
-      userEmail: decoded.email ?? null,
-      displayName: decoded.name ?? null,
-      status: "queued",
+      userEmail:    decoded.email ?? null,
+      displayName:  decoded.name  ?? null,
+      status:       "queued",
       eulaAcceptedAt: eulaAcceptedAt ?? FieldValue.serverTimestamp(),
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-      creditsConsumed: formatsCount,
+      createdAt:    FieldValue.serverTimestamp(),
+      updatedAt:    FieldValue.serverTimestamp(),
+      creditsConsumed: BUILD_COST,
       config,
-      // Build output will be populated by the build worker (Phase 2)
       downloadUrls: {},
-      buildLog: null,
+      buildLog:     null,
     });
 
-    // ── Deduct credits ────────────────────────────────────────────────────
-    await userRef.set(
-      { vulnboxCredits: currentCredits - formatsCount },
-      { merge: true }
-    );
+    // ── Deduct credits ────────────────────────────────────────────────────────
+    const remaining = currentCredits - BUILD_COST;
+    await userRef.set({ vulnboxCredits: remaining }, { merge: true });
 
-    return NextResponse.json({ buildId: docRef.id, creditsRemaining: currentCredits - formatsCount });
+    return NextResponse.json({ buildId: docRef.id, creditsRemaining: remaining });
   } catch (err: any) {
     console.error("[/api/vulnbox] Error:", err);
     return NextResponse.json({ error: err.message ?? "Internal server error" }, { status: 500 });

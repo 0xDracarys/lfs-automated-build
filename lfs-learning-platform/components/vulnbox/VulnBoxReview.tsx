@@ -5,6 +5,7 @@ import { CheckCircle, HardDrive, Box, Container, Shield, Bug, Package, Users, Al
 interface VulnBoxReviewProps {
   formData: any;
   userCredits: number;
+  buildCost: number;           // flat cost per build (35)
   onSubmit: () => void;
   loading: boolean;
   error: string | null;
@@ -25,11 +26,10 @@ const FORMAT_LABELS: Record<string, { label: string; icon: React.ReactNode }> = 
   docker: { label: "Docker Image", icon: <Container className="w-3.5 h-3.5" /> },
 };
 
-export default function VulnBoxReview({ formData, userCredits, onSubmit, loading, error }: VulnBoxReviewProps) {
+export default function VulnBoxReview({ formData, userCredits, buildCost, onSubmit, loading, error }: VulnBoxReviewProps) {
   const { identity, baseConfig, users, vulns, packages, output } = formData;
 
-  const creditsRequired = output?.outputFormats?.length ?? 1;
-  const hasEnoughCredits = userCredits >= creditsRequired;
+  const hasEnoughCredits = userCredits >= buildCost;
 
   // Count enabled vulns
   const enabledVulns = Object.values(vulns ?? {}).filter(
@@ -173,11 +173,17 @@ export default function VulnBoxReview({ formData, userCredits, onSubmit, loading
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-400">This build costs</span>
-          <span className="font-bold text-white">{creditsRequired} credit{creditsRequired !== 1 ? "s" : ""}</span>
+          <span className="font-bold text-white">{buildCost} credits</span>
+        </div>
+        <div className="flex items-center justify-between text-sm mt-1">
+          <span className="text-gray-400">Remaining after build</span>
+          <span className={`font-bold ${hasEnoughCredits ? "text-gray-300" : "text-red-400"}`}>
+            {Math.max(0, userCredits - buildCost)} credits
+          </span>
         </div>
         {!hasEnoughCredits && (
           <p className="mt-2 text-xs text-red-400">
-            ⚠️ Not enough credits. Contact an admin to top up your account.
+            ⚠️ Not enough credits. You need {buildCost}, you have {userCredits}. Contact an admin to top up your account.
           </p>
         )}
       </div>
@@ -209,7 +215,7 @@ export default function VulnBoxReview({ formData, userCredits, onSubmit, loading
         ) : (
           <>
             <CheckCircle className="w-5 h-5" />
-            Queue VulnBox Build ({creditsRequired} credit{creditsRequired !== 1 ? "s" : ""})
+            Queue VulnBox Build ({buildCost} credits)
           </>
         )}
       </button>

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShieldAlert, ChevronLeft, ChevronRight, Coins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
-import { useEffect } from "react";
 
 import VulnBoxEULA from "./VulnBoxEULA";
 import VulnBoxIdentity from "./VulnBoxIdentity";
@@ -20,99 +19,53 @@ import VulnBoxReview from "./VulnBoxReview";
 import type { VulnVulnsData } from "./VulnBoxVulns";
 import type { PackagesData } from "./VulnBoxPackages";
 
-// ─── default state ─────────────────────────────────────────────────────────
+// ─── Credit constants ─────────────────────────────────────────────────────────
+const BASE_CREDITS = 50;   // given to every new user
+const BUILD_COST  = 35;    // flat cost per VulnBox build
 
-const DEFAULT_IDENTITY = {
-  boxName: "",
-  description: "",
-  boxColor: "red",
-  authorTag: "",
-};
+// ─── Default state ────────────────────────────────────────────────────────────
+const DEFAULT_IDENTITY = { boxName: "", description: "", boxColor: "red", authorTag: "" };
+const DEFAULT_BASE = { architecture: "x86_64", osPersona: "debian-like", kernelVersion: "6.4.12", initSystem: "systemd", defaultShell: "bash", timezone: "UTC" };
+const DEFAULT_USERS = { rootPassword: "", addLowPrivUser: true, lowPrivUsername: "user", lowPrivPassword: "password123", weakSudoConfig: false, injectSSHKeys: false, worldWritableHomedirs: false, historyFileCredentials: false };
+const DEFAULT_VULNS: VulnVulnsData = { dvwa: false, webgoat: false, juiceShop: false, mutillidae: false, webPort: "80", worldWritableCron: false, suidBinaries: false, weakPasswdPerms: false, nfsNoRootSquash: false, exposedGitDir: false, directoryListing: false, ftpAnon: false, telnet: false, smbNullSession: false, smtpOpenRelay: false, redisNoAuth: false, mysqlNoPassword: false, snmpDefault: false, dirtyPipe: false, dirtyCow: false, customSuidOverflow: false, plantedFlags: false, userRootTxt: false, encryptedFlag: false, hiddenStegoFlag: false, flagValue: "", rootFlagValue: "", crackablePasswdHashes: false, weakSSHPassphrase: false, envFileCredentials: false };
+const DEFAULT_PACKAGES: PackagesData = { netcat: true, nmap: false, curlWget: true, socat: false, apache: false, php: false, mysql: false, python3Web: false, python3: true, ruby: false, perl: false, zipUnzip: true, git: false, vimNano: true, binwalk: false, exiftool: false, steghide: false, foremost: false, gcc: false, make: false, gdb: false };
+const DEFAULT_OUTPUT = { outputFormats: ["iso"], difficultyRating: 2, intendedAudience: "intermediate", networkMode: "host-only", autoStartServices: true };
 
-const DEFAULT_BASE = {
-  architecture: "x86_64",
-  osPersona: "debian-like",
-  kernelVersion: "6.4.12",
-  initSystem: "systemd",
-  defaultShell: "bash",
-  timezone: "UTC",
-};
-
-const DEFAULT_USERS = {
-  rootPassword: "",
-  addLowPrivUser: true,
-  lowPrivUsername: "user",
-  lowPrivPassword: "password123",
-  weakSudoConfig: false,
-  injectSSHKeys: false,
-  worldWritableHomedirs: false,
-  historyFileCredentials: false,
-};
-
-const DEFAULT_VULNS: VulnVulnsData = {
-  dvwa: false, webgoat: false, juiceShop: false, mutillidae: false, webPort: "80",
-  worldWritableCron: false, suidBinaries: false, weakPasswdPerms: false,
-  nfsNoRootSquash: false, exposedGitDir: false, directoryListing: false,
-  ftpAnon: false, telnet: false, smbNullSession: false, smtpOpenRelay: false,
-  redisNoAuth: false, mysqlNoPassword: false, snmpDefault: false,
-  dirtyPipe: false, dirtyCow: false, customSuidOverflow: false,
-  plantedFlags: false, userRootTxt: false, encryptedFlag: false,
-  hiddenStegoFlag: false, flagValue: "", rootFlagValue: "",
-  crackablePasswdHashes: false, weakSSHPassphrase: false, envFileCredentials: false,
-};
-
-const DEFAULT_PACKAGES: PackagesData = {
-  netcat: true, nmap: false, curlWget: true, socat: false,
-  apache: false, php: false, mysql: false, python3Web: false,
-  python3: true, ruby: false, perl: false,
-  zipUnzip: true, git: false, vimNano: true,
-  binwalk: false, exiftool: false, steghide: false, foremost: false,
-  gcc: false, make: false, gdb: false,
-};
-
-const DEFAULT_OUTPUT = {
-  outputFormats: ["iso"],
-  difficultyRating: 2,
-  intendedAudience: "intermediate",
-  networkMode: "host-only",
-  autoStartServices: true,
-};
-
-// ─── steps definition ────────────────────────────────────────────────────────
-
+// ─── Steps ───────────────────────────────────────────────────────────────────
 const STEPS = [
-  { id: "identity", label: "Identity" },
-  { id: "base", label: "Base System" },
-  { id: "users", label: "Users" },
-  { id: "vulns", label: "Vulnerabilities" },
-  { id: "packages", label: "Packages" },
-  { id: "output", label: "Output" },
-  { id: "review", label: "Review" },
+  { id: "identity",  label: "Identity" },
+  { id: "base",      label: "Base System" },
+  { id: "users",     label: "Users" },
+  { id: "vulns",     label: "Vulnerabilities" },
+  { id: "packages",  label: "Packages" },
+  { id: "output",    label: "Output" },
+  { id: "review",    label: "Review" },
 ];
-
-// ─── Main Wizard ─────────────────────────────────────────────────────────────
 
 export default function VulnBoxWizard() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+
+  const [user, setUser]             = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [eulaAccepted, setEulaAccepted] = useState(false);
-  const [showEula, setShowEula] = useState(false);
+  const [showEula, setShowEula]     = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Mock credits — will come from Firestore in Phase 2
-  const [userCredits] = useState(3);
+  // Credits — fetched from Firestore users doc (BASE_CREDITS granted on first visit)
+  const [userCredits, setUserCredits] = useState<number | null>(null);
+  const [creditsLoading, setCreditsLoading] = useState(false);
 
-  const [identity, setIdentity] = useState(DEFAULT_IDENTITY);
+  // Form state
+  const [identity, setIdentity]   = useState(DEFAULT_IDENTITY);
   const [baseConfig, setBaseConfig] = useState(DEFAULT_BASE);
-  const [users, setUsers] = useState(DEFAULT_USERS);
-  const [vulns, setVulns] = useState<VulnVulnsData>(DEFAULT_VULNS);
-  const [packages, setPackages] = useState<PackagesData>(DEFAULT_PACKAGES);
-  const [output, setOutput] = useState(DEFAULT_OUTPUT);
+  const [users, setUsers]         = useState(DEFAULT_USERS);
+  const [vulns, setVulns]         = useState<VulnVulnsData>(DEFAULT_VULNS);
+  const [packages, setPackages]   = useState<PackagesData>(DEFAULT_PACKAGES);
+  const [output, setOutput]       = useState(DEFAULT_OUTPUT);
 
-  // Auth listener
+  // ── Auth listener ─────────────────────────────────────────────────────────
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -121,12 +74,46 @@ export default function VulnBoxWizard() {
     return unsub;
   }, []);
 
+  // ── Fetch / initialise credits on login ──────────────────────────────────
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      setCreditsLoading(true);
+      try {
+        const ref  = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const data = snap.data();
+          // If no vulnboxCredits field yet, grant BASE_CREDITS
+          if (data.vulnboxCredits === undefined) {
+            await setDoc(ref, { vulnboxCredits: BASE_CREDITS }, { merge: true });
+            setUserCredits(BASE_CREDITS);
+          } else {
+            setUserCredits(data.vulnboxCredits);
+          }
+        } else {
+          // Brand new user doc — create with base credits
+          await setDoc(ref, {
+            userId: user.uid,
+            email:  user.email,
+            displayName: user.displayName,
+            vulnboxCredits: BASE_CREDITS,
+            createdAt: new Date(),
+          });
+          setUserCredits(BASE_CREDITS);
+        }
+      } catch (e) {
+        console.error("Credit fetch error:", e);
+        setUserCredits(0);
+      } finally {
+        setCreditsLoading(false);
+      }
+    })();
+  }, [user]);
+
   const handleLogin = async () => {
-    try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (e) {
-      console.error(e);
-    }
+    try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+    catch (e) { console.error(e); }
   };
 
   const handleEulaAccept = () => {
@@ -134,21 +121,26 @@ export default function VulnBoxWizard() {
     setShowEula(false);
   };
 
+  // ── Submit — calls /api/vulnbox which handles credit deduction ─────────────
   const handleSubmit = async () => {
     if (!user) return;
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const docRef = await addDoc(collection(db, "vulnbox_builds"), {
-        userId: user.uid,
-        userEmail: user.email,
-        displayName: user.displayName,
-        eulaAcceptedAt: serverTimestamp(),
-        status: "queued",
-        createdAt: serverTimestamp(),
-        config: { identity, baseConfig, users, vulns, packages, output },
+      const idToken  = await user.getIdToken();
+      const response = await fetch("/api/vulnbox", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
+        body:    JSON.stringify({
+          config: { identity, baseConfig, users, vulns, packages, output },
+          eulaAcceptedAt: new Date().toISOString(),
+        }),
       });
-      router.push(`/vulnbox/status/${docRef.id}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to queue build");
+      // Refresh credit display
+      setUserCredits(data.creditsRemaining);
+      router.push(`/vulnbox/status/${data.buildId}`);
     } catch (e: any) {
       setSubmitError(e.message || "Failed to queue build. Please try again.");
     } finally {
@@ -156,7 +148,7 @@ export default function VulnBoxWizard() {
     }
   };
 
-  // ── Guard: not logged in ──────────────────────────────────────────────────
+  // ── Guards ────────────────────────────────────────────────────────────────
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[40vh]">
@@ -167,11 +159,7 @@ export default function VulnBoxWizard() {
 
   if (!user) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-lg mx-auto text-center py-20"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg mx-auto text-center py-20">
         <div className="inline-flex p-4 rounded-2xl bg-red-500/10 border border-red-500/20 mb-5">
           <ShieldAlert className="w-10 h-10 text-red-400" />
         </div>
@@ -190,15 +178,10 @@ export default function VulnBoxWizard() {
     );
   }
 
-  // ── Guard: EULA not accepted ─────────────────────────────────────────────
   if (!eulaAccepted) {
     return (
       <>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto py-16 text-center"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto py-16 text-center">
           <div className="inline-flex p-4 rounded-2xl bg-red-500/10 border border-red-500/20 mb-5">
             <ShieldAlert className="w-10 h-10 text-red-400" />
           </div>
@@ -210,7 +193,7 @@ export default function VulnBoxWizard() {
           <div className="mt-6 mb-8 rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-4 text-left max-w-lg mx-auto">
             <p className="text-sm font-semibold text-amber-300 mb-2">⚠️ Why is this mandatory?</p>
             <ul className="text-xs text-gray-400 space-y-1.5 list-disc pl-4">
-              <li>Your VulnBox will contain real, working security vulnerabilities and backdoors</li>
+              <li>Your VulnBox will contain real, working vulnerabilities and backdoors</li>
               <li>Deploying it on a public network could expose you or others to serious risk</li>
               <li>The EULA defines your legal responsibilities and protects both you and us</li>
               <li>Your acceptance is timestamped and stored for audit purposes</li>
@@ -244,7 +227,8 @@ export default function VulnBoxWizard() {
     6: (
       <VulnBoxReview
         formData={{ identity, baseConfig, users, vulns, packages, output }}
-        userCredits={userCredits}
+        userCredits={userCredits ?? 0}
+        buildCost={BUILD_COST}
         onSubmit={handleSubmit}
         loading={submitting}
         error={submitError}
@@ -254,6 +238,19 @@ export default function VulnBoxWizard() {
 
   return (
     <div className="max-w-3xl mx-auto">
+      {/* Credit badge */}
+      <div className="flex justify-end mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10">
+          <Coins className="w-3.5 h-3.5 text-amber-400" />
+          {creditsLoading ? (
+            <span className="text-xs text-amber-400 animate-pulse">Loading…</span>
+          ) : (
+            <span className="text-xs font-bold text-amber-300">{userCredits ?? 0} credits</span>
+          )}
+          <span className="text-xs text-gray-500">· {BUILD_COST} per build</span>
+        </div>
+      </div>
+
       {/* Step progress */}
       <div className="mb-8">
         <div className="flex items-center justify-between gap-1">
@@ -263,21 +260,13 @@ export default function VulnBoxWizard() {
                 type="button"
                 onClick={() => idx < currentStep && setCurrentStep(idx)}
                 disabled={idx >= currentStep}
-                className={`flex items-center gap-1.5 shrink-0 transition-all ${
-                  idx < currentStep
-                    ? "cursor-pointer"
-                    : "cursor-default"
-                }`}
+                className="flex items-center gap-1.5 shrink-0 transition-all disabled:cursor-default"
               >
-                <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                    idx === currentStep
-                      ? "bg-red-600 text-white ring-2 ring-red-500/30"
-                      : idx < currentStep
-                      ? "bg-emerald-600/30 border border-emerald-500/40 text-emerald-400"
-                      : "bg-white/5 border border-white/10 text-gray-600"
-                  }`}
-                >
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                  idx === currentStep ? "bg-red-600 text-white ring-2 ring-red-500/30" :
+                  idx < currentStep  ? "bg-emerald-600/30 border border-emerald-500/40 text-emerald-400" :
+                  "bg-white/5 border border-white/10 text-gray-600"
+                }`}>
                   {idx < currentStep ? "✓" : idx + 1}
                 </div>
                 <span className={`hidden sm:inline text-xs font-medium ${
