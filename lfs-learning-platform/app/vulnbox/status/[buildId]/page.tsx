@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { auth, db } from "@/lib/firebase";
@@ -21,6 +21,7 @@ interface BuildData {
   createdAt: any;
   downloadUrls?: Record<string, string>;
   buildLog?: string;
+  progress?: number;
   creditsConsumed?: number;
 }
 
@@ -55,6 +56,43 @@ const FORMAT_META: Record<string, { icon: React.ReactNode; label: string; ext: s
   iso: { icon: <HardDrive className="w-5 h-5" />, label: "Bootable ISO", ext: ".iso" },
   ova: { icon: <Box className="w-5 h-5" />, label: "OVA Image", ext: ".ova" },
   docker: { icon: <Container className="w-5 h-5" />, label: "Docker Image", ext: ".tar" },
+};
+
+const TerminalLog = ({ logs }: { logs?: string }) => {
+  const [copied, setCopied] = useState(false);
+  const terminalRef = useRef<HTMLPreElement>(null);
+  
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [logs]);
+
+  if (!logs) return null;
+
+  return (
+    <div className="mt-6 text-left rounded-xl border border-white/10 bg-black/60 overflow-hidden font-mono text-xs">
+      <div className="flex items-center justify-between px-4 py-2 bg-white/[0.03] border-b border-white/[0.06] text-gray-400">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Console Output</span>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(logs);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          className="text-[10px] hover:text-white transition-colors"
+        >
+          {copied ? "Copied!" : "Copy Logs"}
+        </button>
+      </div>
+      <pre
+        ref={terminalRef}
+        className="p-4 overflow-auto max-h-60 text-gray-300 leading-relaxed whitespace-pre-wrap select-text scrollbar-thin scrollbar-thumb-white/10"
+      >
+        {logs}
+      </pre>
+    </div>
+  );
 };
 
 export default function VulnBoxStatusPage() {
@@ -167,10 +205,23 @@ export default function VulnBoxStatusPage() {
           )}
 
           {build.status === "building" && (
-            <div className="text-center py-6">
-              <Loader2 className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
-              <h2 className="text-xl font-bold mb-2">Building your VulnBox…</h2>
-              <p className="text-gray-400 text-sm">LFS base compilation + vulnerability injection in progress.</p>
+            <div className="py-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-blue-400">Building your VulnBox…</span>
+                <span className="text-sm font-bold text-blue-300">{build.progress || 0}%</span>
+              </div>
+              <div className="w-full bg-white/5 rounded-full h-2 mb-6 overflow-hidden border border-white/10">
+                <motion.div
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${build.progress || 0}%` }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
+              <p className="text-gray-400 text-xs mb-4 text-center">
+                LFS base compilation + vulnerability injection in progress.
+              </p>
+              <TerminalLog logs={build.buildLog} />
             </div>
           )}
 
@@ -213,6 +264,7 @@ export default function VulnBoxStatusPage() {
                   );
                 })}
               </div>
+              <TerminalLog logs={build.buildLog} />
             </div>
           )}
 
@@ -221,11 +273,7 @@ export default function VulnBoxStatusPage() {
               <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
               <h2 className="text-xl font-bold mb-2">Build Failed</h2>
               <p className="text-gray-400 text-sm mb-4">Something went wrong during the build process.</p>
-              {build.buildLog && (
-                <pre className="text-left text-xs font-mono bg-black/50 p-4 rounded-xl text-red-300 overflow-auto max-h-40">
-                  {build.buildLog}
-                </pre>
-              )}
+              <TerminalLog logs={build.buildLog} />
               <Link
                 href="/vulnbox"
                 className="inline-block mt-4 px-6 py-2.5 bg-red-600/20 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-600/30 transition-all text-sm"

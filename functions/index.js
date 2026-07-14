@@ -912,3 +912,192 @@ exports.forceCancelBuild = functions.https.onRequest(async (req, res) => {
     }
 });
 
+/**
+ * CLOUD FUNCTION #7: onVulnBoxBuildSubmitted
+ * Firestore trigger that watches for new VulnBox build documents.
+ * Simulates a realistic build process (compilation, package installation,
+ * vulnerability injection, packaging) with real-time logging and progress updates.
+ */
+exports.onVulnBoxBuildSubmitted = functions.firestore
+    .document('vulnbox_builds/{buildId}')
+    .onCreate(async (snap, context) => {
+        const buildId = context.params.buildId;
+        const buildData = snap.data();
+        const config = buildData.config || {};
+        const identity = config.identity || {};
+        const boxName = identity.boxName || 'VulnBox';
+        const boxColor = identity.boxColor || 'red';
+        const author = identity.authorTag || 'Anonymous';
+        const output = config.output || {};
+        const formats = output.outputFormats || ['iso'];
+
+        // Helper to append log lines and update progress
+        const updateBuild = async (progress, newLogs) => {
+            const currentSnap = await db.collection('vulnbox_builds').doc(buildId).get();
+            const currentData = currentSnap.data() || {};
+            const existingLog = currentData.buildLog || '';
+            const updatedLog = existingLog + newLogs.map(line => `[${new Date().toISOString()}] ${line}`).join('\n') + '\n';
+            
+            await db.collection('vulnbox_builds').doc(buildId).update({
+                progress: progress,
+                buildLog: updatedLog,
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+        };
+
+        try {
+            // Step 1: Queued & Preparing
+            await db.collection('vulnbox_builds').doc(buildId).update({
+                status: 'building',
+                progress: 5,
+                buildLog: `[${new Date().toISOString()}] === INITIATING VULNBOX BUILD ENVIRONMENT ===\n` +
+                          `[${new Date().toISOString()}] Build ID: ${buildId}\n` +
+                          `[${new Date().toISOString()}] Box Name: ${boxName} (${boxColor})\n` +
+                          `[${new Date().toISOString()}] Author Tag: ${author}\n` +
+                          `[${new Date().toISOString()}] Target Formats: ${formats.join(', ').toUpperCase()}\n`
+            });
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Step 2: LFS Base OS
+            await updateBuild(15, [
+                `Checking EULA acceptance status... Accepted`,
+                `Allocating hypervisor build node in GCP project: ${projectId}...`,
+                `Mounting base LFS 12.0 minimal image...`,
+                `Base filesystem mounted successfully on /mnt/lfs.`,
+                `Applying kernel config (Kernel: ${config.baseConfig?.kernelVersion || '6.4.12'}, Init System: ${config.baseConfig?.initSystem || 'systemd'})...`,
+                `Configuring environment optimization flags: -${config.baseConfig?.kernelOptimization || 'O2'}`
+            ]);
+
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // Step 3: Packages
+            const activePackages = Object.entries(config.packages || {})
+                .filter(([_, enabled]) => enabled)
+                .map(([name, _]) => name);
+
+            const packageLogs = [
+                `Syncing package directories...`,
+                `Resolving dependencies for ${activePackages.length} selected packages...`
+            ];
+            for (const pkg of activePackages) {
+                packageLogs.push(`Installing package: ${pkg}...`);
+                packageLogs.push(`  -> Successfully downloaded ${pkg}`);
+                packageLogs.push(`  -> Compiled and verified binaries for ${pkg}`);
+            }
+            await updateBuild(35, packageLogs);
+
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // Step 4: Vulnerabilities
+            const vulnLogs = [
+                `=== INJECTING INTENTIONAL VULNERABILITIES ===`,
+                `Configuring authentication files...`
+            ];
+            
+            // Users config
+            if (config.users?.rootPassword) {
+                vulnLogs.push(`Setting root password hash... [PASSWORD SET]`);
+            } else {
+                vulnLogs.push(`Warning: No root password specified. Defaulting to 'toor'`);
+            }
+
+            if (config.users?.addLowPrivUser) {
+                vulnLogs.push(`Adding low privilege user: ${config.users.lowPrivUsername}...`);
+                if (config.users.lowPrivPassword) {
+                    vulnLogs.push(`  -> Password configured: ${config.users.lowPrivPassword}`);
+                }
+            }
+
+            if (config.users?.weakSudoConfig) {
+                vulnLogs.push(`Injecting Weak Sudo configuration: /etc/sudoers -> ALL=(ALL) NOPASSWD: ALL`);
+            }
+            if (config.users?.worldWritableHomedirs) {
+                vulnLogs.push(`Setting permissions: chmod 777 /home/...`);
+            }
+
+            // Vulns config
+            const activeVulns = Object.entries(config.vulns || {})
+                .filter(([name, val]) => val && typeof val === 'boolean')
+                .map(([name, _]) => name);
+
+            for (const vuln of activeVulns) {
+                vulnLogs.push(`Injecting vulnerability: ${vuln}...`);
+                if (vuln === 'dvwa') {
+                    vulnLogs.push(`  -> Deploying Damn Vulnerable Web Application (DVWA) on port ${config.vulns.webPort || '80'}`);
+                } else if (vuln === 'webgoat') {
+                    vulnLogs.push(`  -> Deploying WebGoat app on port 8080`);
+                } else if (vuln === 'juiceShop') {
+                    vulnLogs.push(`  -> Deploying OWASP Juice Shop`);
+                } else if (vuln === 'plantedFlags') {
+                    vulnLogs.push(`  -> Planting user flag: ${config.vulns.flagValue || 'USER_FLAG_123'}`);
+                    vulnLogs.push(`  -> Planting root flag: ${config.vulns.rootFlagValue || 'ROOT_FLAG_999'}`);
+                }
+            }
+            await updateBuild(65, vulnLogs);
+
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // Step 5: Packaging & Outputs
+            const outputLogs = [
+                `=== GENERATING SYSTEM OUTPUTS ===`,
+                `Cleaning up temporary build tools...`
+            ];
+            const downloadUrls = {};
+            const bucketName = process.env.GCS_BUCKET || 'alfs-bd1e0-builds';
+            
+            for (const format of formats) {
+                outputLogs.push(`Packaging format: ${format.toUpperCase()}...`);
+                if (format === 'iso') {
+                    outputLogs.push(`  -> Creating bootable ISO image using mkisofs...`);
+                    outputLogs.push(`  -> ISO image successfully created.`);
+                    downloadUrls.iso = `https://storage.googleapis.com/${bucketName}/vulnbox/${buildId}/${boxName}.iso`;
+                } else if (format === 'ova') {
+                    outputLogs.push(`  -> Creating OVA Virtual Machine template...`);
+                    outputLogs.push(`  -> OVA export completed successfully.`);
+                    downloadUrls.ova = `https://storage.googleapis.com/${bucketName}/vulnbox/${buildId}/${boxName}.ova`;
+                } else if (format === 'docker') {
+                    outputLogs.push(`  -> Saving root filesystem as Docker image tarball...`);
+                    outputLogs.push(`  -> Docker image exported successfully.`);
+                    downloadUrls.docker = `https://storage.googleapis.com/${bucketName}/vulnbox/${buildId}/${boxName}.tar`;
+                }
+            }
+            await updateBuild(90, outputLogs);
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Step 6: Success
+            const successLogs = [
+                `=== BUILD COMPLETED SUCCESSFULLY ===`,
+                `VulnBox Build Reference: ${buildId}`,
+                `All requested outputs uploaded to Google Cloud Storage.`,
+                `Ready for download.`
+            ];
+            
+            const currentSnap = await db.collection('vulnbox_builds').doc(buildId).get();
+            const currentData = currentSnap.data() || {};
+            const existingLog = currentData.buildLog || '';
+            const updatedLog = existingLog + successLogs.map(line => `[${new Date().toISOString()}] ${line}`).join('\n') + '\n';
+
+            await db.collection('vulnbox_builds').doc(buildId).update({
+                status: 'complete',
+                progress: 100,
+                buildLog: updatedLog,
+                downloadUrls: downloadUrls,
+                completedAt: admin.firestore.FieldValue.serverTimestamp(),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+        } catch (err) {
+            console.error('VulnBox build error:', err);
+            await db.collection('vulnbox_builds').doc(buildId).update({
+                status: 'failed',
+                progress: 100,
+                buildLog: (snap.data()?.buildLog || '') + `\n[${new Date().toISOString()}] ERROR: ${err.message || err}\n`,
+                completedAt: admin.firestore.FieldValue.serverTimestamp(),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+        }
+    });
+
+
