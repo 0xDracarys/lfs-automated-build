@@ -5,15 +5,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, ShieldAlert } from "lucide-react";
 
-// Whitelist of admin emails — add your own email here
-const ADMIN_EMAILS = [
-  "firebase-adminsdk-fbsvc@alfs-bd1e0.iam.gserviceaccount.com",
-  // Add your admin emails below:
-  // "your-email@example.com",
-];
-
+/**
+ * AdminRoute — accessible by admin OR superadmin role.
+ * Redirects to /auth/login if not logged in.
+ * Shows Access Denied if logged in but role is 'user'.
+ */
 export default function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -33,12 +31,7 @@ export default function AdminRoute({ children }: { children: React.ReactNode }) 
     );
   }
 
-  if (!user) {
-    return null;
-  }
-
-  // Check if the user's email is in the admin whitelist
-  const isAdmin = user.email && ADMIN_EMAILS.includes(user.email);
+  if (!user) return null;
 
   if (!isAdmin) {
     return (
@@ -46,8 +39,12 @@ export default function AdminRoute({ children }: { children: React.ReactNode }) 
         <div className="text-center bg-black/65 backdrop-blur-xl border border-red-500/30 rounded-2xl p-12 max-w-md mx-4">
           <ShieldAlert className="h-16 w-16 text-red-400 mx-auto mb-6" />
           <h2 className="text-2xl font-bold uppercase tracking-tight mb-3">Access Denied</h2>
-          <p className="text-gray-400 text-sm mb-6">
-            You do not have administrator privileges to access this page.
+          <p className="text-gray-400 text-sm mb-2">
+            You need <span className="text-yellow-400 font-bold">admin</span> or{" "}
+            <span className="text-red-400 font-bold">superadmin</span> privileges to access this page.
+          </p>
+          <p className="text-gray-500 text-xs mb-6">
+            Contact your superadmin to be assigned an admin role.
           </p>
           <button
             onClick={() => router.push("/dashboard")}
