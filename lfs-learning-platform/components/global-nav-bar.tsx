@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, BookOpen, Terminal, Download, FileText, Home, LayoutDashboard } from 'lucide-react';
+import { Menu, X, BookOpen, Terminal, Download, FileText, Home, LayoutDashboard, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
 
 const navItems = [
   { label: 'Home', href: '/', icon: Home },
@@ -13,7 +14,10 @@ const navItems = [
   { label: 'Downloads', href: '/downloads', icon: Download },
   { label: 'Docs', href: '/docs', icon: FileText },
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  // VulnBox — reversible: remove this line to roll back
+  { label: 'VulnBox', href: '/vulnbox', icon: ShieldAlert },
 ];
+
 
 export default function GlobalNavBar() {
   const [isOpen, setIsOpen] = useState(false);
