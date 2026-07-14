@@ -1,0 +1,98 @@
+# Multi-stage build for VulnBox compilation container
+FROM debian:bookworm AS base
+
+LABEL maintainer="LFS Automated Builder"
+LABEL description="Cloud Run Job for VulnBox LFS security compilation"
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LC_ALL=C.UTF-8
+
+# LAYER 1: System Dependencies
+FROM base AS system-deps
+RUN set -ex && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        gcc \
+        g++ \
+        make \
+        automake \
+        autoconf \
+        pkg-config \
+        libtool \
+        wget \
+        curl \
+        git \
+        bison \
+        flex \
+        texinfo \
+        gawk \
+        patch \
+        diffutils \
+        file \
+        locales \
+        groff \
+        xz-utils \
+        python3 \
+        ca-certificates \
+        findutils \
+        coreutils \
+        sed \
+        tar \
+        gzip \
+        jq \
+        openssl \
+        m4 && \
+    rm -rf /var/lib/apt/lists/*
+
+# LAYER 2: Locale Configuration
+FROM system-deps AS locale-setup
+RUN set -ex && \
+    locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
+
+# LAYER 3: User and Directory Setup
+FROM locale-setup AS user-setup
+RUN set -ex && \
+    useradd -m -s /bin/bash lfs && \
+    mkdir -p /mnt /output /logs && \
+    chown -R lfs:lfs /mnt /output /logs
+
+# LAYER 4: Node.js Installation
+FROM user-setup AS nodejs-setup
+RUN set -ex && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends nodejs npm && \
+    rm -rf /var/lib/apt/lists/*
+
+# LAYER 5: Application Files
+FROM nodejs-setup AS app-files
+WORKDIR /app
+COPY vulnbox-build.sh ./vulnbox-build.sh
+COPY helpers/ ./helpers/
+RUN set -ex && \
+    chmod +x /app/vulnbox-build.sh
+
+# LAYER 6: Helper Dependencies
+FROM app-files AS helper-deps
+WORKDIR /app/helpers
+RUN set -ex && \
+    npm install --production
+
+# LAYER 7: Google Cloud SDK
+FROM helper-deps AS gcloud-setup
+RUN set -ex && \
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
+    apt-get update && \
+    apt-get install -y google-cloud-cli && \
+    rm -rf /var/lib/apt/lists/*
+
+# LAYER 8: Final permissions
+FROM gcloud-setup AS production
+USER root
+WORKDIR /app
+ENV PATH="/usr/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:/bin"
+
+ENTRYPOINT ["/bin/bash", "-c", "/app/vulnbox-build.sh"]
+CMD []
