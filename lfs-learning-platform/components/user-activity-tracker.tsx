@@ -1,20 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Clock, BookOpen, Award, TrendingUp, Users, Activity } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
+import { ProgressService } from '@/lib/progressService';
 
-interface UserActivity {
-  userId: string;
-  action: 'view_lesson' | 'complete_lesson' | 'take_quiz' | 'submit_answer';
-  lessonId: string;
-  lessonTitle: string;
-  moduleId: string;
-  moduleName: string;
-  timestamp: Date;
-  duration?: number; // in seconds
-  score?: number;
+interface ActivityRecord {
+  eventType: string;
+  eventData: Record<string, any>;
+  timestamp: { toDate?: () => Date } | Date;
 }
 
 interface UserStats {
@@ -23,14 +19,22 @@ interface UserStats {
   totalQuizzesTaken: number;
   averageScore: number;
   totalLearningTime: number; // in minutes
-  currentStreak: number; // consecutive days
+  currentStreak: number;
   lastActivity: Date | null;
 }
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'];
 
+function resolveTimestamp(ts: ActivityRecord['timestamp']): Date {
+  if (!ts) return new Date();
+  if (ts instanceof Date) return ts;
+  if (typeof (ts as any).toDate === 'function') return (ts as any).toDate();
+  return new Date(ts as any);
+}
+
 export default function UserActivityTracker() {
-  const [activities, setActivities] = useState<UserActivity[]>([]);
+  const { user } = useAuth();
+  const [activities, setActivities] = useState<ActivityRecord[]>([]);
   const [stats, setStats] = useState<UserStats>({
     totalLessonsViewed: 0,
     totalLessonsCompleted: 0,
@@ -44,103 +48,69 @@ export default function UserActivityTracker() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     fetchUserActivity();
-    // Simulate real-time updates every 30 seconds
     const interval = setInterval(fetchUserActivity, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
   const fetchUserActivity = async () => {
+    if (!user) return;
     try {
-      const userId = localStorage.getItem('userId') || 'demo-user';
-      
-      // Simulate fetching from Firestore
-      const mockActivities: UserActivity[] = [
-        {
-          userId,
-          action: 'view_lesson',
-          lessonId: 'lesson-1-1',
-          lessonTitle: 'Introduction to LFS',
-          moduleId: '1',
-          moduleName: 'Getting Started with LFS',
-          timestamp: new Date(Date.now() - 5 * 60000),
-          duration: 300,
-        },
-        {
-          userId,
-          action: 'complete_lesson',
-          lessonId: 'lesson-1-1',
-          lessonTitle: 'Introduction to LFS',
-          moduleId: '1',
-          moduleName: 'Getting Started with LFS',
-          timestamp: new Date(Date.now() - 4 * 60000),
-          duration: 600,
-        },
-        {
-          userId,
-          action: 'take_quiz',
-          lessonId: 'lesson-1-1',
-          lessonTitle: 'Introduction to LFS',
-          moduleId: '1',
-          moduleName: 'Getting Started with LFS',
-          timestamp: new Date(Date.now() - 3 * 60000),
-          score: 85,
-          duration: 300,
-        },
-        {
-          userId,
-          action: 'view_lesson',
-          lessonId: 'lesson-2-1',
-          lessonTitle: 'Linux File Systems',
-          moduleId: '2',
-          moduleName: 'Essential Skills',
-          timestamp: new Date(Date.now() - 2 * 60000),
-          duration: 400,
-        },
-        {
-          userId,
-          action: 'submit_answer',
-          lessonId: 'lesson-2-1',
-          lessonTitle: 'Linux File Systems',
-          moduleId: '2',
-          moduleName: 'Essential Skills',
-          timestamp: new Date(Date.now() - 1 * 60000),
-          score: 92,
-        },
-      ];
+      const [rawActivities, streak] = await Promise.all([
+        ProgressService.getRecentActivity(user.uid, 50),
+        ProgressService.calculateStreak(user.uid),
+      ]);
 
-      setActivities(mockActivities);
+      const typed = rawActivities as ActivityRecord[];
+      setActivities(typed);
 
-      // Calculate stats
-      const completed = mockActivities.filter(a => a.action === 'complete_lesson').length;
-      const quizzes = mockActivities.filter(a => a.action === 'take_quiz').length;
-      const scores = mockActivities.filter(a => a.score !== undefined).map(a => a.score || 0);
-      const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-      const totalTime = mockActivities.reduce((sum, a) => sum + (a.duration || 0), 0);
+      // Derive stats from real events
+      const completed = typed.filter(a => a.eventType === 'lesson_complete').length;
+      const viewed    = typed.filter(a => a.eventType === 'lesson_view').length;
+      const quizzes   = typed.filter(a => a.eventType === 'quiz_submit').length;
+      const scores    = typed
+        .filter(a => a.eventType === 'quiz_submit' && typeof a.eventData?.score === 'number')
+        .map(a => a.eventData.score as number);
+      const avgScore = scores.length > 0
+        ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+        : 0;
+      const totalTimeSec = typed
+        .filter(a => typeof a.eventData?.timeSpent === 'number')
+        .reduce((sum, a) => sum + (a.eventData.timeSpent as number), 0);
+
+      const sortedByTime = [...typed].sort((a, b) => {
+        const aDate = resolveTimestamp(a.timestamp);
+        const bDate = resolveTimestamp(b.timestamp);
+        return bDate.getTime() - aDate.getTime();
+      });
+      const lastActivityDate = sortedByTime[0]
+        ? resolveTimestamp(sortedByTime[0].timestamp)
+        : null;
 
       setStats({
-        totalLessonsViewed: mockActivities.filter(a => a.action === 'view_lesson').length,
+        totalLessonsViewed: viewed,
         totalLessonsCompleted: completed,
         totalQuizzesTaken: quizzes,
         averageScore: avgScore,
-        totalLearningTime: Math.round(totalTime / 60),
-        currentStreak: 3,
-        lastActivity: mockActivities[mockActivities.length - 1]?.timestamp || null,
+        totalLearningTime: Math.round(totalTimeSec / 60),
+        currentStreak: streak,
+        lastActivity: lastActivityDate,
       });
 
-      // Prepare chart data
+      // Chart: group activities by module (eventData.moduleId)
       const activityByModule = new Map<string, number>();
-      mockActivities.forEach(a => {
-        const key = a.moduleName;
-        activityByModule.set(key, (activityByModule.get(key) || 0) + 1);
+      typed.forEach(a => {
+        const key = String(a.eventData?.moduleId ?? 'Other');
+        activityByModule.set(key, (activityByModule.get(key) ?? 0) + 1);
       });
+      setChartData(
+        Array.from(activityByModule.entries()).map(([name, value]) => ({ name, activities: value }))
+      );
 
-      const chartDataByModule = Array.from(activityByModule.entries()).map(([name, value]) => ({
-        name,
-        activities: value,
-      }));
-
-      setChartData(chartDataByModule);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching user activity:', error);
@@ -155,6 +125,14 @@ export default function UserActivityTracker() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className="text-slate-400">Loading activity...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <p className="text-slate-400">Please sign in to view your activity.</p>
       </div>
     );
   }
@@ -190,7 +168,9 @@ export default function UserActivityTracker() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-white">{stats.averageScore}%</p>
+            <p className="text-3xl font-bold text-white">
+              {stats.totalQuizzesTaken > 0 ? `${stats.averageScore}%` : '—'}
+            </p>
             <p className="text-xs text-slate-400 mt-1">{stats.totalQuizzesTaken} quizzes taken</p>
           </CardContent>
         </Card>
@@ -243,10 +223,12 @@ export default function UserActivityTracker() {
           </CardHeader>
           <CardContent>
             <p className="text-lg font-bold text-white">
-              {stats.lastActivity ? 'Just now' : 'No activity'}
+              {stats.lastActivity ? 'Recent' : 'No activity yet'}
             </p>
             <p className="text-xs text-slate-400 mt-1">
-              {stats.lastActivity ? new Date(stats.lastActivity).toLocaleTimeString() : 'Start learning'}
+              {stats.lastActivity
+                ? new Date(stats.lastActivity).toLocaleTimeString()
+                : 'Start learning to track progress'}
             </p>
           </CardContent>
         </Card>
@@ -258,18 +240,24 @@ export default function UserActivityTracker() {
           <CardTitle>Activities by Module</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="name" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
-                labelStyle={{ color: '#f1f5f9' }}
-              />
-              <Bar dataKey="activities" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {chartData.length === 0 ? (
+            <div className="flex items-center justify-center h-48 text-slate-500">
+              No activity data yet — complete some lessons to see your progress here.
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="name" stroke="#94a3b8" />
+                <YAxis stroke="#94a3b8" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
+                  labelStyle={{ color: '#f1f5f9' }}
+                />
+                <Bar dataKey="activities" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </CardContent>
       </Card>
 
@@ -279,30 +267,40 @@ export default function UserActivityTracker() {
           <CardTitle>Recent Activities</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {activities.slice().reverse().map((activity, index) => (
-              <div key={index} className="flex items-start gap-3 pb-3 border-b border-slate-700 last:border-0">
-                <div className="w-2 h-2 mt-2 rounded-full bg-blue-500 flex-shrink-0"></div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium text-white">
-                      {activity.action === 'view_lesson' && '👁️ Viewed'}
-                      {activity.action === 'complete_lesson' && '✓ Completed'}
-                      {activity.action === 'take_quiz' && '📝 Quiz'}
-                      {activity.action === 'submit_answer' && '✅ Submitted'}
-                    </span>
-                    <span className="text-slate-400 text-sm">{activity.lessonTitle}</span>
-                    {activity.score && (
-                      <span className="text-green-400 text-sm">Score: {activity.score}%</span>
-                    )}
+          {activities.length === 0 ? (
+            <p className="text-slate-500 text-sm">No activities recorded yet.</p>
+          ) : (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {[...activities]
+                .sort((a, b) => resolveTimestamp(b.timestamp).getTime() - resolveTimestamp(a.timestamp).getTime())
+                .map((activity, index) => (
+                  <div key={index} className="flex items-start gap-3 pb-3 border-b border-slate-700 last:border-0">
+                    <div className="w-2 h-2 mt-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-white capitalize">
+                          {activity.eventType === 'lesson_view'     && '👁️ Viewed'}
+                          {activity.eventType === 'lesson_complete'  && '✅ Completed'}
+                          {activity.eventType === 'quiz_submit'      && '📝 Quiz Submitted'}
+                          {activity.eventType === 'command_try'      && '⌨️ Command Tried'}
+                          {!['lesson_view','lesson_complete','quiz_submit','command_try'].includes(activity.eventType) && activity.eventType}
+                        </span>
+                        {activity.eventData?.lessonId && (
+                          <span className="text-slate-400 text-sm">Lesson {activity.eventData.lessonId}</span>
+                        )}
+                        {typeof activity.eventData?.score === 'number' && (
+                          <span className="text-green-400 text-sm">Score: {activity.eventData.score}%</span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-500 mt-1">
+                        {activity.eventData?.moduleId ? `Module ${activity.eventData.moduleId}` : 'General'}{' '}
+                        • {resolveTimestamp(activity.timestamp).toLocaleTimeString()}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {activity.moduleName} • {activity.timestamp.toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
