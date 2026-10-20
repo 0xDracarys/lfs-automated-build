@@ -54,3 +54,18 @@ lfs-output/
 functions/service-account.json
 service-account.json
 credentials.json
+auth.json
+
+# Local AI tooling & scratch output (untracked by design)
+.claude/
+.agents/
+skills-lock.json
+brag-output/
+.archify-preview-*/
+
+# Compiled installer output (never commit build artifacts)
+installer/**/bin/
+installer/**/obj/
+
+# Local test scratch dirs
+testdir*/
