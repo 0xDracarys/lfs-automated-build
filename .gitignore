@@ -69,3 +69,6 @@ installer/**/obj/
 
 # Local test scratch dirs
 testdir*/
+
+# Migration bundle data (old-project snapshots — local only, never push)
+migration/data/
