@@ -577,6 +577,27 @@ chapter_6_chroot() {
     log_info "Chapter 6 completed successfully"
     write_firestore_log "chapter6" "completed" "Chapter 6: System software installation completed"
     
+    # ========================================================================
+    # Chapter 6.5: Basic daily-driver tools (git/ping/ifconfig/ssh/procps/...)
+    # Env-gated: set ENABLE_BASIC_TOOLS=false to skip (default ON).
+    # ========================================================================
+    if [ "${ENABLE_BASIC_TOOLS:-true}" = "true" ]; then
+        if [ -f "${SCRIPT_DIR}/lfs-basic-tools.sh" ]; then
+            log_info "Chapter 6.5: Building basic tool set (git, ping, ifconfig, ssh...)"
+            write_firestore_log "chapter6-basic-tools" "started" "Building basic tools (git/ping/ifconfig/ssh/procps)" || true
+            if bash "${SCRIPT_DIR}/lfs-basic-tools.sh"; then
+                log_info "Basic tools completed"
+                write_firestore_log "chapter6-basic-tools" "completed" "Basic tools installed: git curl ssh ping ifconfig ps free top htop nano less which strace" || true
+            else
+                log_error "Basic tools FAILED (see logs)"
+                write_firestore_log "chapter6-basic-tools" "error" "Basic tools build failed" || true
+                return 1
+            fi
+        else
+            log_warn "lfs-basic-tools.sh not found - skipping basic tools"
+        fi
+    fi
+    
     return 0
 }
 
@@ -746,6 +767,46 @@ RELEASE_EOF
     
     log_info "  Welcome banner, prompt, and help command installed"
     
+    # ========================================================================
+    # Optional Layer 1: Practice targets (vulnbox) — STRICTLY opt-in
+    # ENABLE_VULNBOX=true + VULNBOX_PACKAGES=juice-shop[,dvwa]
+    # ========================================================================
+    if [ "${ENABLE_VULNBOX:-false}" = "true" ]; then
+        if [ -f "${SCRIPT_DIR}/lfs-vulnbox.sh" ]; then
+            log_info "Optional layer: practice targets (${VULNBOX_PACKAGES:-default})"
+            write_firestore_log "vulnbox" "started" "Installing practice targets: ${VULNBOX_PACKAGES:-none}" || true
+            if bash "${SCRIPT_DIR}/lfs-vulnbox.sh"; then
+                write_firestore_log "vulnbox" "completed" "Vulnbox layer done" || true
+            else
+                log_warn "vulnbox layer had failures - continuing build (non-fatal)"
+                write_firestore_log "vulnbox" "warning" "Vulnbox layer had partial failures" || true
+            fi
+        else
+            log_warn "lfs-vulnbox.sh not found - skipping practice targets"
+        fi
+    fi
+    
+    # ========================================================================
+    # Optional Layer 2: Bootable ISO (kernel + initramfs + isolinux mastering)
+    # ENABLE_ISO_BUILD=true (default ON — this is the June TODO fix)
+    # ========================================================================
+    if [ "${ENABLE_ISO_BUILD:-true}" = "true" ]; then
+        if [ -f "${SCRIPT_DIR}/lfs-bootable-iso.sh" ]; then
+            log_info "Building bootable ISO (Linux kernel + RAM rootfs + isolinux)..."
+            write_firestore_log "iso" "started" "Building bootable ISO (kernel 6.4.12)" || true
+            if bash "${SCRIPT_DIR}/lfs-bootable-iso.sh"; then
+                log_info "Bootable ISO completed"
+                write_firestore_log "iso" "completed" "Bootable ISO created successfully" || true
+            else
+                log_error "Bootable ISO FAILED"
+                write_firestore_log "iso" "error" "ISO build failed" || true
+                return 1
+            fi
+        else
+            log_warn "lfs-bootable-iso.sh not found - skipping ISO"
+        fi
+    fi
+    
     log_info "Chapter 7 completed successfully"
     write_firestore_log "chapter7" "completed" "Chapter 7: System configuration completed"
     
@@ -885,6 +946,19 @@ upload_to_gcs() {
             log_warn "Failed to upload build log (non-critical)"
         fi
     fi
+    
+    # Upload bootable ISO (when ENABLE_ISO_BUILD produced one)
+    local iso_file
+    for iso_file in "${OUTPUT_DIR}"/lfs-bootable-*.iso; do
+        if [ -s "$iso_file" ]; then
+            log_info "Uploading ISO: $(basename "$iso_file")..."
+            if gsutil cp "$iso_file" "${gcs_build_path}/$(basename "$iso_file")"; then
+                log_info "Successfully uploaded ISO: ${gcs_build_path}/$(basename "$iso_file")"
+            else
+                log_warn "Failed to upload ISO (non-critical)"
+            fi
+        fi
+    done
     
     # Create and upload manifest
     log_info "Creating build manifest..."

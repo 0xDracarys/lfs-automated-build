@@ -23,6 +23,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     flex \
     texinfo \
     gawk \
+    bc \
+    cpio \
+    kmod \
+    pkg-config \
+    cmake \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Google Cloud SDK
@@ -43,6 +49,9 @@ COPY build-chapter6-fixed.sh /app/
 COPY lfs-chapter5-real.sh /app/
 COPY build-minimal-bootable.sh /app/
 COPY package-lfs-outputs.sh /app/
+COPY lfs-basic-tools.sh /app/
+COPY lfs-bootable-iso.sh /app/
+COPY lfs-vulnbox.sh /app/
 COPY helpers/ /app/helpers/
 
 # Install Node.js dependencies for Firestore logging
