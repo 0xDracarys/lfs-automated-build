@@ -374,11 +374,19 @@ update_build_status() {
         fi
     fi
     
-    # Try gcloud first
-    gcloud firestore documents update "builds/$BUILD_ID" \
-        --project="$PROJECT_ID" \
-        --update="$update_data" \
-        2>/dev/null || log_warn "Failed to update status via gcloud"
+    # ── Create-or-update: manual/cloud runs may have no app-created doc yet ──
+    if gcloud firestore documents describe "builds/$BUILD_ID" \
+        --project="$PROJECT_ID" >/dev/null 2>&1; then
+        gcloud firestore documents update "builds/$BUILD_ID" \
+            --project="$PROJECT_ID" \
+            --update="$update_data" \
+            2>/dev/null || log_warn "Failed to update status doc via gcloud"
+    else
+        gcloud firestore documents create "builds/$BUILD_ID" \
+            --project="$PROJECT_ID" \
+            --data="$update_data" \
+            2>/dev/null || log_warn "Failed to create status doc via gcloud"
+    fi
 }
 
 # ============================================================================
@@ -589,9 +597,10 @@ chapter_6_chroot() {
                 log_info "Basic tools completed"
                 write_firestore_log "chapter6-basic-tools" "completed" "Basic tools installed: git curl ssh ping ifconfig ps free top htop nano less which strace" || true
             else
-                log_error "Basic tools FAILED (see logs)"
-                write_firestore_log "chapter6-basic-tools" "error" "Basic tools build failed" || true
-                return 1
+                # NON-FATAL by design: a tools failure must never cost the main artifact.
+                # The system ships anyway (like build #1) — marked so the UI can show it.
+                log_error "Basic tools had failures - SHIPPING SYSTEM ANYWAY (non-fatal)"
+                write_firestore_log "chapter6-basic-tools" "warning" "Basic tools build had failures; system still ships (basic tools may be partial)" || true
             fi
         else
             log_warn "lfs-basic-tools.sh not found - skipping basic tools"
@@ -709,6 +718,8 @@ export PS1='\[\033[1;36m\]lfs\[\033[0m\]:\[\033[1;34m\]\w\[\033[0m\]\$ '
 export TERM=xterm-256color
 export LANG=C
 export HOME=/root
+export SSL_CERT_FILE=/etc/ssl/cacert.pem
+export CURL_CA_BUNDLE=/etc/ssl/cacert.pem
 cd /root
 if [ -f /etc/lfs-welcome.sh ]; then
   source /etc/lfs-welcome.sh
@@ -720,6 +731,8 @@ PROFILE_EOF
 export PS1='\[\033[1;36m\]lfs\[\033[0m\]:\[\033[1;34m\]\w\[\033[0m\]\$ '
 export PATH=/usr/bin:/usr/sbin:/bin:/sbin
 export TERM=xterm-256color
+export SSL_CERT_FILE=/etc/ssl/cacert.pem
+export CURL_CA_BUNDLE=/etc/ssl/cacert.pem
 alias ll='ls -la --color=auto'
 alias la='ls -A --color=auto'
 alias l='ls -CF --color=auto'
@@ -798,9 +811,10 @@ RELEASE_EOF
                 log_info "Bootable ISO completed"
                 write_firestore_log "iso" "completed" "Bootable ISO created successfully" || true
             else
-                log_error "Bootable ISO FAILED"
-                write_firestore_log "iso" "error" "ISO build failed" || true
-                return 1
+                # NON-FATAL by design: ISO is an extra artifact; the tar.gz system
+                # remains the primary deliverable (back-compat with build #1).
+                log_error "Bootable ISO had failures - SHIPPING SYSTEM ANYWAY (non-fatal)"
+                write_firestore_log "iso" "warning" "ISO build had failures; tar.gz still ships" || true
             fi
         else
             log_warn "lfs-bootable-iso.sh not found - skipping ISO"

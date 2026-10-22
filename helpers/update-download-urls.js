@@ -11,17 +11,35 @@ const admin = require('firebase-admin');
 const path = require('path');
 
 // Initialize Firebase Admin SDK
+// Priority 1: explicit key file (local dev / exports)
+// Priority 2: runtime default credentials (Cloud Run / Cloud Build container)
 if (!admin.apps.length) {
     try {
         const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || 
                                    path.join(__dirname, '..', 'auth.json');
-        const serviceAccount = require(serviceAccountPath);
+        let serviceAccount = null;
+        try { serviceAccount = require(serviceAccountPath); } catch (e) { serviceAccount = null; }
         
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            projectId: serviceAccount.project_id,
-            storageBucket: `${serviceAccount.project_id}.appspot.com`
-        });
+        let initOpts;
+        if (serviceAccount) {
+            initOpts = {
+                credential: admin.credential.cert(serviceAccount),
+                projectId: serviceAccount.project_id,
+                storageBucket: `${serviceAccount.project_id}.appspot.com`
+            };
+            console.log('[OK] Firebase Admin initialized with key file:', serviceAccountPath);
+        } else {
+            // No key file — use the runtime's own identity (metadata server)
+            const runtimeProject = process.env.PROJECT_ID || process.env.GCP_PROJECT || 
+                                   process.env.GCLOUD_PROJECT || null;
+            initOpts = {
+                credential: admin.credential.applicationDefault(),
+                ...(runtimeProject ? { projectId: runtimeProject } : {}),
+                storageBucket: process.env.GCS_BUCKET
+            };
+            console.log('[OK] Firebase Admin initialized with runtime default credentials');
+        }
+        admin.initializeApp(initOpts);
     } catch (error) {
         console.error('❌ Failed to initialize Firebase Admin SDK:', error.message);
         process.exit(1);

@@ -142,13 +142,18 @@ step 8 "procps-ng-4.0.3 — ps, free, top, uptime"
 download procps-ng-4.0.3.tar.xz \
     "https://sourceforge.net/projects/procps-ng/files/Production/procps-ng-4.0.3.tar.xz" \
     "https://gitlab.com/procps-ng/procps/-/archive/v4.0.3/procps-v4.0.3.tar.gz"
-# variant: the gitlab tarball extracts as 'procps-v4.0.3'
-extract procps-ng-4.0.3.tar.xz procps-v4.0.3 2>/dev/null || extract procps-ng-4.0.3.tar.xz procps-ng-4.0.3
-cd "$SRC/procps-v4.0.3" || cd "$SRC/procps-ng-4.0.3"
-./configure --host="$LFS_TGT" --prefix=/usr --disable-kill --without-systemd \
+# tolerant extraction: sourceforge names vs gitlab names differ
+if [ ! -d "$SRC/procps-ng-4.0.3" ] && [ ! -d "$SRC/procps-v4.0.3" ]; then
+    tar -xf "$SRC/procps-ng-4.0.3.tar.xz" -C "$SRC" >> "$BUILDLOG" 2>&1 \
+        || tar -xf "$SRC/procps-v4.0.3.tar.gz" -C "$SRC" >> "$BUILDLOG" 2>&1 \
+        || fatal "procps extract (both names failed)"
+fi
+cd "$SRC/procps-ng-4.0.3" 2>/dev/null || cd "$SRC/procps-v4.0.3" || fatal "procps dir missing"
+log "   using $(basename "$PWD")"
+    ./configure --host="$LFS_TGT" --prefix=/usr --disable-kill --without-systemd \
     >> "$BUILDLOG" 2>&1 || fatal "procps configure"
 make -j12 >> "$BUILDLOG" 2>&1 || fatal "procps make"
-make DESTDIR="$LFS" exec_libexecdir=/usr/lib install >> "$BUILDLOG" 2>&1 || fatal "procps install"
+make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1 || fatal "procps install"
 log "✅ procps (free works now)"
 
 step 9 "which-2.21"
@@ -226,9 +231,7 @@ wget -q --timeout=60 --tries=3 -O "$LFS/etc/ssl/cacert.pem" \
 [ -s "$LFS/etc/ssl/cacert.pem" ] || fatal "CA bundle empty"
 printf '[http]\n\tsslCAInfo = /etc/ssl/cacert.pem\n[init]\n\tdefaultBranch = main\n' \
     > "$LFS/etc/gitconfig"
-sed -i '/export PATH=/a export SSL_CERT_DIR=/etc/ssl/cacert.pem' "$LFS/etc/profile" \
-    2>/dev/null || true
-log "✅ CA bundle + git ssl config"
+log "✅ CA bundle + git ssl config (profile exports handled by Chapter 7)"
 
 log ""
 log "🎉 BASIC TOOLS COMPLETE — 15/15"

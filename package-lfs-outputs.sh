@@ -357,7 +357,8 @@ if [ -n "$GCS_BUCKET" ] && command -v gsutil &> /dev/null; then
     if command -v node &> /dev/null && [ -f "/app/helpers/update-download-urls.js" ]; then
         echo ""
         echo "Updating Firestore with download URLs..."
-        node /app/helpers/update-download-urls.js "$BUILD_ID"
+        node /app/helpers/update-download-urls.js "$BUILD_ID" || \
+            echo "⚠ download-urls update failed (non-fatal) - build artifacts still valid"
     fi
 else
     echo ""
