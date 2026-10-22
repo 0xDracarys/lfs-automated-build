@@ -71,4 +71,7 @@ installer/**/obj/
 testdir*/
 
 # Migration bundle data (old-project snapshots — local only, never push)
+migration/data/lfs-output/
+*.tar.gz
+*.tar.xz
 migration/data/
