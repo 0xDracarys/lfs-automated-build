@@ -68,7 +68,7 @@ options:
   machineType: 'E2_HIGHCPU_8'
   logging: CLOUD_LOGGING_ONLY
 EOF
-gcloud builds submit --config /tmp/_build-lfs.yaml . --suppress-traffic=false
+gcloud builds submit --config /tmp/_build-lfs.yaml .
 
 say "6. Create the Cloud Run job (exact old spec: 8 vCPU / 32 GiB / 10 h / GEN2)"
 gcloud run jobs create lfs-builder \
