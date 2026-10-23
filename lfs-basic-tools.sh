@@ -135,8 +135,12 @@ cd "$SRC/git-2.43.0"
 # standalone curl client (built in step 3) still covers https fetching.
 ./configure --host="$LFS_TGT" --prefix=/usr --without-tcltk --without-curl \
     >> "$BUILDLOG" 2>&1 || fatal "git configure"
-make -j12 >> "$BUILDLOG" 2>&1 || fatal "git make"
-make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1 || fatal "git install"
+# v3.4 lesson: the translation catalogs run msgfmt, which no toolchain step
+# provides — the build died at po/*.mo ("msgfmt: not found") after spending
+# its whole budget compiling objects. NO_GETTEXT skips the po/ subtree
+# entirely (git messages stay in English — fine for a practice system).
+make -j12 NO_GETTEXT=1 NO_TCLTK=1 >> "$BUILDLOG" 2>&1 || fatal "git make"
+make DESTDIR="$LFS" NO_GETTEXT=1 NO_TCLTK=1 install >> "$BUILDLOG" 2>&1 || fatal "git install"
 log "✅ git"
 
 step 6 "net-tools-2.10 — ifconfig, route, netstat (what you asked for)"
