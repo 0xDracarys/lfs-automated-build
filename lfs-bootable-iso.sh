@@ -128,11 +128,16 @@ CFG_EOF
 
 # host-side xorriso (native build, runs in container)
 if ! command -v xorriso >/dev/null 2>&1 && [ ! -x /usr/local/bin/xorriso ]; then
-    download xorriso-1.5.5.tar.gz \
-        "https://ftp.gnu.org/gnu/xorriso/xorriso-1.5.5.tar.gz" \
-        "https://mirrors.kernel.org/gnu/xorriso/xorriso-1.5.5.tar.gz"
-    [ -d "$SRC/xorriso-1.5.5" ] || tar -xf "$SRC/xorriso-1.5.5.tar.gz" -C "$SRC"
-    cd "$SRC/xorriso-1.5.5"
+    # NOTE: xorriso-1.5.5 does NOT exist on the GNU mirrors (v3.1 lesson) —
+    # current line is 1.5.6(.plNN) / 1.5.8.
+    XVER="1.5.6.pl02"
+    download "xorriso-${XVER}.tar.gz" \
+        "https://ftp.gnu.org/gnu/xorriso/xorriso-${XVER}.tar.gz" \
+        "https://mirrors.kernel.org/gnu/xorriso/xorriso-${XVER}.tar.gz" \
+        "https://ftp.gnu.org/gnu/xorriso/xorriso-1.5.6.tar.gz"
+    [ -d "$SRC/xorriso-${XVER}" ] || tar -xf "$SRC/xorriso-${XVER}.tar.gz" -C "$SRC"
+    XDIR=$(find "$SRC" -maxdepth 1 -type d -name 'xorriso-*' | head -1)
+    cd "$XDIR"
     ./configure --prefix=/usr/local >> "$BUILDLOG" 2>&1 || fatal "xorriso configure"
     make -j12 >> "$BUILDLOG" 2>&1 || fatal "xorriso make"
     make install >> "$BUILDLOG" 2>&1 || fatal "xorriso install"

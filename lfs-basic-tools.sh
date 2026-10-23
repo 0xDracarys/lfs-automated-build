@@ -111,8 +111,12 @@ download git-2.43.0.tar.xz \
     "https://github.com/git/git/archive/refs/tags/v2.43.0.tar.gz"
 extract git-2.43.0.tar.xz git-2.43.0
 cd "$SRC/git-2.43.0"
-./configure --host="$LFS_TGT" --prefix=/usr --without-tcltk >> "$BUILDLOG" 2>&1 \
-    || fatal "git configure"
+# v3.1 lesson: with the cross toolchain, git's link line put -lcurl BEFORE the
+# object files, so curl symbols never resolved (`git make` died on
+# git-http-fetch). git works fine without its http transport locally — the
+# standalone curl client (built in step 3) still covers https fetching.
+./configure --host="$LFS_TGT" --prefix=/usr --without-tcltk --without-curl \
+    >> "$BUILDLOG" 2>&1 || fatal "git configure"
 make -j12 >> "$BUILDLOG" 2>&1 || fatal "git make"
 make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1 || fatal "git install"
 log "✅ git"

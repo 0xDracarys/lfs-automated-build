@@ -120,7 +120,17 @@ if [ "$has_dvwa" = true ]; then
             "https://www.php.net/distributions/php-8.2.13.tar.xz" \
             "https://github.com/php/php-src/archive/refs/tags/php-8.2.13.tar.gz"; then
             [ -d "$SRC/php-8.2.13" ] || { [ -d "$SRC/php-src-php-8.2.13" ] || run tar -xf "$SRC/php-8.2.13.tar.xz" -C "$SRC"; }
-            if ( cd "$SRC/php-8.2.13" 2>/dev/null || cd "$SRC/php-src-php-8.2.13" 2>/dev/null ); then
+            # cd in the PARENT shell (a ( cd … ) test if would only move the
+            # subshell — v3.1 lesson: ./configure then ran from the wrong cwd).
+            prev_dir="$(pwd)"
+            if [ -d "$SRC/php-8.2.13" ] && cd "$SRC/php-8.2.13"; then
+                php_dir="$SRC/php-8.2.13"
+            elif [ -d "$SRC/php-src-php-8.2.13" ] && cd "$SRC/php-src-php-8.2.13"; then
+                php_dir="$SRC/php-src-php-8.2.13"
+            else
+                php_dir=""
+            fi
+            if [ -n "$php_dir" ]; then
                 # --disable-all configures without zlib (the minimal root has no
                 # guaranteed libz for cross-linking) and without libxml.
                 ./configure --host="$LFS_TGT" --prefix=/usr --disable-all \
@@ -128,6 +138,7 @@ if [ "$has_dvwa" = true ]; then
                     --without-pcre-jit --without-libxml >> "$BUILDLOG" 2>&1 \
                     && run make -j12 && run make DESTDIR="$LFS" install \
                     || warn "php build/install failed"
+                cd "$prev_dir"
             else
                 warn "php source dir missing (extract failed?)"
             fi
