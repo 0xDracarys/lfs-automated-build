@@ -75,10 +75,28 @@ download openssl-3.1.4.tar.gz \
     "https://github.com/openssl/openssl/releases/download/openssl-3.1.4/openssl-3.1.4.tar.gz"
 extract openssl-3.1.4.tar.gz openssl-3.1.4
 cd "$SRC/openssl-3.1.4"
+# v3.1 WSL-import lesson: with prefix=/usr, openssl's default libdir is `lib64`,
+# but the LFS dynamic loader only searches /lib and /usr/lib — curl then died
+# with "libssl.so.3: cannot open shared object file". Force libdir=lib and
+# relocate any lib64 stragglers as a safety net.
 ./Configure linux-x86_64 --cross-compile-prefix="${LFS_TGT}-" --prefix=/usr \
-    --openssldir=/etc/ssl shared no-tests >> "$BUILDLOG" 2>&1 || fatal "openssl Configure"
+    --libdir=lib --openssldir=/etc/ssl shared no-tests >> "$BUILDLOG" 2>&1 || fatal "openssl Configure"
 make -j12 >> "$BUILDLOG" 2>&1 || fatal "openssl make"
 make DESTDIR="$LFS" install_sw >> "$BUILDLOG" 2>&1 || fatal "openssl install"
+if [ -d "$LFS/usr/lib64" ] && [ ! -e "$LFS/usr/lib/libssl.so.3" ]; then
+    cp -a "$LFS/usr/lib64/"libssl.so* "$LFS/usr/lib64/"libcrypto.so* "$LFS/usr/lib/" 2>/dev/null
+fi
+# v3.1 WSL lesson: https only works with a CA bundle at
+# /etc/ssl/certs/ca-certificates.crt (curl error 77 otherwise). The build
+# container ships one via the ca-certificates package — copy it in.
+mkdir -p "$LFS/etc/ssl/certs"
+if [ -s /etc/ssl/certs/ca-certificates.crt ]; then
+    cp /etc/ssl/certs/ca-certificates.crt "$LFS/etc/ssl/certs/ca-certificates.crt"
+else
+    wget -q --timeout=60 -O "$SRC/cacert.pem" "https://curl.se/ca/cacert.pem" \
+        && cp "$SRC/cacert.pem" "$LFS/etc/ssl/certs/ca-certificates.crt" \
+        || log "⚠️ CA bundle unavailable — guest https cert checks may fail"
+fi
 log "✅ openssl"
 
 step 3 "curl-8.5.0 (https client; runtime downloads)"
