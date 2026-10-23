@@ -276,11 +276,35 @@ fi
 
 # ==================================================== 4. /usr/bin launchers
 mkdir -p "$LFS/usr/bin"
+# A public one-command demo tunnel (cloudflared static binary) — lets the user
+# open the targets from the Windows browser (or any other machine) even when
+# WSL localhost forwarding is unavailable (broken relay / restricted firewall).
+if download "cloudflared-linux-amd64" \
+    "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64"; then
+    mkdir -p "$LFS/usr/local/bin"
+    cp "$SRC/cloudflared-linux-amd64" "$LFS/usr/local/bin/cloudflared" \
+        && chmod +x "$LFS/usr/local/bin/cloudflared" && log "✅ cloudflared (tunnel helper)"
+fi
+
+cat > "$LFS/usr/bin/vulnbox-tunnel" << 'VTEOF'
+#!/bin/bash
+# Exposes a running practice target through a throwaway public HTTPS URL.
+# Usage:  vulnbox-tunnel [port]        (default 8080 = WebGoat; 3000 = Juice Shop, 80 = DVWA)
+exec /usr/local/bin/cloudflared tunnel --no-autoupdate --url "http://127.0.0.1:${1:-8080}"
+VTEOF
+chmod +x "$LFS/usr/bin/vulnbox-tunnel"
+
 cat > "$LFS/usr/bin/vulnbox-start" << 'VBEOF'
 #!/bin/bash
 # Starts every installed practice target. Run as:  vulnbox-start
 R='\033[0m'; G='\033[1;32m'; Y='\033[1;33m'
 STARTED=0
+
+# v3.4 live-fire lessons: lighttpd insists on /var/tmp (upload-dirs) which the
+# minimal root lacks — an absent dir kills the web server outright. And without
+# a UTF-8 locale the JVM warns (ANSI_X3.4-1968) and WebWolf misbehaves.
+mkdir -p /var/tmp
+export LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 if [ -x /usr/local/bin/node ] && [ -d /opt/juice-shop ]; then
     ( cd /opt/juice-shop || exit 1
@@ -328,9 +352,9 @@ fi
 if [ -x /usr/local/jdk/bin/java ] && [ -f /opt/webgoat/webgoat-8.2.2.jar ]; then
     (
         cd /opt/webgoat
-        /usr/local/jdk/bin/java -jar webgoat-8.2.2.jar --server.port=8080 > /root/.webgoat.log 2>&1 &
+        /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webgoat-8.2.2.jar --server.port=8080 > /root/.webgoat.log 2>&1 &
         sleep 1
-        [ -f webwolf-8.2.2.jar ] && /usr/local/jdk/bin/java -jar webwolf-8.2.2.jar --server.port=9090 > /root/.webwolf.log 2>&1 &
+        [ -f webwolf-8.2.2.jar ] && /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webwolf-8.2.2.jar --server.port=9090 > /root/.webwolf.log 2>&1 &
     )
     echo -e "${G}🎯 WebGoat${R}   → http://localhost:8080/WebGoat (register new user; WebWolf → :9090)"
     STARTED=1
