@@ -29,6 +29,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     cmake \
     unzip \
+    rsync \
+    perl \
+    libelf-dev \
+    libssl-dev \
+    dwarves \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Google Cloud SDK
