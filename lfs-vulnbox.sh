@@ -155,6 +155,51 @@ if [ "$has_dvwa" = true ]; then
                     done < <(objdump -p "$LFS/opt/mysql/bin/mysqld" 2>/dev/null | awk '/NEEDED/{print $2}')
                 fi
                 log "✅ MariaDB 11.4.5 (server + client) at /opt/mysql (compat path)"
+                # v3.4 labs evidence: the container may LACK libs the MariaDB
+                # bintar needs (libgcrypt.so.20 / libsystemd.so.0 / liblz4.so.1 /
+                # libcap.so.2 / libzstd.so.1) — the NEEDED-shipper can only copy
+                # what the container itself has. Fetch missing ones from distro
+                # pools (jammy glibc 2.35 ≤ target 2.38) and extract via ar+tar
+                # (dpkg not guaranteed). Graceful: a dead URL is a warning, the
+                # build continues.
+                fetch_lib_from_deb() { # $1=pool-url $2=debprefix $3=soname
+                    [ -e "$LFS/usr/lib/$3" ] && return 0
+                    local listing name url tmp work libfile
+                    listing=$(curl -fsSL "$1" 2>>"$BUILDLOG") || return 1
+                    name=$(printf '%s\n' "$listing" | grep -o "$2_[^\"]*_amd64\.deb" | sort | tail -1) || true
+                    [ -n "$name" ] || return 1
+                    url="$1$name"
+                    tmp="$SRC/deb-$name"
+                    curl -fsSL -o "$tmp" "$url" 2>>"$BUILDLOG" || { rm -f "$tmp"; return 1; }
+                    work="$SRC/.debx$$"; rm -rf "$work"; mkdir -p "$work"
+                    ( cd "$work" && ar x "$tmp" ) 2>>"$BUILDLOG" || { rm -f "$tmp"; rm -rf "$work"; return 1; }
+                    if [ -f "$work/data.tar.xz" ]; then tar -xJf "$work/data.tar.xz" -C "$work" 2>>"$BUILDLOG"
+                    elif [ -f "$work/data.tar.zst" ]; then ( cd "$work" && tar --zstd -xf data.tar.zst ) 2>>"$BUILDLOG"
+                    elif [ -f "$work/data.tar.gz" ]; then tar -xzf "$work/data.tar.gz" -C "$work" 2>>"$BUILDLOG"
+                    fi
+                    libfile=$(find "$work" -name "$3*" 2>/dev/null | head -1)
+                    if [ -n "$libfile" ]; then
+                        cp -aL "$libfile" "$LFS/usr/lib/$3" 2>>"$BUILDLOG" \
+                            && log "✅ shipped $3 from distro deb"
+                    fi
+                    rm -f "$tmp"; rm -rf "$work"
+                    [ -e "$LFS/usr/lib/$3" ]
+                }
+                for soname in libsystemd.so.0 libgcrypt.so.20 liblz4.so.1 libcap.so.2 libzstd.so.1; do
+                    [ -e "$LFS/usr/lib/$soname" ] && continue
+                    case "$soname" in
+                        libsystemd.so.0) pools="s/systemd" prefix="libsystemd0" ;;
+                        libgcrypt.so.20) pools="libg/libgcrypt20" prefix="libgcrypt20" ;;
+                        liblz4.so.1)     pools="l/lz4" prefix="liblz4-1" ;;
+                        libcap.so.2)     pools="libc/libcap2" prefix="libcap2" ;;
+                        libzstd.so.1)    pools="libz/libzstd" prefix="libzstd1" ;;
+                    esac
+                    # try jammy first, Debian bookworm as backup
+                    if ! fetch_lib_from_deb "http://archive.ubuntu.com/ubuntu/pool/main/$pools/" "$prefix" "$soname"; then
+                        fetch_lib_from_deb "https://deb.debian.org/debian/pool/main/$pools/" "$prefix" "$soname" \
+                            || log "warn: could not fetch $soname from distro pools"
+                    fi
+                done
             else warn "mariadb extract failed"; fi
         fi
     fi
@@ -176,18 +221,45 @@ if [ "$has_dvwa" = true ]; then
                 php_dir=""
             fi
             if [ -n "$php_dir" ]; then
-                # --disable-all configures without zlib (the minimal root has no
-                # guaranteed libz for cross-linking) and without libxml.
-                ./configure --host="$LFS_TGT" --prefix=/usr --disable-all \
+                # v3.4 lesson: the CROSS build "succeeded" (configure/make/install
+                # all status 0) but produced NO $LFS/usr/bin/php-cgi — and the
+                # shipped minimal root's gcc can't even produce executables
+                # (-lgcc missing), so no guest-side rebuild either. Fix: build
+                # NATIVE in the container (its glibc ≤ target glibc), install
+                # with DESTDIR="$LFS", and let the NEEDED-shipper carry
+                # libgcc_s.so.1 and friends into the root.
+                # --disable-all keeps it libc-only (no zlib/libxml on the host);
+                # mysqli/session/filter are bundled; sqlite/phar/pear off.
+                ./configure --prefix=/usr --disable-all \
                     --enable-cli --enable-cgi --enable-session --enable-filter --enable-mysqli \
-                    --without-pcre-jit --without-libxml >> "$BUILDLOG" 2>&1 \
-                    && run make -j12 && run make DESTDIR="$LFS" install \
+                    --without-pcre-jit --without-libxml --without-pear \
+                    >> "$BUILDLOG" 2>&1 \
+                    && run make -j8 && run make DESTDIR="$LFS" install \
                     || warn "php build/install failed"
+                # php.ini for sessions/uploads (DVWA needs one to behave)
+                PHPINIDIR=$(find "$LFS/usr/lib/php" "$LFS/lib/php" -maxdepth 1 \
+                    -name 'php.ini-development' 2>/dev/null | head -1)
+                [ -n "$PHPINIDIR" ] && cp "$PHPINIDIR" "$LFS/usr/lib/php.ini" 2>>"$BUILDLOG"
                 cd "$prev_dir"
             else
                 warn "php source dir missing (extract failed?)"
             fi
         fi
+        # ship host-only deps of the built binaries (same rules as mysqld)
+        for bin in "$LFS/usr/bin/php-cgi" "$LFS/usr/bin/php"; do
+            [ -x "$bin" ] || continue
+            while read -r soname; do
+                case "$soname" in
+                    libc.so*|libm.so*|libdl*|libpthread*|librt*|ld-linux*) continue ;;
+                esac
+                [ -e "$LFS/usr/lib/$soname" ] && continue
+                found=""
+                for d in /usr/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib /lib; do
+                    [ -e "$d/$soname" ] && { found="$d/$soname"; break; }
+                done
+                [ -n "$found" ] && cp -aL "$found" "$LFS/usr/lib/$soname" 2>>"$BUILDLOG"
+            done < <(objdump -p "$bin" 2>/dev/null | awk '/NEEDED/{print $2}')
+        done
         [ -x "$LFS/usr/bin/php-cgi" ] && log "✅ PHP 8.2 (cli + fastcgi)" || warn "php missing"
     else log "✓ PHP already installed"; fi
 
@@ -219,8 +291,13 @@ if [ "$has_dvwa" = true ]; then
         # DVWA config with local mysql creds (vulnbox boot creates the db)
         [ -f "$LFS/opt/dvwa/config/config.inc.php" ] || cp "$LFS/opt/dvwa/config/config.inc.php.dist" \
             "$LFS/opt/dvwa/config/config.inc.php" 2>>"$BUILDLOG" || true
-        sed -i "s/^\$_DVWA\[ 'db_server' \].*/\$_DVWA[ 'db_server' ] = '127.0.0.1';/; s/^\$_DVWA\[ 'db_database' \].*/\$_DVWA[ 'db_database' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_user' \].*/\$_DVWA[ 'db_user' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_password' \].*/\$_DVWA[ 'db_password' ] = 'vulpass';/" \
+        sed -i "s/^\$_DVWA\[ 'db_server' \].*/\$_DVWA[ 'db_server' ] = '127.0.0.1';/; s/^\$_DVWA\[ 'db_port' \].*/\$_DVWA[ 'db_port' ] = '3307';/; s/^\$_DVWA\[ 'db_database' \].*/\$_DVWA[ 'db_database' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_user' \].*/\$_DVWA[ 'db_user' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_password' \].*/\$_DVWA[ 'db_password' ] = 'vulpass';/" \
             "$LFS/opt/dvwa/config/config.inc.php" 2>>"$BUILDLOG" || warn "dvwa config sed"
+        # v3.4 lessons: lighttpd 1.4.x has NO mod_access (it is mod_accesslog),
+        # and mod_fastcgi SPAWNS bin-path at startup — a missing php-cgi kills
+        # the entire server. Emit the fastcgi block ONLY when php-cgi exists,
+        # put mod_indexfile BEFORE mod_fastcgi (silences the order warning).
+        if [ -x "$LFS/usr/bin/php-cgi" ]; then
         cat > "$LFS/etc/lighttpd/lighttpd.conf" << 'LT_EOF'
 server.port          = 80
 server.bind          = "0.0.0.0"
@@ -228,7 +305,7 @@ server.username      = "root"
 server.groupname     = "root"
 server.document-root = "/opt/dvwa"
 server.errorlog      = "/root/.lighttpd-error.log"
-server.modules = ( "mod_fastcgi", "mod_access", "mod_indexfile" )
+server.modules = ( "mod_indexfile", "mod_fastcgi", "mod_accesslog" )
 index-file.names = ( "index.php", "index.html" )
 mimetype.assign = ( ".css" => "text/css", ".js" => "text/javascript",
                     ".png" => "image/png", ".jpg" => "image/jpeg", ".ico" => "image/x-icon" )
@@ -237,7 +314,22 @@ fastcgi.server = ( ".php" => (( "bin-path" => "/usr/bin/php-cgi",
                                 "max-procs" => 2,
                                 "bin-environment" => ( "PHP_FCGI_CHILDREN" => "4" ) )) )
 LT_EOF
-        log "✅ lighttpd config (docroot /opt/dvwa)"
+        log "✅ lighttpd config (docroot /opt/dvwa, php fastcgi)"
+        else
+        cat > "$LFS/etc/lighttpd/lighttpd.conf" << 'LT_EOF'
+server.port          = 80
+server.bind          = "0.0.0.0"
+server.username      = "root"
+server.groupname     = "root"
+server.document-root = "/opt/dvwa"
+server.errorlog      = "/root/.lighttpd-error.log"
+server.modules = ( "mod_indexfile", "mod_accesslog" )
+index-file.names = ( "index.php", "index.html" )
+mimetype.assign = ( ".css" => "text/css", ".js" => "text/javascript",
+                    ".png" => "image/png", ".jpg" => "image/jpeg", ".ico" => "image/x-icon" )
+LT_EOF
+        log "⚠ lighttpd config (static-only docroot — php-cgi missing)"
+        fi
     fi
 fi
 
@@ -317,27 +409,33 @@ if [ -x /usr/local/bin/node ] && [ -d /opt/juice-shop ]; then
 fi
 
 if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
+    mkdir -p /opt/mysql-data
     if [ ! -d /opt/mysql-data/mysql ]; then
         echo -e "${Y}… initializing MariaDB data directory (first boot, ~1 min)${R}"
         # MariaDB init ≠ MySQL init: use mariadb-install-db when present.
+        # v3.4 lesson: this root runs as root — MariaDB refuses mysqld unless
+        # an explicit --user is given, so add --user=root to every call.
         if [ -x /opt/mysql/bin/mariadb-install-db ]; then
             /opt/mysql/bin/mariadb-install-db \
+                --user=root \
                 --datadir=/opt/mysql-data --basedir=/opt/mysql \
                 --auth-root-authentication-method=normal --skip-test-db \
                 >> /root/.mysqld-init.log 2>&1
         else
-            TERM=dumb /opt/mysql/bin/mysqld --initialize-insecure \
+            TERM=dumb /opt/mysql/bin/mysqld --initialize-insecure --user=root \
                 --datadir=/opt/mysql-data --basedir=/opt/mysql >> /root/.mysqld-init.log 2>&1
         fi
     fi
-    /opt/mysql/bin/mysqld --datadir=/opt/mysql-data --basedir=/opt/mysql \
-        --port=3306 --bind-address=127.0.0.1 \
+    # v3.4 WSL lesson: Windows' own MySQL frequently OWNS 127.0.0.1:3306 via
+    # the WSL2 localhost relay — even from inside the distro. 3307 has no clash.
+    TERM=dumb /opt/mysql/bin/mysqld --user=root --datadir=/opt/mysql-data --basedir=/opt/mysql \
+        --port=3307 --bind-address=127.0.0.1 \
         > /root/.mysqld.log 2>&1 &
     sleep 3
     if TERM=dumb /opt/mysql/bin/mysql -e "SELECT 1" >/dev/null 2>&1; then
         TERM=dumb /opt/mysql/bin/mysql -e "CREATE DATABASE IF NOT EXISTS dvwa; CREATE USER IF NOT EXISTS 'dvwa'@'localhost' IDENTIFIED BY 'vulpass';
             GRANT ALL ON dvwa.* TO 'dvwa'@'localhost';" 2>/dev/null || true
-        echo -e "${G}🎯 MariaDB${R}  → 127.0.0.1:3306 (db: dvwa, user: dvwa, pass: vulpass)"
+        echo -e "${G}🎯 MariaDB${R}  → 127.0.0.1:3307 (db: dvwa, user: dvwa, pass: vulpass)"
     else
         echo -e "${Y}⚠ MariaDB did not come up — check /root/.mysqld.log /root/.mysqld-init.log${R}"
     fi
