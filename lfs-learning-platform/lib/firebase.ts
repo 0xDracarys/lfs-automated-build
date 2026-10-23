@@ -26,18 +26,27 @@ if (!getApps().length) {
   app = initializeApp(firebaseConfig);
   db = getFirestore(app);
   auth = getAuth(app);
-  
-  // Initialize Analytics only on client side
-  if (typeof window !== 'undefined') {
-    analytics = getAnalytics(app);
-  }
 } else {
   app = getApps()[0];
   db = getFirestore(app);
   auth = getAuth(app);
+}
 
-  if (typeof window !== 'undefined') {
-    analytics = getAnalytics(app);
+/**
+ * GDPR / ePrivacy: Google Analytics is DISABLED BY DEFAULT.
+ * It only initializes after the user explicitly accepts via the consent
+ * banner (components/gdpr/ConsentBanner). Nothing imports `analytics`
+ * directly, so lazy init here is safe.
+ */
+export function initAnalyticsIfConsented(): void {
+  if (analytics || typeof window === 'undefined') return;
+  try {
+    const raw = window.localStorage.getItem('lfs-gdpr-consent-v1');
+    if (raw && raw.includes('"analytics":true')) {
+      analytics = getAnalytics(getApps()[0]);
+    }
+  } catch {
+    /* storage blocked or no consent — stays off */
   }
 }
 

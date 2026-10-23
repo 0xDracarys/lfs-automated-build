@@ -5,6 +5,7 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 import admin from "@/lib/firebase-admin";
+import { requireUid } from "@/lib/api-auth";
 
 async function getGcloudToken(): Promise<string> {
   try {
@@ -55,6 +56,13 @@ export async function POST(
 ) {
   try {
     const { buildId } = await params;
+
+    // ── Security: caller must own this build ────────────────────────────────
+    const caller = await requireUid(request);
+    if (!caller) {
+      return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+    }
+
     const projectId =
       process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "alfs-bd1e0";
 
@@ -73,6 +81,12 @@ export async function POST(
     if (docRes.ok) {
       const rawDoc = await docRes.json();
       const data = parseDoc(rawDoc);
+
+      // Ownership check before touching anyone else's build
+      if (data?.userId && data.userId !== caller.uid) {
+        return NextResponse.json({ error: "Not your build" }, { status: 403 });
+      }
+
       const executionPath = data?.cloudRunExecution?.name;
       if (executionPath) {
         const executionName = executionPath.split("/").pop();

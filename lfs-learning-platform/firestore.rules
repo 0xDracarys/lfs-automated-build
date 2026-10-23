@@ -1,57 +1,89 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Users collection - anyone can read, users can write their own data
+
+    // ───────── helpers ─────────
+    function signedIn()   { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function isAdmin()    { return signedIn() && request.auth.token.get('admin', false) == true; }
+    function myEmail()    { return request.auth.token.get('email', 'x'); }
+
+    // ───────── users + their subcollections (progress, commands, activities) ─────────
+    // Hardened: self-only writes/reads. Admin claim can audit.
     match /users/{userId} {
-      allow read: if true;
-      allow write: if true; // Open for demo purposes
+      allow get, list:   if isOwner(userId) || isAdmin();
+      allow create, update: if isOwner(userId) || isAdmin();
+      allow delete:      if isAdmin(); // erasure runs server-side (admin SDK)
+      match /{subPath=**}/{docId} { // subcollections: modules, commands, activities, ...
+        allow read, write, delete: if isOwner(userId) || isAdmin();
+      }
     }
-    
-    // User progress - anyone can read/write for demo purposes
+
+    // legacy duplicate path — same policy
     match /userProgress/{userId} {
-      allow read: if true;
-      allow write: if true;
+      allow read, write: if isOwner(userId) || isAdmin();
     }
-    
-    // Modules/Courses - anyone can read, only admins can write
-    match /modules/{moduleId} {
-      allow read: if true;
-      allow write: if false; // Only admins via Firebase Console
-    }
-    
-    // Lessons - anyone can read
-    match /lessons/{lessonId} {
-      allow read: if true;
-      allow write: if false; // Only admins via Firebase Console
-    }
-    
-    // Comments - anyone can read and write for demo purposes
+
+    // ───────── learning content: public read, admin/server write ─────────
+    match /modules/{moduleId}  { allow read: if true; allow write: if isAdmin(); }
+    match /lessons/{lessonId}  { allow read: if true; allow write: if isAdmin(); }
+    match /quizzes/{quizId}    { allow read: if true; allow write: if isAdmin(); }
+
+    // ───────── comments: signed users may speak for themselves ─────────
     match /comments/{commentId} {
-      allow read: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+      allow read:   if true;
+      allow create: if signedIn() && request.resource.data.get('userId', 'x') == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['userId','text','lessonId','moduleId','createdAt','name']);
+      allow update, delete: if isAdmin()
+                    || (signedIn() && resource.data.get('userId', 'x') == request.auth.uid);
     }
-    
-    // Analytics - anyone can write for tracking purposes
+
+    // ───────── first-party analytics events: append-only, own events, admin read ─────────
     match /analytics/{docId} {
-      allow create: if true;
-      allow read, update, delete: if false;
+      allow create: if signedIn() && request.resource.data.get('userId', 'x') == request.auth.uid;
+      allow read:   if isAdmin();
+      allow update, delete: if false; // erasure handled by admin SDK (GDPR delete route)
     }
 
-    // VulnBox builds — users can create and read their own builds only
-    match /vulnbox_builds/{buildId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow update, delete: if false; // Only server-side (firebase-admin) can update
-    }
-
-    // Builds collection (existing cloud builds) — keep existing behaviour
+    // ───────── cloud builds: OWNER-ONLY (previously: any signed-in user could
+    //          read every other user's build configs and emails) ─────────
     match /builds/{buildId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if false;
+      allow create: if signedIn() && request.resource.data.get('userId', 'x') == request.auth.uid;
+      allow read:   if isAdmin() || (signedIn() && resource.data.get('userId', 'x') == request.auth.uid);
+      allow update, delete: if false; // server-side only
     }
+    match /buildLogs/{logId} {
+      allow read:   if isAdmin() || (signedIn() && resource.data.get('userId', 'x') == request.auth.uid);
+      allow write:  if false; // server-side only
+    }
+
+    // ───────── vulnbox builds: create own, read own ─────────
+    match /vulnbox_builds/{buildId} {
+      allow create: if signedIn() && request.resource.data.get('userId', '') == request.auth.uid;
+      allow read:   if isAdmin() || (signedIn() && resource.data.get('userId', 'x') == request.auth.uid);
+      allow update, delete: if false; // server-side only
+    }
+
+    // ───────── notification requests: users register ONLY their own email ─────────
+    match /buildNotifications/{docId} {
+      allow create: if signedIn() && request.resource.data.get('email', 'x') == myEmail();
+      allow read, update, delete: if false; // server-side only
+    }
+
+    // ───────── support requests via API route (client SDK rules still apply) ─────────
+    match /support_requests/{reqId} {
+      allow create: if signedIn() && request.resource.data.get('userId', 'x') == request.auth.uid
+                    && request.resource.data.get('userEmail', 'x') == myEmail();
+      allow read:   if isAdmin() || (signedIn() && resource.data.get('userId', 'x') == request.auth.uid)
+                    || (signedIn() && resource.data.get('userEmail', 'x') == myEmail());
+      allow update: if isAdmin() || (signedIn() && resource.data.get('userId', 'x') == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+    match /hr_notifications/{docId} {
+      allow read, write: if false; // server-side only
+    }
+
+    // Everything not listed above is DENIED (implicit default).
   }
 }

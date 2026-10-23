@@ -31,6 +31,7 @@ function parseDoc(doc: any): Record<string, any> {
 }
 
 import admin from "@/lib/firebase-admin";
+import { requireUid } from "@/lib/api-auth";
 
 async function getGcloudToken(): Promise<string> {
   try {
@@ -57,6 +58,13 @@ export async function GET(
 ) {
   try {
     const { buildId } = await params;
+
+    // ── Security: caller must own this build ────────────────────────────────
+    const caller = await requireUid(request);
+    if (!caller) {
+      return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+    }
+
     const projectId =
       process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "alfs-bd1e0";
 
@@ -79,6 +87,11 @@ export async function GET(
 
     const rawDoc = await docRes.json();
     const data = parseDoc(rawDoc);
+
+    // Ownership check: server parses ownerId from the build doc
+    if (data?.userId && caller && data.userId !== caller.uid) {
+      return NextResponse.json({ error: "Not your build" }, { status: 403 });
+    }
 
     // ── Fetch the logs sub-collection ────────────────────────────────────────
     const logsRes = await fetch(

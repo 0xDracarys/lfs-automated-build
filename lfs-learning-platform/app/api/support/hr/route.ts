@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
+import { requireUid } from '@/lib/api-auth';
+import { rateLimit, callerKey } from '@/lib/rate-limit';
 
 interface SupportRequest {
   userId: string;
@@ -35,9 +37,24 @@ interface SupportResponse {
  */
 export async function POST(request: NextRequest): Promise<NextResponse<SupportResponse>> {
   try {
+    // ── Security: identify the caller from their verified ID token ─────────
+    // (userId / userEmail in the body are IGNORED — spoofable)
+    const caller = await requireUid(request);
+    if (!caller) {
+      return NextResponse.json(
+        { success: false, message: 'Sign in required' },
+        { status: 401 }
+      );
+    }
+    if (!rateLimit(`support:${caller.uid}`, 5, 10 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, message: 'Too many support requests — try again shortly' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const {
-      userId,
       type,
       lessonId,
       moduleId,
@@ -49,12 +66,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<SupportRe
     } = body;
 
     // Validation
-    if (!userId || !type || !message) {
+    if (!type || !message) {
       return NextResponse.json(
         {
           success: false,
           message: 'Missing required fields',
-          error: 'userId, type, and message are required'
+          error: 'type, and message are required'
         },
         { status: 400 }
       );
@@ -62,7 +79,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SupportRe
 
     // Create support request document
     const supportData: SupportRequest = {
-      userId,
+      userId: caller.uid,
       type,
       message,
       selectedText,
@@ -81,13 +98,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<SupportRe
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       responses: [],
-      userEmail: (request.headers.get('x-user-email') || 'unknown@example.com'),
+      userEmail: (caller.email || 'unknown@example.com'),
       userAgent: request.headers.get('user-agent')
     });
 
     // Also log this as an activity
     try {
-      const activitiesRef = collection(db, 'users', userId, 'activities');
+      const activitiesRef = collection(db, 'users', caller.uid, 'activities');
       await addDoc(activitiesRef, {
         eventType: 'support_request_created',
         supportType: type,
@@ -150,9 +167,23 @@ export async function POST(request: NextRequest): Promise<NextResponse<SupportRe
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const userId = request.nextUrl.searchParams.get('userId');
+    // ── Security: only the verified user's own tickets (or the support team) ─
+    const caller = await requireUid(request);
+    if (!caller) {
+      return NextResponse.json(
+        { success: false, message: 'Sign in required' },
+        { status: 401 }
+      );
+    }
+
+    // The support team is allow-listed via env (never via a query flag the
+    // client can set): SUPPORT_TEAM_EMAILS="a@x.com,b@y.com"
+    const teamEmails = (process.env.SUPPORT_TEAM_EMAILS || '')
+      .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+    const isHRTeam = teamEmails.includes(caller.email.toLowerCase());
+
+    const userId = caller.uid; // token-derived; query string userId is IGNORED
     const supportId = request.nextUrl.searchParams.get('supportId');
-    const isHRTeam = request.nextUrl.searchParams.get('isHRTeam') === 'true';
 
     if (supportId) {
       // Get specific support request

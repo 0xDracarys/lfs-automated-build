@@ -3,11 +3,25 @@ import { spawn, exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 import fs from 'fs/promises';
+import { requireUid } from '@/lib/api-auth';
+import { rateLimit, callerKey } from '@/lib/rate-limit';
 
 const execAsync = promisify(exec);
 
 export async function POST(request: NextRequest) {
   try {
+    // ── Security: authenticated callers only (this spawns local builds!) ────
+    const caller = await requireUid(request);
+    if (!caller) {
+      return NextResponse.json({ error: 'Sign in required' }, { status: 401 });
+    }
+    if (!rateLimit(`local-build:${caller.uid}`, 2, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: 'Local build limit reached (2/hour)' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { kernelVersion, optimization, options, scriptType = 'default' } = body;
 
