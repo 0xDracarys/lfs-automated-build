@@ -644,6 +644,17 @@ default=root
 
 [boot]
 systemd=false
+
+# v3.1 WSL-import lesson: without this, WSL injects the Windows PATH into the
+# guest and /init prints "Failed to translate 'C:\...'" for every entry.
+[interop]
+appendWindowsPath=false
+EOF
+    # v3.1: an ABSENT /etc/fstab makes WSL init print
+    # "Processing /etc/fstab with mount -a failed" on every launch — an empty
+    # fstab keeps mount -a a happy no-op.
+    cat > "${LFS_MNT}/etc/fstab" << "EOF"
+# WSL rootfs — no additional mounts (created by the WSL runtime).
 EOF
 
     log_info "Creating network configuration..."
