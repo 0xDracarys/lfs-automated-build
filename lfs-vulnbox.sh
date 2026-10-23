@@ -101,14 +101,21 @@ if [ "$has_dvwa" = true ]; then
             mkdir -p "$LFS/opt" "$LFS/usr/local/bin"
             if tar -xzf "$SRC/mariadb-11.4.5-linux-systemd-x86_64.tar.gz" -C "$LFS/opt" 2>>"$BUILDLOG"; then
                 ln -sfn /opt/mariadb-11.4.5-linux-systemd-x86_64 "$LFS/opt/mysql"
-                # The minimal LFS root lacks libraries normal distros always have;
-                # mysqld refuses to start without them, so ship them over now.
+                # v3.1 WSL-import lesson: the container's libncursesw replaced
+                # $LFS/usr/lib/libncursesw.so.6.4 (the LFS-built version is
+                # self-contained; Debian's dlopens a separate libtinfo.so.6 the
+                # minimal root doesn't have) — every binary in the guest then
+                # died with "libtinfo.so.6: cannot open". Only ADD missing
+                # libs (libaio), never overwrite anything the root already has.
                 for lib in /lib/x86_64-linux-gnu/libaio.so* \
-                           /usr/lib/x86_64-linux-gnu/libaio.so* \
-                           /usr/lib/x86_64-linux-gnu/libncursesw.so* \
-                           /lib/x86_64-linux-gnu/libncursesw.so*; do
-                    [ -e "$lib" ] && cp -a "$lib" "$LFS/usr/lib/" 2>>"$BUILDLOG"
+                           /usr/lib/x86_64-linux-gnu/libaio.so*; do
+                    [ -e "$lib" ] || continue
+                    [ -e "$LFS/usr/lib/$(basename "$lib")" ] && continue
+                    cp -a "$lib" "$LFS/usr/lib/" 2>>"$BUILDLOG"
                 done
+                [ -e "$LFS/usr/lib/libaio.so.1" ] || \
+                    { [ -e "$LFS/usr/lib/libaio.so.1.0.2" ] && \
+                      ln -s libaio.so.1.0.2 "$LFS/usr/lib/libaio.so.1"; }
                 log "✅ MariaDB 11.4.5 (server + client) at /opt/mysql (compat path)"
             else warn "mariadb extract failed"; fi
         fi
