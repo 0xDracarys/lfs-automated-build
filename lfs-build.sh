@@ -781,26 +781,8 @@ RELEASE_EOF
     log_info "  Welcome banner, prompt, and help command installed"
     
     # ========================================================================
-    # Optional Layer 1: Practice targets (vulnbox) — STRICTLY opt-in
-    # ENABLE_VULNBOX=true + VULNBOX_PACKAGES=juice-shop[,dvwa]
-    # ========================================================================
-    if [ "${ENABLE_VULNBOX:-false}" = "true" ]; then
-        if [ -f "${SCRIPT_DIR}/lfs-vulnbox.sh" ]; then
-            log_info "Optional layer: practice targets (${VULNBOX_PACKAGES:-default})"
-            write_firestore_log "vulnbox" "started" "Installing practice targets: ${VULNBOX_PACKAGES:-none}" || true
-            if bash "${SCRIPT_DIR}/lfs-vulnbox.sh"; then
-                write_firestore_log "vulnbox" "completed" "Vulnbox layer done" || true
-            else
-                log_warn "vulnbox layer had failures - continuing build (non-fatal)"
-                write_firestore_log "vulnbox" "warning" "Vulnbox layer had partial failures" || true
-            fi
-        else
-            log_warn "lfs-vulnbox.sh not found - skipping practice targets"
-        fi
-    fi
-    
-    # ========================================================================
-    # Optional Layer 2: Bootable ISO (kernel + initramfs + isolinux mastering)
+    # Optional Layer: Bootable ISO — built from the CLEAN system (base +
+    # minimum tools, BEFORE practice targets go in).
     # ENABLE_ISO_BUILD=true (default ON — this is the June TODO fix)
     # ========================================================================
     if [ "${ENABLE_ISO_BUILD:-true}" = "true" ]; then
@@ -821,6 +803,49 @@ RELEASE_EOF
         fi
     fi
     
+    # ========================================================================
+    # Snapshot 1: lfs-system.tar.gz — base system + minimum tools (CLEAN,
+    # before any practice targets). This is the "normal" tarball with its
+    # real size recorded in the manifest.
+    # ========================================================================
+    if ! create_output_archive "lfs-system"; then
+        log_error "lfs-system archive failed - continuing (upload stage will retry)"
+        write_firestore_log "package" "warning" "lfs-system snapshot failed" || true
+    fi
+    
+    # ========================================================================
+    # Optional Layer: Practice targets (vulnbox) — STRICTLY opt-in.
+    # ENABLE_VULNBOX=true + VULNBOX_PACKAGES=juice-shop[,dvwa][,webgoat]
+    # ========================================================================
+    vulnbox_ran=false
+    if [ "${ENABLE_VULNBOX:-false}" = "true" ]; then
+        if [ -f "${SCRIPT_DIR}/lfs-vulnbox.sh" ]; then
+            log_info "Optional layer: practice targets (${VULNBOX_PACKAGES:-default})"
+            write_firestore_log "vulnbox" "started" "Installing practice targets: ${VULNBOX_PACKAGES:-none}" || true
+            if bash "${SCRIPT_DIR}/lfs-vulnbox.sh"; then
+                vulnbox_ran=true
+                write_firestore_log "vulnbox" "completed" "Vulnbox layer done" || true
+            else
+                log_warn "vulnbox layer had failures - continuing build (non-fatal)"
+                vulnbox_ran=true  # partial installs still useful; snapshot again
+                write_firestore_log "vulnbox" "warning" "Vulnbox layer had partial failures" || true
+            fi
+        else
+            log_warn "lfs-vulnbox.sh not found - skipping practice targets"
+        fi
+    fi
+    
+    # ========================================================================
+    # Snapshot 2: vuln-labs.tar.gz — clean system + practice targets
+    # (only when the labs layer was enabled).
+    # ========================================================================
+    if [ "$vulnbox_ran" = "true" ] && [ -f "${OUTPUT_DIR}/archive-path.txt" ]; then
+        if ! create_output_archive "vuln-labs"; then
+            log_error "vuln-labs archive failed - shipping lfs-system only (non-fatal)"
+            write_firestore_log "package" "warning" "vuln-labs snapshot failed" || true
+        fi
+    fi
+    
     log_info "Chapter 7 completed successfully"
     write_firestore_log "chapter7" "completed" "Chapter 7: System configuration completed"
     
@@ -832,14 +857,16 @@ RELEASE_EOF
 # ============================================================================
 
 create_output_archive() {
-    log_section "Creating Output Archive"
+    local TAG="${1:-lfs-system}"
+    log_section "Creating Output Archive (${TAG})"
     
-    log_info "Creating output archive..."
+    log_info "Creating output archive (${TAG})..."
     
-    local archive_name="lfs-system-${BUILD_ID}.tar.gz"
+    local archive_name="${TAG}-${BUILD_ID}.tar.gz"
     local archive_path="${OUTPUT_DIR}/${archive_name}"
     
-    # Create build metadata
+    # Create build metadata (once)
+    if [ ! -f "${OUTPUT_DIR}/build-metadata-${BUILD_ID}.txt" ]; then
     {
         echo "LFS Build Metadata"
         echo "Build ID: $BUILD_ID"
@@ -848,6 +875,7 @@ create_output_archive() {
         echo "Host: $(hostname)"
         echo "Build Type: ${ENABLE_FULL_BUILD:-false}"
     } > "${OUTPUT_DIR}/build-metadata-${BUILD_ID}.txt"
+    fi
     
     # ========================================================================
     # ALWAYS CREATE REAL BUILD - NO MORE PLACEHOLDERS!
@@ -873,7 +901,7 @@ create_output_archive() {
         }
         
         local archive_size=$(du -h "$archive_path" | cut -f1)
-        log_info "✅ Real LFS system archive created: $archive_size"
+        log_info "✅ Archive ${TAG} created: $archive_size"
         log_info "   Location: $archive_path"
         
         # Verify it's actually a real build (> 100MB)
@@ -887,10 +915,15 @@ create_output_archive() {
         # Also copy metadata
         cp "${OUTPUT_DIR}/build-metadata-${BUILD_ID}.txt" "${LFS_MNT}/"
         
-        # Store archive path for upload
-        echo "$archive_path" > "${OUTPUT_DIR}/archive-path.txt"
+        # Store archive path for upload (legacy name for lfs-system tag;
+        # suffixed path file for the labs snapshot)
+        if [ "$TAG" = "lfs-system" ]; then
+            echo "$archive_path" > "${OUTPUT_DIR}/archive-path.txt"
+        else
+            echo "$archive_path" > "${OUTPUT_DIR}/archive-path-${TAG}.txt"
+        fi
         
-        log_info "✅ REAL build archive ready for upload!"
+        log_info "✅ ${TAG} archive ready for upload!"
         return 0
         
     else
@@ -927,10 +960,8 @@ upload_to_gcs() {
         return 1
     fi
     
-    log_info "Uploading archive to GCS..."
+    log_info "Uploading archive(s) to GCS..."
     log_info "  Bucket: $GCS_BUCKET_NAME"
-    log_info "  File: $archive_name"
-    log_info "  Path: $archive_path"
     
     # Check if gsutil is available
     if ! command -v gsutil &> /dev/null; then
@@ -949,6 +980,24 @@ upload_to_gcs() {
         log_error "Failed to upload build artifact"
         write_firestore_log "upload" "failed" "Failed to upload build to GCS"
         return 1
+    fi
+    
+    # ── Vuln-labs snapshot (second tarball; ships only when the labs layer ran) ──
+    local labs_path="" labs_size="" labs_size_bytes=""
+    if [ -f "${OUTPUT_DIR}/archive-path-vuln-labs.txt" ]; then
+        labs_path=$(cat "${OUTPUT_DIR}/archive-path-vuln-labs.txt")
+        if [ -f "$labs_path" ]; then
+            labs_size="$(du -h "$labs_path" | cut -f1)"
+            labs_size_bytes="$(stat -c%s "$labs_path" 2>/dev/null || echo unknown)"
+            log_info "Uploading practice-targets archive (${labs_size})..."
+            if gsutil cp "$labs_path" "${gcs_build_path}/vuln-labs.tar.gz"; then
+                log_info "Successfully uploaded: ${gcs_build_path}/vuln-labs.tar.gz"
+            else
+                log_warn "Failed to upload vuln-labs tarball (non-critical; lfs-system already safe)"
+            fi
+        else
+            log_warn "Labs archive missing despite path file: $labs_path"
+        fi
     fi
     
     # Upload build log
@@ -977,13 +1026,20 @@ upload_to_gcs() {
     # Create and upload manifest
     log_info "Creating build manifest..."
     local manifest_file="${OUTPUT_DIR}/manifest.json"
+    local sys_size_bytes="$(stat -c%s "$archive_path" 2>/dev/null || echo unknown)"
     cat > "$manifest_file" << EOF
 {
   "buildId": "${BUILD_ID}",
   "lfsVersion": "${LFS_VERSION}",
   "buildDate": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "archiveName": "lfs-system.tar.gz",
-  "archiveSize": "$(stat -c%s "$archive_path" 2>/dev/null || echo "unknown")",
+  "archiveSize": "${sys_size_bytes}",
+  "artifacts": [
+    { "file": "lfs-system.tar.gz", "sizeBytes": ${sys_size_bytes}, "description": "Base LFS system + minimum tools (git, curl, ssh, ping, ifconfig)" }${labs_path:+,
+    { "file": "vuln-labs.tar.gz", "sizeBytes": $( [ -f "$labs_path" ] && stat -c%s "$labs_path" 2>/dev/null || echo unknown ), "description": "Same system + practice targets (${VULNBOX_PACKAGES:-none})" }}
+  ],
+  "practiceTargets": "${VULNBOX_PACKAGES:-none}",
+  "vulnboxEnabled": "${ENABLE_VULNBOX:-false}",
   "buildDuration": "$(($(date +%s) - $(date -d "$BUILD_START_TIME" +%s 2>/dev/null || echo 0)))s",
   "errors": ${ERRORS_COUNT},
   "warnings": ${WARNINGS_COUNT}
@@ -1097,11 +1153,15 @@ main() {
         log_warn "Chapter 7 encountered issues but continuing"
     fi
     
-    # Post-build steps
-    if ! create_output_archive; then
-        log_error "Failed to create output archive"
-        update_build_status "error" "Failed to create archive" || true
-        exit 1
+    # Post-build steps — packaging happens INSIDE chapter 7 in two snapshots
+    # (clean "lfs-system", then "vuln-labs" when the labs layer is enabled).
+    # Fallback: if the in-chapter snapshot never landed, package once here.
+    if [ ! -f "${OUTPUT_DIR}/archive-path.txt" ]; then
+        if ! create_output_archive "lfs-system"; then
+            log_error "Failed to create output archive"
+            update_build_status "error" "Failed to create archive" || true
+            exit 1
+        fi
     fi
     
     if ! upload_to_gcs; then
