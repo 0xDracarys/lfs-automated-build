@@ -50,7 +50,10 @@ has_wg=false;  printf '%s' "$PKG_LIST" | grep -q 'webgoat'      && has_wg=true
 # ============================================================ 1. Juice Shop
 if [ "$has_js" = true ]; then
     # v20.x bundles ship for node22/node24/node26 — pin node22 to match them.
-    NODEV="v22.11.0"
+    # v3.2 lesson: Juice Shop 20.x bundles an ESM-only dependency (proxy-agent);
+    # Node enabled require() of ES modules starting 22.12 — 22.11 died with
+    # ERR_REQUIRE_ESM on boot. Pin a 22.x with require(ESM) enabled.
+    NODEV="v22.14.0"
     log "--- Juice Shop ---"
     if [ -x "$LFS/usr/local/bin/node" ]; then
         log "✓ node already installed"
@@ -106,16 +109,51 @@ if [ "$has_dvwa" = true ]; then
                 # self-contained; Debian's dlopens a separate libtinfo.so.6 the
                 # minimal root doesn't have) — every binary in the guest then
                 # died with "libtinfo.so.6: cannot open". Only ADD missing
-                # libs (libaio), never overwrite anything the root already has.
-                for lib in /lib/x86_64-linux-gnu/libaio.so* \
-                           /usr/lib/x86_64-linux-gnu/libaio.so*; do
-                    [ -e "$lib" ] || continue
-                    [ -e "$LFS/usr/lib/$(basename "$lib")" ] && continue
-                    cp -a "$lib" "$LFS/usr/lib/" 2>>"$BUILDLOG"
+                # libs, never overwrite anything the root already has.
+                ship_missing_lib(){ # copy container lib ONLY if the target lacks it
+                    local src="$1" name
+                    name="$(basename "$src")"
+                    [ -e "$LFS/usr/lib/$name" ] && return 0
+                    cp -aL "$src" "$LFS/usr/lib/$name" 2>>"$BUILDLOG"
+                }
+                for pat in libaio.so* libcrypt.so*; do
+                    for lib in /lib/x86_64-linux-gnu/$pat /usr/lib/x86_64-linux-gnu/$pat; do
+                        [ -e "$lib" ] && ship_missing_lib "$lib"
+                    done
                 done
-                [ -e "$LFS/usr/lib/libaio.so.1" ] || \
-                    { [ -e "$LFS/usr/lib/libaio.so.1.0.2" ] && \
-                      ln -s libaio.so.1.0.2 "$LFS/usr/lib/libaio.so.1"; }
+                # libcrypt.so.1 may be a tiny ld-script stub in some distros —
+                # make sure a REAL ELF (>=32KB) landed in the target.
+                if [ -e "$LFS/usr/lib/libcrypt.so.1" ] && \
+                   [ "$(stat -c%s "$LFS/usr/lib/libcrypt.so.1" 2>/dev/null)" -lt 32768 ]; then
+                    for real in $(find /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu \
+                                   -name 'libcrypt.so.*.*.*' 2>/dev/null); do
+                        if [ "$(stat -c%s "$real")" -ge 32768 ]; then
+                            cp -aL "$real" "$LFS/usr/lib/libcrypt.so.1"
+                            break
+                        fi
+                    done
+                fi
+                # Self-healing dependency scan: MariaDB's binaries list their own
+                # NEEDED libs — copy any the minimal root lacks straight from the
+                # container, so libsystemd.so.0 and friends arrive automatically
+                # instead of needing one-off hand-shipping per visit.
+                if [ -e "$LFS/opt/mysql/bin/mysqld" ]; then
+                    while read -r soname; do
+                        case "$soname" in
+                            libc.so*|libm.so*|libdl*|libpthread*|librt*|ld-linux*) continue ;;
+                        esac
+                        [ -e "$LFS/usr/lib/$soname" ] && continue
+                        found=""
+                        for d in /usr/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib /lib; do
+                            if [ -e "$d/$soname" ]; then found="$d/$soname"; break; fi
+                        done
+                        if [ -n "$found" ]; then
+                            cp -aL "$found" "$LFS/usr/lib/$soname" 2>>"$BUILDLOG"
+                        else
+                            log "warn: mysqld needs $soname but container lacks it"
+                        fi
+                    done < <(objdump -p "$LFS/opt/mysql/bin/mysqld" 2>/dev/null | awk '/NEEDED/{print $2}')
+                fi
                 log "✅ MariaDB 11.4.5 (server + client) at /opt/mysql (compat path)"
             else warn "mariadb extract failed"; fi
         fi
@@ -214,7 +252,11 @@ if [ "$has_wg" = true ]; then
             mkdir -p "$LFS/usr/local"
             if tar -xzf "$SRC/jdk17-linux-x64.tar.gz" -C "$LFS/usr/local" 2>>"$BUILDLOG"; then
                 JDKDIR=$(find "$LFS/usr/local" -maxdepth 1 -type d -name 'jdk-17*' | head -1)
-                [ -n "$JDKDIR" ] && ln -sfn "$JDKDIR" "$LFS/usr/local/jdk" \
+                # v3.1 lesson: find() returns the ABSOLUTE /mnt/lfs/... path, and
+                # symlinks built from it dangle in any other environment (the
+                # path only exists on the builder). Link RELATIVE to the dir.
+                JDKBASE=$(basename "$JDKDIR")
+                [ -n "$JDKDIR" ] && (cd "$LFS/usr/local" && ln -sfn "$JDKBASE" jdk) \
                     && ln -sfn /usr/local/jdk/bin/java "$LFS/usr/local/bin/java" \
                     && ln -sfn /usr/local/jdk/bin/javac "$LFS/usr/local/bin/javac" \
                     && log "✅ JDK 17 at /usr/local/jdk"
