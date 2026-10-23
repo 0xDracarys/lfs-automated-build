@@ -8,6 +8,7 @@ import {
   ArrowRight, Sparkles, Clock, Zap, Monitor
 } from "lucide-react";
 import Link from "next/link";
+import MyBuildsArtifacts from "@/components/downloads/MyBuildsArtifacts";
 
 /* ───────────────────────── data ───────────────────────── */
 
@@ -37,15 +38,14 @@ const downloads: DownloadCard[] = [
     description:
       "Our automated cloud pipeline compiles the full LFS 12.0 system from source. Download the tarball and import it into WSL2 in under 2 minutes.",
     icon: <Cloud className="w-7 h-7" />,
-    size: "~196 MB",
+    size: "~1.1 GB",
     format: ".tar.gz",
     gradient: "from-violet-600/20 via-fuchsia-600/20 to-pink-600/20",
     borderColor: "border-violet-500/40",
     glowColor: "shadow-violet-500/20",
     badge: "LATEST",
     badgeColor: "from-violet-500 to-fuchsia-500",
-    downloadUrl:
-      "https://storage.googleapis.com/alfs-bd1e0-builds/1IokPNQ5rM3BWpugAnVK/lfs-system.tar.gz",
+    downloadUrl: undefined, // per-build signed links now come from "Your recent builds" below
     features: [
       "Full LFS 12.0 root filesystem",
       "GCC 13.2, Bash 5.2, Coreutils 9.3",
@@ -53,7 +53,7 @@ const downloads: DownloadCard[] = [
       "Built on Google Cloud Run (8 vCPU, 32 GB RAM)",
     ],
     steps: [
-      "Download lfs-system.tar.gz (~196 MB)",
+      "Real size varies per build (manifest.json records it exactly)",
       "Open PowerShell as Administrator",
       'Run: wsl --import LFS-Cloud "C:\\LFS" .\\lfs-system.tar.gz --version 2',
       "Run: wsl --shutdown && wsl -d LFS-Cloud",
@@ -478,6 +478,16 @@ export default function DownloadsPage() {
               </span>
             </Link>
           ))}
+        </motion.div>
+
+        {/* ──────── Per-artifact downloads from the user's own builds ──────── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="max-w-5xl mx-auto mt-4"
+        >
+          <MyBuildsArtifacts />
         </motion.div>
 
         {/* ──────── Checksum ──────── */}

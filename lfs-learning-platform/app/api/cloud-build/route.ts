@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import admin, { adminDb } from "@/lib/firebase-admin";
+import { launchLfsJob, flagsFromRequest } from "@/lib/job-launch";
 
 /**
  * POST /api/cloud-build
- * Authenticates user and creates a new build document in Firestore.
- * This triggers the onBuildSubmitted Cloud Function.
+ * Authenticates user, records the build document, and LAUNCHES the real
+ * pipeline (Cloud Run job lfs-builder) with the feature flags the user
+ * picked (basic tools / ISO / practice-target checkboxes).
+ * No Cloud Function dependency: launch happens in-route.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -18,16 +21,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = authHeader.split('Bearer ')[1];
     let decodedToken;
     try {
-      decodedToken = await admin.auth().verifyIdToken(token);
+      decodedToken = await admin.auth().verifyIdToken(authHeader.split('Bearer ')[1]);
     } catch (e) {
       return NextResponse.json({ error: "Unauthorized - Invalid token" }, { status: 401 });
     }
 
+    const flags = flagsFromRequest(
+      body,
+      `web-${Date.now()}`,
+      decodedToken.uid,
+      decodedToken.email || ''
+    );
+
     const buildData = {
       ...body,
+      buildId: flags.buildId,             // pipeline BUILD_ID (bucket folder + logs)
+      features: {                          // the checkbox state, persisted
+        basicTools: flags.basicTools,
+        iso: flags.iso,
+        targets: flags.targets,
+      },
       userId: decodedToken.uid, // Override with authenticated UID
       email: decodedToken.email,
       status: "INITIALIZING",
@@ -36,18 +51,40 @@ export async function POST(request: NextRequest) {
 
     const docRef = await adminDb.collection("builds").add(buildData);
 
+    const jobId = `web-${docRef.id}`;
+    flags.buildId = jobId; // ensure the bucket folder/log file match the Firestore doc id
+    buildData.buildId = jobId;
+
+    // Launch only if the caller explicitly asked for a real cloud build
+    // (wizard "do it for me" path). Plain config saves skip this.
+    let launch: { launched: boolean; execution?: string; reason?: string } | null = null;
+    if (body.launch !== false) {
+      launch = await launchLfsJob(flags);
+      if (launch.launched) {
+        await adminDb.collection("builds").doc(docRef.id).update({
+          buildId: jobId,
+          cloudRunExecution: launch.execution ? { name: launch.execution } : null,
+          status: "RUNNING",
+        });
+      } else if (launch.reason) {
+        await adminDb.collection("builds").doc(docRef.id).update({
+          launchError: launch.reason,
+        });
+      }
+    }
+
     return NextResponse.json({
       success: true,
       buildId: docRef.id,
-      message: "Build submitted successfully"
+      ...(launch ? { launched: launch.launched, execution: launch.execution || null, launchError: launch.reason || null } : {}),
+      message: "Build submitted successfully",
     });
-
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Cloud build error:", error);
     return NextResponse.json(
       { 
         error: "Failed to start cloud build", 
-        details: error.message 
+        details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
     );

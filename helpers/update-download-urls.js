@@ -73,7 +73,13 @@ async function updateDownloadUrls(buildId) {
             });
             
             // Categorize by file type
-            if (fileName.includes('toolchain') && fileName.endsWith('.tar.gz')) {
+            if (fileName.includes('lfs-system') && fileName.endsWith('.tar.gz')) {
+                downloadUrls.systemUrl = url;
+                downloadUrls.systemFile = fileName;
+            } else if (fileName.includes('vuln-labs') && fileName.endsWith('.tar.gz')) {
+                downloadUrls.labsUrl = url;
+                downloadUrls.labsFile = fileName;
+            } else if (fileName.includes('toolchain') && fileName.endsWith('.tar.gz')) {
                 downloadUrls.toolchainUrl = url;
                 downloadUrls.toolchainFile = fileName;
             } else if (fileName.endsWith('.iso')) {
@@ -84,18 +90,22 @@ async function updateDownloadUrls(buildId) {
                 downloadUrls.installerFile = fileName;
             } else if (fileName === 'README.md') {
                 downloadUrls.readmeUrl = url;
+            } else if (fileName === 'manifest.json') {
+                downloadUrls.manifestUrl = url;
             }
             
             console.log(`   ✓ ${fileName}: ${url.substring(0, 80)}...`);
         }
         
-        // Set primary download URL to toolchain
-        downloadUrls.downloadUrl = downloadUrls.toolchainUrl || '';
+        // Primary = the real system tarball (fall back to toolchain for old builds)
+        downloadUrls.downloadUrl = downloadUrls.systemUrl || downloadUrls.toolchainUrl || '';
         
         // Update Firestore document
         await db.collection('builds').doc(buildId).update({
             downloadUrls: downloadUrls,
             downloadUrl: downloadUrls.downloadUrl,
+            systemUrl: downloadUrls.systemUrl || null,
+            labsUrl: downloadUrls.labsUrl || null,
             toolchainUrl: downloadUrls.toolchainUrl || null,
             isoUrl: downloadUrls.isoUrl || null,
             installerUrl: downloadUrls.installerUrl || null,

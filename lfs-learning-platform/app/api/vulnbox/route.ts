@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb, adminAuth } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { launchLfsJob } from "@/lib/job-launch";
 
 /**
  * VulnBox build cost constants
@@ -12,11 +13,11 @@ const BUILD_COST   = 35; // flat cost per build regardless of output formats
 /**
  * POST /api/vulnbox
  *
- * Queues a new VulnBox build in the `vulnbox_builds` Firestore collection.
- * This endpoint is COMPLETELY SEPARATE from /api/cloud-build.
- * It does NOT trigger any Google Cloud Build job — Phase 1 is UI + Firestore only.
- *
- * To revert: delete this file and remove the nav link.
+ * Queues a new VulnBox build in the `vulnbox_builds` Firestore collection,
+ * deducts credits (refunded automatically if the launch fails), and NOW ALSO
+ * launches the real Google Cloud Run build job (lfs-builder) with the
+ * practice-target checkboxes mapped to pipeline flags.
+ * /api/cloud-build stays separate (non-credits path).
  */
 export async function POST(req: NextRequest) {
   try {
@@ -69,7 +70,53 @@ export async function POST(req: NextRequest) {
     const remaining = currentCredits - BUILD_COST;
     await userRef.set({ vulnboxCredits: remaining }, { merge: true });
 
-    return NextResponse.json({ buildId: docRef.id, creditsRemaining: remaining });
+    // ── Launch the REAL pipeline (Cloud Run job lfs-builder) ─────────────────
+    // Flags come straight from the wizard checkboxes: practice-target trio,
+    // ISO choice, and basic tools are always on for these builds.
+    const v = config?.vulns ?? {};
+    const targets: string[] = [];
+    if (v.juiceShop) targets.push("juice-shop");
+    if (v.dvwa) targets.push("dvwa");
+    if (v.webgoat) targets.push("webgoat");
+    const wantIso = (config?.output?.outputFormats || []).includes("iso");
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "linux-from-scratch-512419";
+
+    const launch = await launchLfsJob({
+      buildId: `vulnbox-${docRef.id}`,
+      projectId,
+      basicTools: true,
+      iso: wantIso,
+      targets,
+      userId,
+      email: decoded.email ?? undefined,
+    });
+
+    if (launch.launched) {
+      await adminDb.collection("vulnbox_builds").doc(docRef.id).update({
+        status: "building",
+        pipelineBuildId: `vulnbox-${docRef.id}`,
+        pipelineExecution: launch.execution ?? null,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+      return NextResponse.json({
+        buildId: docRef.id,
+        creditsRemaining: remaining,
+        launched: true,
+        execution: launch.execution ?? null,
+      });
+    }
+
+    // Launch failed — refund credits and tell the caller why (graceful).
+    await userRef.set({ vulnboxCredits: currentCredits }, { merge: true });
+    await adminDb.collection("vulnbox_builds").doc(docRef.id).update({
+      status: "launch-failed",
+      launchError: launch.reason ?? "unknown",
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    return NextResponse.json(
+      { error: `Job launch failed: ${launch.reason ?? "unknown"}. Credits refunded.` },
+      { status: 502 }
+    );
   } catch (err: any) {
     console.error("[/api/vulnbox] Error:", err);
     return NextResponse.json({ error: err.message ?? "Internal server error" }, { status: 500 });
