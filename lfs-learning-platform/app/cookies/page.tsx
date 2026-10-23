@@ -52,7 +52,7 @@ export default function CookiesPage() {
         </div>
 
         <section className="rounded-xl border border-white/10 bg-white/[0.03] p-6 overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-sm text-left min-w-[760px] [&_td]:align-top [&_td]:py-4">
             <thead>
               <tr className="text-gray-300 border-b border-white/10">
                 <th className="py-3 pr-4 font-semibold">Storage item</th>
