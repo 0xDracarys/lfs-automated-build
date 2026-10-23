@@ -18,7 +18,7 @@ WORK="$SRC/iso-build"
 BUILDLOG="$LFS/build-logs/bootable-iso-$(date +%Y%m%d-%H%M%S).log"
 
 log(){ echo "[bootable-iso] $*"; }
-fatal(){ log "❌ $*"; echo "FATAL: $*" >> "$BUILDLOG" 2>&1; exit 1; }
+fatal(){ log "❌ $*"; echo "FATAL: $*" >> "$BUILDLOG" 2>&1; tail -n 25 "$BUILDLOG" 2>/dev/null | sed 's/^/[iso-log] /'; exit 1; }
 run(){ echo "+ $*" >> "$BUILDLOG" 2>&1; "$@" >> "$BUILDLOG" 2>&1 || fatal "cmd failed: $*"; }
 download(){
     local f="$1"; shift
@@ -51,6 +51,12 @@ make defconfig >> "$BUILDLOG" 2>&1 || fatal "defconfig"
 ./scripts/config --set-val CONFIG_SYSTEM_TRUSTED_KEYS "" >> "$BUILDLOG" 2>&1 || true
 make -j12 bzImage >> "$BUILDLOG" 2>&1 || fatal "bzImage build"
 log "✅ bzImage done"
+
+# v3.0 lesson: `make modules_install` needs modules.order, which exists only
+# after `make modules` — building only bzImage made __modinst_pre die with
+#   sed: can't read modules.order: No such file or directory
+make -j12 modules >> "$BUILDLOG" 2>&1 || fatal "modules build"
+log "✅ modules built"
 
 log "[2/5] Installing kernel into \$LFS/boot + stripped modules..."
 mkdir -p "$LFS/boot"

@@ -23,8 +23,8 @@ export LDFLAGS="${LDFLAGS:--L$LFS/usr/lib}"
 export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:-$LFS/usr/lib/pkgconfig}"
 
 log(){ echo "[vulnbox] $*"; }
-warn(){ log "⚠️  $*"; echo "WARN: $*" >> "$BUILDLOG" 2>&1; }
-fatal(){ log "❌ $*"; echo "FATAL: $*" >> "$BUILDLOG" 2>&1; exit 1; }
+warn(){ log "⚠️  $*"; echo "WARN: $*" >> "$BUILDLOG" 2>&1; tail -n 8 "$BUILDLOG" 2>/dev/null | sed 's/^/[vulnbox-log] /'; }
+fatal(){ log "❌ $*"; echo "FATAL: $*" >> "$BUILDLOG" 2>&1; tail -n 25 "$BUILDLOG" 2>/dev/null | sed 's/^/[vulnbox-log] /'; exit 1; }
 download(){
     local f="$1"; shift
     [ -s "$SRC/$f" ] && { log "✓ Already downloaded: $f"; return 0; }
@@ -38,13 +38,19 @@ download(){
 run(){ echo "+ $*" >> "$BUILDLOG" 2>&1; "$@" >> "$BUILDLOG" 2>&1 || return 1; }
 
 log "=== PRACTICE TARGETS LAYER: $PKG_LIST ==="
+
+# Destination dirs exist BEFORE any download success/failure branch — v3 lesson:
+# $LFS/opt was previously created only inside branches that had already
+# succeeded, so every later copy silently failed when the first download died.
+mkdir -p "$LFS/opt" "$LFS/opt/webgoat" "$LFS/usr/lib" 2>>"$BUILDLOG" || warn "opt dirs create failed"
 has_js=false;  printf '%s' "$PKG_LIST" | grep -q 'juice-shop' && has_js=true
 has_dvwa=false; printf '%s' "$PKG_LIST" | grep -q 'dvwa'        && has_dvwa=true
 has_wg=false;  printf '%s' "$PKG_LIST" | grep -q 'webgoat'      && has_wg=true
 
 # ============================================================ 1. Juice Shop
 if [ "$has_js" = true ]; then
-    NODEV="v20.11.0"
+    # v20.x bundles ship for node22/node24/node26 — pin node22 to match them.
+    NODEV="v22.11.0"
     log "--- Juice Shop ---"
     if [ -x "$LFS/usr/local/bin/node" ]; then
         log "✓ node already installed"
@@ -62,30 +68,49 @@ if [ "$has_js" = true ]; then
     if [ -d "$LFS/opt/juice-shop" ]; then
         log "✓ Juice Shop already installed"
     else
-        if download "juice-shop-15.4.0.zip" \
-            "https://github.com/juice-shop/juice-shop/releases/download/v15.4.0/juice-shop-15.4.0_node16_linux_x64.zip" \
-            "https://github.com/juice-shop/juice-shop/releases/download/v15.4.0/juice-shop-15.4.0_node18_linux_x64.zip"; then
-            mkdir -p "$LFS/opt"
-            if ( cd "$LFS/opt" && run unzip -oq "$SRC/juice-shop-15.4.0.zip" ); then
+        # NOTE: linux x64 bundles are .tgz (v20 era); the old v15 .zip URL 404'd.
+        if download "juice-shop-20.3.0_node22.tgz" \
+            "https://github.com/juice-shop/juice-shop/releases/download/v20.3.0/juice-shop-20.3.0_node22_linux_x64.tgz" \
+            "https://github.com/juice-shop/juice-shop/releases/download/v20.2.0/juice-shop-20.2.0_node22_linux_x64.tgz"; then
+            rm -rf "$LFS/opt/juice-shop-tmp"
+            mkdir -p "$LFS/opt/juice-shop-tmp"
+            if tar -xzf "$SRC/juice-shop-20.3.0_node22.tgz" -C "$LFS/opt/juice-shop-tmp" 2>>"$BUILDLOG"; then
+                top="$(find "$LFS/opt/juice-shop-tmp" -mindepth 1 -maxdepth 1 -type d | head -1)"
+                if [ -n "$top" ] && [ "$(find "$LFS/opt/juice-shop-tmp" -mindepth 1 -maxdepth 1 | wc -l)" = "1" ]; then
+                    mv "$top" "$LFS/opt/juice-shop"
+                else
+                    mv "$LFS/opt/juice-shop-tmp" "$LFS/opt/juice-shop"
+                fi
+                rm -rf "$LFS/opt/juice-shop-tmp"
                 log "✅ Juice Shop installed at /opt/juice-shop"
-            else warn "juice-shop unzip failed"; fi
+            else warn "juice-shop extract failed"; fi
         fi
     fi
 fi
 
 # ============================================================ 2. DVWA stack
 if [ "$has_dvwa" = true ]; then
-    log "--- DVWA: MySQL server (prebuilt distribution) ---"
+    log "--- DVWA: MariaDB 11.4 server (prebuilt bintar, MySQL-compatible) ---"
     if [ -x "$LFS/opt/mysql/bin/mysqld" ]; then
-        log "✓ MySQL already installed"
+        log "✓ MariaDB already installed"
     else
-        if download "mysql-8.0.35-linux-glibc2.28-x86_64.tar.xz" \
-            "https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.35-linux-glibc2.28-x86_64.tar.xz"; then
+        # MySQL's CDN purged the 8.0.x prebuilt tarballs (all 404 now);
+        # MariaDB's archive keeps stable bintars — DVWA speaks to it fine.
+        if download "mariadb-11.4.5-linux-systemd-x86_64.tar.gz" \
+            "https://archive.mariadb.org/mariadb-11.4.5/bintar-linux-systemd-x86_64/mariadb-11.4.5-linux-systemd-x86_64.tar.gz"; then
             mkdir -p "$LFS/opt" "$LFS/usr/local/bin"
-            if tar -xf "$SRC/mysql-8.0.35-linux-glibc2.28-x86_64.tar.xz" -C "$LFS/opt" 2>>"$BUILDLOG"; then
-                ln -sfn /opt/mysql-8.0.35-linux-glibc2.28-x86_64 "$LFS/opt/mysql"
-                log "✅ MySQL 8.0.35 (server + client) at /opt/mysql"
-            else warn "mysql extract failed"; fi
+            if tar -xzf "$SRC/mariadb-11.4.5-linux-systemd-x86_64.tar.gz" -C "$LFS/opt" 2>>"$BUILDLOG"; then
+                ln -sfn /opt/mariadb-11.4.5-linux-systemd-x86_64 "$LFS/opt/mysql"
+                # The minimal LFS root lacks libraries normal distros always have;
+                # mysqld refuses to start without them, so ship them over now.
+                for lib in /lib/x86_64-linux-gnu/libaio.so* \
+                           /usr/lib/x86_64-linux-gnu/libaio.so* \
+                           /usr/lib/x86_64-linux-gnu/libncursesw.so* \
+                           /lib/x86_64-linux-gnu/libncursesw.so*; do
+                    [ -e "$lib" ] && cp -a "$lib" "$LFS/usr/lib/" 2>>"$BUILDLOG"
+                done
+                log "✅ MariaDB 11.4.5 (server + client) at /opt/mysql (compat path)"
+            else warn "mariadb extract failed"; fi
         fi
     fi
 
@@ -95,12 +120,17 @@ if [ "$has_dvwa" = true ]; then
             "https://www.php.net/distributions/php-8.2.13.tar.xz" \
             "https://github.com/php/php-src/archive/refs/tags/php-8.2.13.tar.gz"; then
             [ -d "$SRC/php-8.2.13" ] || { [ -d "$SRC/php-src-php-8.2.13" ] || run tar -xf "$SRC/php-8.2.13.tar.xz" -C "$SRC"; }
-            cd "$SRC/php-8.2.13" 2>/dev/null || cd "$SRC/php-src-php-8.2.13" || warn "php dir missing"
-            ./configure --host="$LFS_TGT" --prefix=/usr --disable-all \
-                --enable-cli --enable-cgi --enable-session --enable-filter --enable-mysqli \
-                --with-zlib --without-pcre-jit --without-libxml >> "$BUILDLOG" 2>&1 \
-                && run make -j12 && run make DESTDIR="$LFS" install \
-                || warn "php build/install failed"
+            if ( cd "$SRC/php-8.2.13" 2>/dev/null || cd "$SRC/php-src-php-8.2.13" 2>/dev/null ); then
+                # --disable-all configures without zlib (the minimal root has no
+                # guaranteed libz for cross-linking) and without libxml.
+                ./configure --host="$LFS_TGT" --prefix=/usr --disable-all \
+                    --enable-cli --enable-cgi --enable-session --enable-filter --enable-mysqli \
+                    --without-pcre-jit --without-libxml >> "$BUILDLOG" 2>&1 \
+                    && run make -j12 && run make DESTDIR="$LFS" install \
+                    || warn "php build/install failed"
+            else
+                warn "php source dir missing (extract failed?)"
+            fi
         fi
         [ -x "$LFS/usr/bin/php-cgi" ] && log "✅ PHP 8.2 (cli + fastcgi)" || warn "php missing"
     else log "✓ PHP already installed"; fi
@@ -111,7 +141,7 @@ if [ "$has_dvwa" = true ]; then
             "https://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.74.tar.gz"; then
             [ -d "$SRC/lighttpd-1.4.74" ] || run tar -xf "$SRC/lighttpd-1.4.74.tar.gz" -C "$SRC"
             cd "$SRC/lighttpd-1.4.74"
-            ./configure --host="$LFS_TGT" --prefix=/usr --without-zlib >> "$BUILDLOG" 2>&1 \
+            ./configure --host="$LFS_TGT" --prefix=/usr --without-zlib --without-pcre2 --without-bzip2 >> "$BUILDLOG" 2>&1 \
                 && run make -j12 && run make DESTDIR="$LFS" install \
                 || warn "lighttpd build/install failed"
         fi
@@ -173,9 +203,9 @@ if [ "$has_wg" = true ]; then
             else warn "jdk extract failed"; fi
         fi
     fi
+    mkdir -p "$LFS/opt/webgoat"
     if download "webgoat-8.2.2.jar" \
-        "https://github.com/WebGoat/WebGoat/releases/download/v8.2.2/webgoat-8.2.2.jar"; then
-        mkdir -p "$LFS/opt/webgoat"
+        "https://github.com/WebGoat/WebGoat/releases/download/v8.2.2/webgoat-server-8.2.2.jar"; then
         cp "$SRC/webgoat-8.2.2.jar" "$LFS/opt/webgoat/" && log "✅ WebGoat 8.2.2 jar at /opt/webgoat"
     fi
     if download "webwolf-8.2.2.jar" \
@@ -204,20 +234,28 @@ fi
 
 if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
     if [ ! -d /opt/mysql-data/mysql ]; then
-        echo -e "${Y}… initializing MySQL data directory (first boot, ~1 min)${R}"
-        /opt/mysql/bin/mysqld --initialize-insecure \
-            --datadir=/opt/mysql-data --basedir=/opt/mysql >> /root/.mysqld-init.log 2>&1
+        echo -e "${Y}… initializing MariaDB data directory (first boot, ~1 min)${R}"
+        # MariaDB init ≠ MySQL init: use mariadb-install-db when present.
+        if [ -x /opt/mysql/bin/mariadb-install-db ]; then
+            /opt/mysql/bin/mariadb-install-db \
+                --datadir=/opt/mysql-data --basedir=/opt/mysql \
+                --auth-root-authentication-method=normal --skip-test-db \
+                >> /root/.mysqld-init.log 2>&1
+        else
+            TERM=dumb /opt/mysql/bin/mysqld --initialize-insecure \
+                --datadir=/opt/mysql-data --basedir=/opt/mysql >> /root/.mysqld-init.log 2>&1
+        fi
     fi
     /opt/mysql/bin/mysqld --datadir=/opt/mysql-data --basedir=/opt/mysql \
-        --port=3306 --bind-address=127.0.0.1 --skip-grant-tables=OFF \
+        --port=3306 --bind-address=127.0.0.1 \
         > /root/.mysqld.log 2>&1 &
-    sleep 2
-    if /opt/mysql/bin/mysqladmin ping --silent 2>/dev/null; then
-        /opt/mysql/bin/mysql -e "CREATE DATABASE IF NOT EXISTS dvwa; CREATE USER IF NOT EXISTS 'dvwa'@'localhost' IDENTIFIED BY 'vulpass';
+    sleep 3
+    if TERM=dumb /opt/mysql/bin/mysql -e "SELECT 1" >/dev/null 2>&1; then
+        TERM=dumb /opt/mysql/bin/mysql -e "CREATE DATABASE IF NOT EXISTS dvwa; CREATE USER IF NOT EXISTS 'dvwa'@'localhost' IDENTIFIED BY 'vulpass';
             GRANT ALL ON dvwa.* TO 'dvwa'@'localhost';" 2>/dev/null || true
-        echo -e "${G}🎯 MySQL${R}     → 127.0.0.1:3306 (db: dvwa, user: dvwa, pass: vulpass)"
+        echo -e "${G}🎯 MariaDB${R}  → 127.0.0.1:3306 (db: dvwa, user: dvwa, pass: vulpass)"
     else
-        echo -e "${Y}⚠ MySQL did not come up — check /root/.mysqld.log${R}"
+        echo -e "${Y}⚠ MariaDB did not come up — check /root/.mysqld.log /root/.mysqld-init.log${R}"
     fi
     if [ -x /usr/sbin/lighttpd ]; then
         /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf > /root/.lighttpd.log 2>&1 &

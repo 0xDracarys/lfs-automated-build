@@ -17,7 +17,7 @@ BUILDLOG="$LFS/build-logs/basic-tools-$(date +%Y%m%d-%H%M%S).log"
 
 log(){ echo "[basic-tools] $*"; }
 llog(){ echo "$*" >> "$BUILDLOG" 2>&1; }
-fatal(){ log "❌ $*"; llog "FATAL: $*"; exit 1; }
+fatal(){ log "❌ $*"; llog "FATAL: $*"; tail -n 12 "$BUILDLOG" 2>/dev/null | sed 's/^/[basic-tools-log] /'; exit 1; }
 step(){ log ""; log "===== [$1/$TOOL_TOTAL] $2 ====="; }
 run(){ llog "+ $*"; "$@" >> "$BUILDLOG" 2>&1 || fatal "command failed: $*" ; }
 
@@ -36,7 +36,10 @@ download(){ # download <file> <url1> <url2>...
 
 extract(){ # extract <file-prefix> <dirname>
     if [ -d "$SRC/$2" ]; then log "✓ Already extracted: $2"; return 0; fi
-    run tar -xf "$SRC/$1"*
+    # v3.0 lesson: tar without -C extracts into the CURRENT directory — and the
+    # script cd's into linux-*/ for headers, so every later package silently
+    # extracted inside the kernel tree and the $SRC/<pkg> check then failed.
+    run tar -xf "$SRC/$1"* -C "$SRC"
     [ -d "$SRC/$2" ] || fatal "extract failed: $2"
     log "✓ Extracted: $2"
 }

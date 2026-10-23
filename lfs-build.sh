@@ -1027,6 +1027,14 @@ upload_to_gcs() {
     log_info "Creating build manifest..."
     local manifest_file="${OUTPUT_DIR}/manifest.json"
     local sys_size_bytes="$(stat -c%s "$archive_path" 2>/dev/null || echo unknown)"
+    # Labs artifact line pre-built OUTSIDE the heredoc: quote-removal inside
+    # ${var:+...} expansions strips embedded quotes and produced invalid JSON.
+    local labs_json=""
+    if [ -n "$labs_path" ] && [ -f "$labs_path" ]; then
+        labs_json=$(printf ',\n    { "file": "vuln-labs.tar.gz", "sizeBytes": %s, "description": "Same system + practice targets (%s)" }' \
+            "$( [ -f "$labs_path" ] && stat -c%s "$labs_path" 2>/dev/null || echo unknown )" \
+            "${VULNBOX_PACKAGES:-none}")
+    fi
     cat > "$manifest_file" << EOF
 {
   "buildId": "${BUILD_ID}",
@@ -1035,8 +1043,7 @@ upload_to_gcs() {
   "archiveName": "lfs-system.tar.gz",
   "archiveSize": "${sys_size_bytes}",
   "artifacts": [
-    { "file": "lfs-system.tar.gz", "sizeBytes": ${sys_size_bytes}, "description": "Base LFS system + minimum tools (git, curl, ssh, ping, ifconfig)" }${labs_path:+,
-    { "file": "vuln-labs.tar.gz", "sizeBytes": $( [ -f "$labs_path" ] && stat -c%s "$labs_path" 2>/dev/null || echo unknown ), "description": "Same system + practice targets (${VULNBOX_PACKAGES:-none})" }}
+    { "file": "lfs-system.tar.gz", "sizeBytes": ${sys_size_bytes}, "description": "Base LFS system + minimum tools (git, curl, ssh, ping, ifconfig)" }${labs_json}
   ],
   "practiceTargets": "${VULNBOX_PACKAGES:-none}",
   "vulnboxEnabled": "${ENABLE_VULNBOX:-false}",
