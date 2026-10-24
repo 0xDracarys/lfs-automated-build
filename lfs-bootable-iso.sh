@@ -83,9 +83,27 @@ cat > "$RF/init" << 'INIT_EOF'
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export HOME=/root
 export TERM=${TERM:-linux}
-[ -e /proc/stat ] || mount -t proc   none /proc  2>/dev/null
-[ -e /sys/slot ]  || mount -t sysfs  none /sys   2>/dev/null
-[ -e /dev/zero ]  || mount -t devtmpfs none /dev 2>/dev/null
+# Mount the pseudo-filesystems the rest of the system expects. v3.6 lesson:
+# `mount` did not exist in this image, so these three lines failed silently and
+# the booted system had no /proc, /sys or /dev — `free`, `ps` and `top` broke,
+# and the welcome banner showed blank memory. Try both PATH and absolute
+# locations, and say so on the console when it still fails.
+for fs in proc:proc:proc sysfs:sysfs:/sys devtmpfs:devtmpfs:/dev; do
+    dev=${fs%%:*}; rest=${fs#*:}; type=${rest%%:*}; mnt=${rest#*:}
+    [ -e "$mnt/." ] || mkdir -p "$mnt" 2>/dev/null
+    case "$type" in
+        proc)    [ -e /proc/stat ]   && continue ;;
+        sysfs)   [ -e /sys/kernel ]  && continue ;;
+        devtmpfs)[ -e /dev/zero ]    && continue ;;
+    esac
+    if mount -t "$type" "$dev" "$mnt" 2>/dev/null \
+       || /bin/mount -t "$type" "$dev" "$mnt" 2>/dev/null \
+       || /usr/bin/mount -t "$type" "$dev" "$mnt" 2>/dev/null; then
+        :
+    else
+        echo "  ⚠  could not mount $type on $mnt (is util-linux installed?)"
+    fi
+done
 clear 2>/dev/null
 echo ""
 echo "  ✅ Booted: Linux From Scratch 12.0 (Cloud-Built)"

@@ -185,6 +185,35 @@ make -j12 >> "$BUILDLOG" 2>&1 || fatal "procps make"
 make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1 || fatal "procps install"
 log "✅ procps (free works now)"
 
+# ── util-linux: mount/umount/blkid/dmesg ────────────────────────────────────
+# v3.6 lesson: the ISO's /init tries `mount -t proc` before login, but this
+# image shipped no mount binary at all. The call failed silently (stderr went
+# to /dev/null) and the booted system had no /proc, /sys or /dev — so `free`,
+# `ps` and `top` all failed too, and the welcome banner printed blank memory.
+# Only the few binaries we actually need are enabled; a full util-linux build
+# is far heavier than this image warrants.
+step 8b "util-linux-2.39.3 — mount, umount, blkid, lsblk, dmesg"
+download util-linux-2.39.3.tar.xz \
+    "https://cdn.kernel.org/pub/linux/utils/util-linux/v2.39/util-linux-2.39.3.tar.xz" \
+    "https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.39/util-linux-2.39.3.tar.xz"
+extract util-linux-2.39.3.tar.xz util-linux-2.39.3
+cd "$SRC/util-linux-2.39.3"
+# Non-fatal on purpose: a missing mount binary degrades the image (no /proc),
+# but it must not abort an otherwise complete build.
+if ./configure --host="$LFS_TGT" --prefix=/usr \
+        --disable-all-programs \
+        --enable-libmount --enable-mount --enable-umount \
+        --enable-libblkid --enable-blkid \
+        --enable-lsblk --enable-dmesg \
+        --disable-nls --without-python --without-systemd --disable-bash-completion \
+        >> "$BUILDLOG" 2>&1 \
+   && make -j12 >> "$BUILDLOG" 2>&1 \
+   && make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1; then
+    log "✅ util-linux (mount/umount/blkid/lsblk/dmesg)"
+else
+    log "⚠  util-linux build failed — /proc will not mount on boot (see build log)"
+fi
+
 step 9 "which-2.21"
 download which-2.21.tar.gz \
     "https://ftp.gnu.org/gnu/which/which-2.21.tar.gz" \
