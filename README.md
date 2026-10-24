@@ -414,6 +414,7 @@ lfs-automated/
 │   └── .vercel/project.json        # Vercel project link
 │
 ├── Dockerfile                      # Cloud Run container
+├── deploy-vercel.ps1               # CLI deploy (clean copy, no .git)
 ├── docker-entrypoint.sh            # Container entrypoint
 ├── lfs-build.sh                    # Main LFS automation script
 ├── lfs-basic-tools.sh              # Chapter 6.5 daily-driver tools
@@ -468,21 +469,27 @@ FIREBASE_SERVICE_ACCOUNT_KEY=
 
 ### Deploy to Vercel
 
-```bash
-npm install -g vercel
-cd lfs-learning-platform
-vercel login          # once, interactively
-vercel --prod --yes
-```
+Two paths, both supported. The Vercel project's **Root Directory is `lfs-learning-platform`**, so both paths build from that folder.
 
-**If the deploy comes back `BLOCKED`**, Vercel is rejecting the *commit author*, not the code: this project is linked to a Git repo, so a deployment carrying git metadata is only accepted when its commit author is a member of the Vercel team. Deploy from a copy with no `.git` directory (or commit under a team member's identity):
+**1. From the repo** — just push:
 
 ```bash
-# clean copy → no commit author → attributed to your own account
-robocopy . ..\vercel-deploy /E /XD node_modules .next .git .netlify
-copy .vercel\project.json ..\vercel-deploy\.vercel\project.json
-cd ..\vercel-deploy && vercel --prod --yes
+git push origin main
 ```
+
+Vercel's Git integration picks up the commit and builds it. (Before the Root Directory was set, this failed with `NEXT_NO_VERSION`: Vercel built the repo root, where `package.json` has no `next` dependency.)
+
+**2. From the CLI** — run the script from the repo root:
+
+```powershell
+.\deploy-vercel.ps1          # or: npm run deploy  (from lfs-learning-platform/)
+```
+
+It stages a clean copy with **no `.git`**, keeps the nested `lfs-learning-platform/` path that the Root Directory expects, excludes `node_modules`, `.next`, `.netlify`, `.vercel` and any `.env*.local`, then runs `vercel --prod --yes` and prints the deployment URL and the production alias. The staged copy is deleted afterwards unless you pass `-KeepStaging`.
+
+> **Why the clean copy matters.** This project is linked to a Git repo, so a deployment carrying git metadata is only accepted when its commit author is a member of the Vercel team. Commits here are authored by a GitHub account that isn't on the team, so a direct `vercel --prod` from the working tree returns `BLOCKED` / `TEAM_ACCESS_REQUIRED` before any build starts. Uploading a tree with no `.git` removes the commit author, so the deployment is attributed to the account that owns the token.
+
+Verify against the **alias** (`https://lfs-learning-platform.vercel.app`), not the raw deployment hostname: Vercel injects its own CSP on `*.vercel.app` deployment URLs, so the app's policy only shows on the alias.
 
 ---
 

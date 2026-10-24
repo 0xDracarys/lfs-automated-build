@@ -125,12 +125,11 @@ if ($code -ne 0) {
     Stop-WithError "vercel exited with code $code"
 }
 
-$deploymentUrl = ($output | Select-String -Pattern '^https://\S+$' | Select-Object -Last 1)
-if ($deploymentUrl) { $deploymentUrl = $deploymentUrl.Line.Trim() }
-if (-not $deploymentUrl) {
-    $m = $output | Select-String -Pattern 'Production:\s*(\S+)' | Select-Object -Last 1
-    if ($m) { $deploymentUrl = $m.Matches[0].Groups[1].Value }
-}
+# The CLI prints the URL and the word "Building" on the same line, so match the
+# hostname itself rather than the rest of the line.
+$deploymentUrl = $null
+$urlMatch = $output | Select-String -Pattern 'https://[A-Za-z0-9.\-]+\.vercel\.app' | Select-Object -Last 1
+if ($urlMatch) { $deploymentUrl = $urlMatch.Matches[0].Value }
 
 if (-not $KeepStaging) {
     Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
