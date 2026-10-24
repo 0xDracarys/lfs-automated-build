@@ -298,11 +298,11 @@ if [ "$has_dvwa" = true ]; then
         # the entire server. Emit the fastcgi block ONLY when php-cgi exists,
         # put mod_indexfile BEFORE mod_fastcgi (silences the order warning).
         if [ -x "$LFS/usr/bin/php-cgi" ]; then
+        # No server.username/groupname on purpose: lighttpd refuses to
+        # start when told to set uid 0, and this root runs as root.
         cat > "$LFS/etc/lighttpd/lighttpd.conf" << 'LT_EOF'
 server.port          = 80
 server.bind          = "0.0.0.0"
-server.username      = "root"
-server.groupname     = "root"
 server.document-root = "/opt/dvwa"
 server.errorlog      = "/root/.lighttpd-error.log"
 server.modules = ( "mod_indexfile", "mod_fastcgi", "mod_accesslog" )
@@ -316,11 +316,11 @@ fastcgi.server = ( ".php" => (( "bin-path" => "/usr/bin/php-cgi",
 LT_EOF
         log "✅ lighttpd config (docroot /opt/dvwa, php fastcgi)"
         else
+        # No server.username/groupname on purpose: lighttpd refuses to
+        # start when told to set uid 0, and this root runs as root.
         cat > "$LFS/etc/lighttpd/lighttpd.conf" << 'LT_EOF'
 server.port          = 80
 server.bind          = "0.0.0.0"
-server.username      = "root"
-server.groupname     = "root"
 server.document-root = "/opt/dvwa"
 server.errorlog      = "/root/.lighttpd-error.log"
 server.modules = ( "mod_indexfile", "mod_accesslog" )
@@ -388,9 +388,30 @@ chmod +x "$LFS/usr/bin/vulnbox-tunnel"
 
 cat > "$LFS/usr/bin/vulnbox-start" << 'VBEOF'
 #!/bin/bash
-# Starts every installed practice target. Run as:  vulnbox-start
-R='\033[0m'; G='\033[1;32m'; Y='\033[1;33m'
+# Starts every installed practice target, then reports what is ACTUALLY up.
+#
+# v3.6 lesson: this script printed a green target line for anything it merely
+# *tried* to launch, so DVWA looked healthy while lighttpd was dead, and its
+# warnings ("MariaDB did not come up", the init notice) were scattered between
+# the target lines where they were easy to miss. Now each target is started,
+# probed, and reported as up or down — and every problem is listed once, in a
+# single Warnings block at the end.
+R='\033[0m'; G='\033[1;32m'; Y='\033[1;33m'; DIM='\033[2m'
 STARTED=0
+WARNS=()
+HINTS=()
+EPORT=(); ELABEL=(); EURL=()
+
+warn() { WARNS+=("$1"); HINTS+=("${2:-}"); }
+want() { EPORT+=("$1"); ELABEL+=("$2"); EURL+=("$3"); }
+
+# port_open <port> — true when something accepts a TCP connection on loopback.
+# /dev/tcp needs no binaries; curl covers the case where bash lacks it.
+port_open() {
+    ( exec 3<>"/dev/tcp/127.0.0.1/$1" ) 2>/dev/null && return 0
+    command -v curl >/dev/null 2>&1 || return 1
+    curl -s -o /dev/null --max-time 3 "http://127.0.0.1:$1/" 2>/dev/null
+}
 
 # v3.4 live-fire lessons: lighttpd insists on /var/tmp (upload-dirs) which the
 # minimal root lacks — an absent dir kills the web server outright. And without
@@ -398,29 +419,38 @@ STARTED=0
 mkdir -p /var/tmp
 export LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-if [ -x /usr/local/bin/node ] && [ -d /opt/juice-shop ]; then
-    ( cd /opt/juice-shop || exit 1
-      if [ -f app.js ]; then /usr/local/bin/node app.js > /root/.juice-shop.log 2>&1 &
-      elif [ -f app/index.js ]; then /usr/local/bin/node app/index.js > /root/.juice-shop.log 2>&1 &
-      else /usr/local/bin/npm start --silent > /root/.juice-shop.log 2>&1 &
-      fi )
-    echo -e "${G}🎯 Juice Shop${R}  → http://localhost:3000  (log: /root/.juice-shop.log)"
-    STARTED=1
+echo -e "${DIM}starting practice targets…${R}"
+
+# ── Juice Shop ───────────────────────────────────────────────────────────────
+if [ -d /opt/juice-shop ]; then
+    if [ -x /usr/local/bin/node ]; then
+        ( cd /opt/juice-shop || exit 1
+          if [ -f app.js ]; then /usr/local/bin/node app.js > /root/.juice-shop.log 2>&1 &
+          elif [ -f app/index.js ]; then /usr/local/bin/node app/index.js > /root/.juice-shop.log 2>&1 &
+          else /usr/local/bin/npm start --silent > /root/.juice-shop.log 2>&1 &
+          fi )
+        want 3000 "Juice Shop" "http://localhost:3000"
+        STARTED=1
+    else
+        warn "Juice Shop is installed but node is missing, so it cannot start." \
+             "see /opt/juice-shop and /root/.juice-shop.log"
+    fi
 fi
 
+# ── MariaDB + DVWA ───────────────────────────────────────────────────────────
 if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
     mkdir -p /opt/mysql-data
     # A datadir without the sentinel is either empty or half-built. v3.6 left
-    # exactly that behind: the init below failed, but /opt/mysql-data/mysql
-    # existed, so the old guard skipped re-init forever and DVWA stayed dead.
+    # exactly that behind: init failed, but /opt/mysql-data/mysql existed, so
+    # the old guard skipped re-init forever and DVWA stayed dead.
     if [ ! -f /opt/mysql-data/.lfs-initialized ]; then
-        echo -e "${Y}… initializing MariaDB data directory (first boot, ~1 min)${R}"
+        echo -e "${DIM}  first boot: creating the MariaDB data directory (~1 min)…${R}"
         rm -rf /opt/mysql-data/*
-        # MariaDB init ≠ MySQL init: use mariadb-install-db when present.
-        # v3.6 lesson: the 11.4 bintar ships it at /opt/mysql/scripts/, not
-        # /opt/mysql/bin/, so a bin-only check fell through to MySQL's
-        # --initialize-insecure — which MariaDB rejects as an unknown option.
-        # Look in both places, and never fall back to MySQL syntax.
+        # MariaDB init ≠ MySQL init. v3.6 lesson: the 11.4 bintar ships
+        # mariadb-install-db at /opt/mysql/scripts/, not /opt/mysql/bin/, so a
+        # bin-only check fell through to MySQL's --initialize-insecure, which
+        # MariaDB rejects as an unknown option. Look in both places and never
+        # fall back to MySQL syntax.
         MARIADB_INSTALL=""
         for cand in /opt/mysql/bin/mariadb-install-db \
                     /opt/mysql/scripts/mariadb-install-db \
@@ -434,9 +464,15 @@ if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
                 --datadir=/opt/mysql-data --basedir=/opt/mysql \
                 --auth-root-authentication-method=normal --skip-test-db \
                 >> /root/.mysqld-init.log 2>&1
-            [ -d /opt/mysql-data/mysql ] && touch /opt/mysql-data/.lfs-initialized
+            if [ -d /opt/mysql-data/mysql ]; then
+                touch /opt/mysql-data/.lfs-initialized
+            else
+                warn "MariaDB could not create its data directory, so DVWA has no database." \
+                     "see /root/.mysqld-init.log"
+            fi
         else
-            echo -e "${Y}⚠ no mariadb-install-db found — DVWA's database cannot be created${R}"
+            warn "No mariadb-install-db found, so DVWA's database cannot be created." \
+                 "expected /opt/mysql/scripts/mariadb-install-db"
         fi
     fi
     # v3.4 WSL lesson: Windows' own MySQL frequently OWNS 127.0.0.1:3306 via
@@ -444,37 +480,80 @@ if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
     TERM=dumb /opt/mysql/bin/mysqld --user=root --datadir=/opt/mysql-data --basedir=/opt/mysql \
         --port=3307 --bind-address=127.0.0.1 \
         > /root/.mysqld.log 2>&1 &
-    sleep 3
-    if TERM=dumb /opt/mysql/bin/mysql -e "SELECT 1" >/dev/null 2>&1; then
-        TERM=dumb /opt/mysql/bin/mysql -e "CREATE DATABASE IF NOT EXISTS dvwa; CREATE USER IF NOT EXISTS 'dvwa'@'localhost' IDENTIFIED BY 'vulpass';
-            GRANT ALL ON dvwa.* TO 'dvwa'@'localhost';" 2>/dev/null || true
-        echo -e "${G}🎯 MariaDB${R}  → 127.0.0.1:3307 (db: dvwa, user: dvwa, pass: vulpass)"
+    want 3307 "MariaDB" "127.0.0.1:3307 (db dvwa)"
+
+    # DVWA is a PHP application: without php-cgi there is nothing to serve, and
+    # starting lighttpd anyway would only expose the raw .php sources.
+    if [ ! -x /usr/sbin/lighttpd ]; then
+        warn "DVWA is installed but lighttpd is missing, so its web interface cannot start."
+    elif [ ! -x /usr/bin/php-cgi ]; then
+        warn "DVWA is installed but PHP is missing, so its pages cannot be rendered." \
+             "the shipped image has no php-cgi; rebuild with ENABLE_VULNBOX=true"
     else
-        echo -e "${Y}⚠ MariaDB did not come up — check /root/.mysqld.log /root/.mysqld-init.log${R}"
-    fi
-    if [ -x /usr/sbin/lighttpd ]; then
         /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf > /root/.lighttpd.log 2>&1 &
-        sleep 1
-        echo -e "${G}🎯 DVWA${R}      → http://localhost/  (login: admin / password, click 'Create / Reset Database' on first visit)"
+        want 80 "DVWA" "http://localhost/"
     fi
     STARTED=1
 fi
 
-if [ -x /usr/local/jdk/bin/java ] && [ -f /opt/webgoat/webgoat-8.2.2.jar ]; then
-    (
-        cd /opt/webgoat
-        /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webgoat-8.2.2.jar --server.port=8080 > /root/.webgoat.log 2>&1 &
-        sleep 1
-        [ -f webwolf-8.2.2.jar ] && /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webwolf-8.2.2.jar --server.port=9090 > /root/.webwolf.log 2>&1 &
-    )
-    echo -e "${G}🎯 WebGoat${R}   → http://localhost:8080/WebGoat (register new user; WebWolf → :9090)"
-    STARTED=1
+# ── WebGoat + WebWolf ────────────────────────────────────────────────────────
+if [ -f /opt/webgoat/webgoat-8.2.2.jar ]; then
+    if [ -x /usr/local/jdk/bin/java ]; then
+        (
+            cd /opt/webgoat
+            /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webgoat-8.2.2.jar --server.port=8080 > /root/.webgoat.log 2>&1 &
+            [ -f webwolf-8.2.2.jar ] && /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webwolf-8.2.2.jar --server.port=9090 > /root/.webwolf.log 2>&1 &
+        )
+        want 8080 "WebGoat" "http://localhost:8080/WebGoat"
+        [ -f /opt/webgoat/webwolf-8.2.2.jar ] && want 9090 "WebWolf" "http://localhost:9090/WebWolf"
+        STARTED=1
+    else
+        warn "WebGoat is installed but Java is missing, so it cannot start." \
+             "expected /usr/local/jdk/bin/java"
+    fi
 fi
 
 if [ "$STARTED" = "0" ]; then
     echo "No practice targets installed on this system."
     echo "Rebuild with ENABLE_VULNBOX=true and VULNBOX_PACKAGES=juice-shop,dvwa,webgoat"
+    exit 0
 fi
+
+# Wait for the slow ones (Java ~20-30 s, MariaDB ~5 s) before judging them.
+if [ ${#EPORT[@]} -gt 0 ]; then
+    echo -e "${DIM}  waiting up to 60s for services to answer…${R}"
+    i=0
+    while [ $i -lt 30 ]; do
+        pending=0
+        for p in "${EPORT[@]}"; do port_open "$p" || pending=$((pending+1)); done
+        [ "$pending" -eq 0 ] && break
+        sleep 2; i=$((i+1))
+    done
+fi
+
+printf '\n  %-11s %-32s %s\n' 'TARGET' 'ADDRESS' 'STATUS'
+for i in "${!EPORT[@]}"; do
+    if port_open "${EPORT[$i]}"; then
+        status="${G}up${R}"
+    else
+        status="${Y}no response${R}"
+    fi
+    printf '  %-11s %-32s %b\n' "${ELABEL[$i]}" "${EURL[$i]}" "$status"
+done
+
+if [ ${#WARNS[@]} -gt 0 ]; then
+    printf '\n  %bWarnings (%d)%b\n' "$Y" "${#WARNS[@]}" "$R"
+    for i in "${!WARNS[@]}"; do
+        printf '  %d. %s\n' "$((i+1))" "${WARNS[$i]}"
+        [ -n "${HINTS[$i]}" ] && printf '     %b%s%b\n' "$DIM" "${HINTS[$i]}" "$R"
+    done
+    printf '\n'
+else
+    printf '\n  %ball targets answered%b\n\n' "$G" "$R"
+fi
+
+printf '  %bDVWA login: admin / password — click "Create / Reset Database" on first visit.%b\n' "$DIM" "$R"
+printf '  %bExpose one through a public URL:  vulnbox-tunnel 3000|80|8080%b\n\n' "$DIM" "$R"
 VBEOF
 chmod +x "$LFS/usr/bin/vulnbox-start"
 
