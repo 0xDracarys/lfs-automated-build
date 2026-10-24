@@ -6,6 +6,7 @@ import Link from "next/link";
 import BuildProgress from "@/components/lfs/build-progress";
 import LogViewer from "@/components/lfs/log-viewer";
 import { DottedSurface } from "@/components/ui/dotted-surface";
+import { auth } from "@/lib/firebase";
 
 interface LogEntry {
   timestamp: string;
@@ -25,6 +26,9 @@ interface BuildData {
   completedAt?: string;
   estimatedCompletion?: string;
   error?: string;
+  launchError?: string | null;
+  execution?: { name: string; state: string; reason: string; message: string } | null;
+  executionState?: "none" | "running" | "succeeded" | "failed" | "unknown";
   config: {
     kernelVersion?: string;
     optimization?: string;
@@ -57,12 +61,29 @@ export default function BuildProgressPage({
   const [cancelling, setCancelling] = useState(false);
 
   // ── Polling ────────────────────────────────────────────────────────────────
+  // The status route verifies the caller's Firebase ID token, so every request
+  // has to carry it. Without this header the route answers 401 and the page
+  // showed nothing but "HTTP 401".
+  const authHeader = useCallback(async (): Promise<Record<string, string>> => {
+    const user = auth.currentUser;
+    if (!user) return {};
+    try {
+      return { Authorization: `Bearer ${await user.getIdToken()}` };
+    } catch {
+      return {};
+    }
+  }, []);
+
   const fetchBuild = useCallback(async () => {
     try {
-      const res = await fetch(`/api/lfs/status/${buildId}`, { cache: "no-store" });
+      const headers = await authHeader();
+      const res = await fetch(`/api/lfs/status/${buildId}`, { cache: "no-store", headers });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.message || `HTTP ${res.status}`);
+        if (res.status === 401) {
+          throw new Error("Sign in to view this build — your session has expired.");
+        }
+        throw new Error(body.message || body.error || `HTTP ${res.status}`);
       }
       const data: BuildData = await res.json();
       setBuildData(data);
@@ -75,7 +96,7 @@ export default function BuildProgressPage({
       setLoading(false);
       return null;
     }
-  }, [buildId]);
+  }, [buildId, authHeader]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -123,7 +144,8 @@ export default function BuildProgressPage({
     if (!confirm("Cancel this build? This will stop the Cloud Run container.")) return;
     setCancelling(true);
     try {
-      const res = await fetch(`/api/lfs/cancel/${buildId}`, { method: "POST" });
+      const headers = await authHeader();
+      const res = await fetch(`/api/lfs/cancel/${buildId}`, { method: "POST", headers });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error || "Cancel failed");
       await fetchBuild();
@@ -221,6 +243,20 @@ export default function BuildProgressPage({
                   <span className="text-red-400 text-xs bg-red-500/10 px-3 py-1 rounded-full flex items-center gap-1">
                     <AlertTriangle className="h-3 w-3" />
                     {buildData.error}
+                  </span>
+                )}
+
+                {/* Honest waiting state: no execution means nothing is running */}
+                {isActive(buildData.status) && buildData.executionState === "none" && (
+                  <span className="text-yellow-300 text-xs bg-yellow-500/10 px-3 py-1 rounded-full flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    Cloud Run has no execution for this build yet
+                  </span>
+                )}
+
+                {buildData.execution?.state === "running" && buildData.execution.name && (
+                  <span className="font-mono text-xs bg-white/5 px-3 py-1 rounded-full text-gray-400">
+                    execution {buildData.execution.name}
                   </span>
                 )}
               </div>

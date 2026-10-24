@@ -52,11 +52,58 @@ async function getGcloudToken(): Promise<string> {
   }
 }
 
+/**
+ * Ask Cloud Run what actually happened to this build.
+ *
+ * A build document can say RUNNING while the container never started (missing
+ * image, billing off, permissions). Polling Firestore alone therefore spins
+ * forever. The execution's conditions carry the real reason, so surface them.
+ */
+async function getExecutionState(
+  token: string,
+  projectId: string,
+  since: string | undefined
+): Promise<{ name: string; state: "running" | "succeeded" | "failed"; reason: string; message: string } | null> {
+  try {
+    const res = await fetch(
+      `https://run.googleapis.com/v2/projects/${projectId}/locations/us-central1/jobs/lfs-builder/executions?pageSize=5`,
+      { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
+    );
+    if (!res.ok) return null;
+
+    const body = await res.json();
+    const sinceMs = since ? new Date(since).getTime() - 120_000 : 0;
+    const executions: any[] = Array.isArray(body.executions) ? body.executions : [];
+
+    const match = executions.find((e) => {
+      const started = e.createTime || e.startTime;
+      return started ? new Date(started).getTime() >= sinceMs : false;
+    });
+    if (!match) return null;
+
+    const conditions: any[] = match.conditions || [];
+    const failed = conditions.find((c) => c.state === "CONDITION_FAILED");
+    const completed = conditions.find((c) => c.type === "Completed");
+    const name = String(match.name || "").split("/").pop() || "";
+
+    if (failed) {
+      return { name, state: "failed", reason: failed.reason || "EXECUTION_FAILED", message: failed.message || "" };
+    }
+    return {
+      name,
+      state: completed?.state === "CONDITION_SUCCEEDED" ? "succeeded" : "running",
+      reason: "",
+      message: "",
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ buildId: string }> }
-) {
-  try {
+) {  try {
     const { buildId } = await params;
 
     // ── Security: caller must own this build ────────────────────────────────
@@ -168,15 +215,39 @@ export async function GET(
       data.startedAt ||
       new Date().toISOString();
 
+    // ── Cloud Run is the source of truth for whether the job ever ran ───────
+    const activeStatuses = ["INITIALIZING", "PENDING", "QUEUED", "RUNNING"];
+    const isActiveDoc = activeStatuses.includes(String(data.status || "").toUpperCase());
+
+    let execution: Awaited<ReturnType<typeof getExecutionState>> = null;
+    if (isActiveDoc || data.cloudRunExecution?.name) {
+      execution = await getExecutionState(token, projectId, createdAt);
+    }
+
+    const executionFailed = execution?.state === "failed";
+    const status = executionFailed ? "failed" : data.status || "unknown";
+    const error =
+      (executionFailed
+        ? `The build container never started (${execution!.reason}). ${
+            execution!.message || ""
+          }`.trim()
+        : null) ||
+      data.error ||
+      data.launchError ||
+      null;
+
     return NextResponse.json({
       id: buildId,
-      status: data.status || "unknown",
+      status,
       config: data.config || data.buildOptions || {},
       progress: typeof data.progress === "number" ? data.progress : 0,
       currentPhase: data.currentPhase || data.currentStage || "",
       currentStep: data.currentStep || "",
       logs: logs.length > 0 ? logs : cloudLogs,
-      error: data.error || null,
+      error,
+      launchError: data.launchError || null,
+      execution,
+      executionState: execution ? execution.state : isActiveDoc ? "none" : "unknown",
       downloadUrls: data.downloadUrls || null,
       cloudRunExecution: data.cloudRunExecution || null,
       createdAt,

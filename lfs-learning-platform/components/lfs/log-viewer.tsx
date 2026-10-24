@@ -122,7 +122,7 @@ export default function LogViewer({ logs, autoScroll = true, buildId, logsSource
               <div className="text-center text-xs text-gray-600 space-y-1">
                 <p>The Cloud Run container writes logs to Google Cloud Logging.</p>
                 <a
-                  href={`https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_job%22%20AND%20resource.labels.job_name%3D%22lfs-builder%22;project=linux-from-scratch-512419`}
+                  href={`https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_job%22%20AND%20resource.labels.job_name%3D%22lfs-builder%22;project=${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "alfs-bd1e0"}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline"

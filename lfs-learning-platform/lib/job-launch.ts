@@ -92,19 +92,11 @@ export async function launchLfsJob(
 
     await client.request({ url: baseUrl + ':run', method: 'POST', headers, data: { overrides: { containerOverrides: [{ env: Object.entries(env).map(([name, value]) => ({ name, value })) }] } } });
 
-    // Resolve the execution name (newest execution on the job)
-    let execution: string | undefined;
-    for (let i = 0; i < 12 && !execution; i++) {
-      await new Promise(r => setTimeout(r, 5000));
-      const lr = await client.request({ url: baseUrl + '/executions', headers });
-      const first = ((lr.data as { executions?: Array<{ name?: string; startTime?: string }> }).executions || [])[0];
-      if (first?.name) {
-        const nm = first.name.split('/executions/')[1];
-        const startedIso = (first.startTime || '').slice(0, 16);
-        if (nm && startedIso >= new Date(Date.now() - 11 * 60000).toISOString().slice(0, 16)) execution = nm;
-      }
-    }
-    return { launched: true, execution };
+    // Return as soon as Cloud Run accepts the run request. Resolving the
+    // execution name here used to poll for up to 60 seconds inside the POST,
+    // which made the form look frozen and could outlive the function timeout.
+    // The status route now resolves the execution from Cloud Run directly.
+    return { launched: true };
   } catch (e) {
     return { launched: false, reason: (e as Error).message.split('\n')[0].slice(0, 200) };
   }

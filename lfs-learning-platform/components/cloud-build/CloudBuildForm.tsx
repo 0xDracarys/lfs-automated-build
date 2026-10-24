@@ -132,7 +132,12 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to start cloud build");
+        // The route returns { error, details }; the details are the only place
+        // the real cause appears, so never drop them.
+        const message = data.details
+          ? `${data.error || "Failed to start cloud build"}: ${data.details}`
+          : data.error || "Failed to start cloud build";
+        throw new Error(message);
       }
 
       // Redirect to build monitoring page
