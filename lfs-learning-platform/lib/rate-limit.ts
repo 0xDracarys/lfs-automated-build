@@ -5,8 +5,9 @@
  * Returns true when the call is allowed.
  */
 
-const hits = new Map<string, { count: number; resetAt: number }>();
+import type { NextRequest } from 'next/server';
 
+const hits = new Map<string, { count: number; resetAt: number }>();
 export function rateLimit(key: string, max: number, windowMs: number): boolean {
   const now = Date.now();
   const h = hits.get(key);

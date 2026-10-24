@@ -66,7 +66,16 @@ export default function VulnBoxPage() {
               <span className="font-semibold text-red-300">For isolated lab use only. </span>
               <span className="text-gray-400">
                 VulnBox systems contain real working vulnerabilities. Never deploy on a public
-                network or any system you do not own. EULA acceptance is mandatory and logged.
+                network or any system you do not own. EULA acceptance is mandatory and logged — and
+                every build is also governed by our{" "}
+                <a href="/legal/acceptable-use" className="text-red-300 underline hover:text-red-200">
+                  Acceptable Use Policy
+                </a>{" "}
+                and the{" "}
+                <a href="/legal/ethics" className="text-red-300 underline hover:text-red-200">
+                  Legal &amp; Ethics framework
+                </a>
+                .
               </span>
             </div>
           </div>

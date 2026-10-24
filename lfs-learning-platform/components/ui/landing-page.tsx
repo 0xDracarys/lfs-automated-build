@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import LatestBuildBand from "@/components/ui/latest-build-band";
 
 const Penguin3D = dynamic(() => import("@/components/ui/penguin-3d"), {
   ssr: false,
@@ -161,6 +162,15 @@ export default function LFSLandingPage() {
             >
               Download LFS 12.0
             </Link>
+            <Link
+              href="/vuln-hub"
+              className="relative border border-primary/40 bg-primary/[0.06] text-primary text-center px-6 py-3.5 text-sm rounded-sm uppercase tracking-wider cursor-pointer hover:bg-primary/15 transition-all active:scale-[0.97]"
+            >
+              Explore Vuln Hub
+              <span className="absolute -top-2 -right-2 text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500 text-black tracking-widest">
+                NEW
+              </span>
+            </Link>
           </div>
 
           <p
@@ -171,6 +181,9 @@ export default function LFSLandingPage() {
           </p>
         </div>
       </section>
+
+      {/* ──────── Latest build strip ──────── */}
+      <LatestBuildBand />
 
       {/* ──────── Stats Ribbon ──────── */}
       <section className="relative z-10 py-8 sm:py-12 px-5 sm:px-8 md:px-12 lg:px-20 border-y border-white/[0.08] bg-nav-button/40 backdrop-blur-md">
@@ -253,6 +266,73 @@ export default function LFSLandingPage() {
             <div className="relative">
               <TypingTerminal />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ──────── Practice Targets / Vuln Hub ──────── */}
+      <section className="relative py-16 sm:py-20 md:py-24 px-5 sm:px-8 md:px-12 lg:px-20 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-emerald-500/10 border border-emerald-500/25 mb-4">
+                <Shield className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-mono text-emerald-300 uppercase tracking-widest">
+                  Practice Targets · New
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-3">
+                Break What You <span className="text-emerald-400">Built</span>
+              </h2>
+              <p className="text-sm md:text-base text-muted-foreground font-light max-w-2xl">
+                Ship an ISO or WSL tarball with three industry-standard vulnerable web apps
+                pre-installed, then work through them against a system you own end to end.
+              </p>
+            </div>
+            <Link
+              href="/vuln-hub"
+              className="shrink-0 inline-flex items-center gap-2 px-5 py-3 border border-emerald-500/40 bg-emerald-500/[0.08] text-emerald-300 rounded-sm font-semibold uppercase text-xs tracking-wider hover:bg-emerald-500/15 transition-all"
+            >
+              Open Vuln Hub
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            {[
+              { name: "OWASP Juice Shop", port: ":3000", tag: "Node.js · XSS, SQLi, IDOR", color: "emerald" },
+              { name: "DVWA", port: ":80", tag: "PHP · LFI, upload, injection", color: "rose" },
+              { name: "WebGoat + WebWolf", port: ":8080 / :9090", tag: "Java · OWASP Top 10 lessons", color: "violet" },
+            ].map((t) => (
+              <Link
+                key={t.name}
+                href="/vuln-hub"
+                className="group p-5 sm:p-6 rounded-xl bg-nav-button/30 border border-white/[0.08] hover:border-emerald-500/40 hover:bg-nav-button/60 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-300/80">
+                    vulnbox-start
+                  </span>
+                  <span className="text-[10px] font-mono text-muted-foreground">{t.port}</span>
+                </div>
+                <h3 className="text-base font-semibold mb-2 tracking-tight group-hover:text-emerald-300 transition-colors">
+                  {t.name}
+                </h3>
+                <p className="text-sm text-muted-foreground font-light">{t.tag}</p>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-4">
+            <p className="text-[11px] sm:text-xs text-amber-200/80 leading-relaxed">
+              <span className="font-semibold text-amber-300">Authorized use only. </span>
+              These targets are deliberately vulnerable. Run them isolated and only test systems you
+              own or have written permission to assess.{" "}
+              <Link href="/legal/acceptable-use" className="underline hover:text-amber-200">
+                Read the Acceptable Use Policy
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </section>
@@ -347,24 +427,6 @@ export default function LFSLandingPage() {
         </div>
       </section>
 
-      {/* ──────── Footer ──────── */}
-      <footer className="relative z-20 py-8 sm:py-10 px-5 sm:px-8 border-t border-white/[0.08] bg-hero-bg">
-        <div className="max-w-6xl mx-auto flex flex-col gap-5 items-center text-center md:flex-row md:justify-between md:text-left">
-          <div>
-            <h3 className="text-base font-bold uppercase tracking-wider flex items-center justify-center md:justify-start gap-2">
-              <Terminal className="w-4 h-4 text-primary" />
-              Linux From Scratch
-            </h3>
-            <p className="text-muted-foreground text-xs font-light mt-1">LFS 12.0 Interactive Learning Platform</p>
-          </div>
-          <div className="flex flex-wrap justify-center md:justify-end gap-5 sm:gap-8 text-xs uppercase tracking-widest text-muted-foreground">
-            <Link href="/learn" className="hover:text-foreground transition-colors">Learn</Link>
-            <Link href="/commands" className="hover:text-foreground transition-colors">Commands</Link>
-            <Link href="/docs" className="hover:text-foreground transition-colors">Docs</Link>
-            <Link href="/downloads" className="hover:text-foreground transition-colors">Downloads</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

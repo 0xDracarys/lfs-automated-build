@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { Heart, Users, Target, Rocket, BookOpen, Code, Zap, Terminal } from "lucide-react";
@@ -39,7 +39,7 @@ export default function AboutPage() {
                   After successfully compiling <strong className="text-white">Linux Kernel 6.4.12</strong>, configuring networking tools, and creating a bootable system, I realized this knowledge was too valuable to keep to myself.
                 </p>
                 <p>
-                  This platform exists to share that journey with you—breaking down complex concepts into digestible lessons, providing hands-on exercises, and guiding you through building your own Linux system.
+                  This platform exists to share that journey with youâ€”breaking down complex concepts into digestible lessons, providing hands-on exercises, and guiding you through building your own Linux system.
                 </p>
               </div>
             </div>
@@ -182,12 +182,12 @@ export default function AboutPage() {
               <div className="flex-1">
                 <h3 className="text-3xl font-bold mb-2">Shubham Bhasker</h3>
                 <p className="text-xl text-blue-400 mb-2">Linux Systems Developer</p>
-                <p className="text-sm text-gray-500 mb-6">Born: July 5, 2001 • India 🇮🇳</p>
+                <p className="text-sm text-gray-500 mb-6">Born: July 5, 2001 â€¢ India ðŸ‡®ðŸ‡³</p>
                 <p className="text-gray-400 mb-4">
                   Passionate about Linux systems, open-source development, and making complex technologies accessible to everyone. This LFS Builder platform represents years of experience in Linux system administration and development.
                 </p>
                 <p className="text-gray-400 mb-6">
-                  With a deep understanding of Linux kernel internals and system programming, I&apos;ve dedicated this project to helping others master the art of building Linux from scratch—breaking down barriers and making advanced concepts approachable for developers at all levels.
+                  With a deep understanding of Linux kernel internals and system programming, I&apos;ve dedicated this project to helping others master the art of building Linux from scratchâ€”breaking down barriers and making advanced concepts approachable for developers at all levels.
                 </p>
                 
                 {/* Contact */}
@@ -321,31 +321,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-6">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Terminal className="h-5 w-5 text-blue-400" />
-              <span className="font-bold">Sam's LFS</span>
-            </div>
-            <p className="text-sm text-gray-400">
-              Built with ❤️ for the Linux community
-            </p>
-            <div className="flex gap-6">
-              <Link href="/learn" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Learn
-              </Link>
-              <Link href="/docs" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Docs
-              </Link>
-              <Link href="/commands" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Commands
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }

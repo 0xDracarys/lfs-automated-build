@@ -33,6 +33,7 @@ export default function Navigation() {
     { href: "/research", label: "Research" },
     { href: "/docs", label: "Docs" },
     { href: "/downloads", label: "Downloads" },
+    { href: "/vuln-hub", label: "Vuln Hub" },
   ];
 
   return (
@@ -164,6 +165,7 @@ export default function Navigation() {
           </div>
           <button
             onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
             className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
             <X className="h-5 w-5" />

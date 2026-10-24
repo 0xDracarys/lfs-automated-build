@@ -33,7 +33,6 @@ const allowedConnect = [
   'https://*.firebaseio.com',
   'https://firebasestorage.googleapis.com',
   'wss://*.firebaseio.com',
-  'wss://s-us*.rustansws.com',
 ];
 
 /** @type {import('next').NextConfig} */

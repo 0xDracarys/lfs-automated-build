@@ -412,16 +412,22 @@ export default function BuildPage() {
                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold">3</div>
                   <h3 className="text-xl font-bold">Download and Extract Toolchain</h3>
                 </div>
-                <p className="text-gray-400 mb-4">Use our pre-built toolchain as a starting point</p>
+                <p className="text-gray-400 mb-4">
+                  Use our pre-built toolchain as a starting point — grab the current signed link from{" "}
+                  <a href="/downloads" className="text-blue-400 hover:underline">
+                    Downloads → Latest platform build
+                  </a>
+                  .
+                </p>
                 <div className="bg-black/50 rounded-lg p-4 font-mono text-sm relative">
                   <button
-                    onClick={() => copyToClipboard("cd $LFS\nwget https://firebasestorage.googleapis.com/v0/b/alfs-bd1e0.firebasestorage.app/o/lfs-12.0-toolchain.tar.gz?alt=media -O toolchain.tar.gz\ntar -xzf toolchain.tar.gz", "step3")}
+                    onClick={() => copyToClipboard("cd $LFS\nwget \"$TOOLCHAIN_URL\" -O toolchain.tar.gz\ntar -xzf toolchain.tar.gz", "step3")}
                     className="absolute top-2 right-2 p-2 hover:bg-white/10 rounded"
                   >
                     {copiedCommand === "step3" ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4 text-gray-400" />}
                   </button>
                   <p className="text-green-400">cd $LFS</p>
-                  <p className="text-green-400 break-all">wget [toolchain-url] -O toolchain.tar.gz</p>
+                  <p className="text-green-400 break-all">wget &quot;$TOOLCHAIN_URL&quot; -O toolchain.tar.gz</p>
                   <p className="text-green-400">tar -xzf toolchain.tar.gz</p>
                 </div>
               </div>

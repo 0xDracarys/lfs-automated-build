@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, BookOpen, Terminal, Download, FileText, Home, LayoutDashboard, ShieldAlert } from 'lucide-react';
+import { Menu, X, BookOpen, Terminal, Download, FileText, Home, LayoutDashboard, ShieldAlert, FlaskConical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 
@@ -16,6 +16,7 @@ const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   // VulnBox — reversible: remove this line to roll back
   { label: 'VulnBox', href: '/vulnbox', icon: ShieldAlert },
+  { label: 'Vuln Hub', href: '/vuln-hub', icon: FlaskConical },
 ];
 
 

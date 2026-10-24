@@ -5,7 +5,7 @@
  * Used by every route where a user acts on their own data (GDPR, builds, support).
  */
 
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import admin from '@/lib/firebase-admin';
 
 export type Caller = { uid: string; email: string };

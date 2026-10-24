@@ -38,6 +38,7 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
     enableNetworking: true,
     enableDebug: false,
     additionalNotes: "",
+    includeTargets: false,
   });
 
   // Check if user has an active build
@@ -110,6 +111,9 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
         },
         body: JSON.stringify({
           ...formData,
+          vulnTargets: formData.includeTargets
+            ? ["juice-shop", "dvwa", "webgoat"]
+            : [],
           userId: user.uid,
           email: user.email,
           displayName: user.displayName,
@@ -315,18 +319,39 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
               <div className="text-sm text-gray-400">Include debugging information (larger size)</div>
             </div>
           </label>
+
+          <label className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-all">
+            <input
+              type="checkbox"
+              checked={formData.includeTargets}
+              onChange={(e) => setFormData({ ...formData, includeTargets: e.target.checked })}
+              className="w-5 h-5 text-purple-500 rounded focus:ring-purple-500"
+            />
+            <div>
+              <div className="font-semibold">Include Practice Targets</div>
+              <div className="text-sm text-gray-400">OWASP Juice Shop + DVWA + WebGoat (with MariaDB, launchers, tunnel helper)</div>
+            </div>
+          </label>
         </div>
 
         {/* Additional Notes */}
         <div>
-          <label className="block text-sm font-semibold mb-2">Additional Notes (Optional)</label>
+          <label className="block text-sm font-semibold mb-2">Lab Description / Additional Notes (Optional)</label>
           <textarea
             value={formData.additionalNotes}
             onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
-            placeholder="Any special requirements or notes..."
+            placeholder="What is this build for? e.g. 'OSCP prep box — practice targets + privesc' or 'clean LFS reference image'"
             rows={3}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none"
           />
+          <p className="mt-2 text-xs text-gray-500">
+            Stored with the build record so you can tell your images apart later. For per-target
+            details (ports, credentials, launcher commands) see the{" "}
+            <a href="/vuln-hub" className="text-purple-400 hover:underline">
+              Vuln Hub
+            </a>
+            ; the VulnBox wizard has its own Description field under Identity.
+          </p>
         </div>
 
         {/* Build Info */}
@@ -335,7 +360,7 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
           <div className="space-y-2 text-sm text-gray-400">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>Estimated time: 4-6 hours</span>
+              <span>Estimated time: 45-75 minutes</span>
             </div>
             <div className="flex items-center gap-2">
               <Settings className="h-4 w-4" />

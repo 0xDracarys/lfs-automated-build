@@ -95,6 +95,28 @@ export default function TermsPage() {
               <div className="text-sm text-gray-400 space-y-3">{s.body}</div>
             </section>
           ))}
+
+          <section className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-6">
+            <h2 className="text-xl font-semibold mb-3">Related policies</h2>
+            <p className="text-sm text-gray-400 mb-4">
+              These documents form part of the terms for anyone using the build pipeline or the
+              practice targets.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a href="/legal/acceptable-use" className="px-4 py-2 rounded-lg text-sm border border-white/15 hover:bg-white/10 transition-colors">
+                Acceptable Use Policy
+              </a>
+              <a href="/legal/security" className="px-4 py-2 rounded-lg text-sm border border-white/15 hover:bg-white/10 transition-colors">
+                Responsible Disclosure
+              </a>
+              <a href="/legal/ethics" className="px-4 py-2 rounded-lg text-sm border border-white/15 hover:bg-white/10 transition-colors">
+                Legal &amp; Ethics
+              </a>
+              <a href="/privacy" className="px-4 py-2 rounded-lg text-sm border border-white/15 hover:bg-white/10 transition-colors">
+                Privacy
+              </a>
+            </div>
+          </section>
         </div>
       </div>
     </main>

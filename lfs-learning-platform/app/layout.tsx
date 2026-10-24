@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 
 import InteractiveBlockWall from "@/components/ui/interactive-block-wall";
 import ConsentBanner from "@/components/gdpr/ConsentBanner";
+import SiteFooter from "@/components/ui/site-footer";
 
 export const metadata: Metadata = {
   title: "Linux From Scratch - Build Your Own Custom Linux System",
@@ -47,6 +48,7 @@ export default function RootLayout({
             <main className="min-h-screen">
               {children}
             </main>
+            <SiteFooter />
           </div>
 
           {/* GDPR / ePrivacy consent banner (essential-only storage by default) */}

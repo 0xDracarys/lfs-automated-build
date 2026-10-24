@@ -66,7 +66,7 @@ export async function GET(
     }
 
     const projectId =
-      process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "alfs-bd1e0";
+      process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "linux-from-scratch-512419";
 
     const token = await getGcloudToken();
     const base = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;

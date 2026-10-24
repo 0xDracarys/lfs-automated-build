@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -652,31 +652,6 @@ export default function CommandsPage() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="relative border-t border-white/10 py-12 px-6">
-          <div className="container mx-auto max-w-6xl">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex items-center gap-2">
-                <Terminal className="h-5 w-5 text-blue-400" />
-                <span className="font-bold">Sam's LFS</span>
-              </div>
-              <p className="text-sm text-gray-400">
-                Build your own Linux system from source
-              </p>
-              <div className="flex gap-6">
-                <Link href="/learn" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Learn
-                </Link>
-                <Link href="/docs" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Docs
-                </Link>
-                <Link href="/downloads" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Downloads
-                </Link>
-              </div>
-            </div>
-          </div>
-        </footer>
       </main>
     </ProtectedRoute>
   );

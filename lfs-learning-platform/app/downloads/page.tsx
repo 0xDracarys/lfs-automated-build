@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import MyBuildsArtifacts from "@/components/downloads/MyBuildsArtifacts";
+import LatestPlatformBuilds from "@/components/downloads/LatestPlatformBuilds";
 
 /* ───────────────────────── data ───────────────────────── */
 
@@ -26,6 +27,8 @@ interface DownloadCard {
   badge?: string;
   badgeColor?: string;
   downloadUrl?: string;
+  /** When set, the live signed URL for this artifact is resolved from /api/downloads/latest */
+  artifactKey?: string;
   features: string[];
   steps: string[];
 }
@@ -46,6 +49,7 @@ const downloads: DownloadCard[] = [
     badge: "LATEST",
     badgeColor: "from-violet-500 to-fuchsia-500",
     downloadUrl: undefined, // per-build signed links now come from "Your recent builds" below
+    artifactKey: "system",
     features: [
       "Full LFS 12.0 root filesystem",
       "GCC 13.2, Bash 5.2, Coreutils 9.3",
@@ -63,17 +67,16 @@ const downloads: DownloadCard[] = [
   {
     id: "toolchain",
     title: "Full Toolchain",
-    subtitle: "Complete 436 MB LFS build environment",
+    subtitle: "Complete LFS build environment",
     description:
       "Everything you need to continue building LFS packages yourself. Includes the cross-compilation toolchain, headers, and libraries.",
     icon: <Server className="w-7 h-7" />,
-    size: "436 MB",
+    size: "latest build",
     format: ".tar.gz",
     gradient: "from-blue-600/20 via-cyan-600/20 to-teal-600/20",
     borderColor: "border-blue-500/30",
     glowColor: "shadow-blue-500/20",
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/alfs-bd1e0.firebasestorage.app/o/lfs-12.0-toolchain.tar.gz?alt=media&token=1e9e0aed-ba72-4465-8fa2-b0ff5381a5c1",
+    artifactKey: "toolchain",
     features: [
       "GCC 13.2.0, Binutils 2.41, Glibc 2.38",
       "Make, Bash, Coreutils, Findutils, Grep",
@@ -81,7 +84,7 @@ const downloads: DownloadCard[] = [
       "Tested on x86_64 architecture",
     ],
     steps: [
-      "Download the toolchain archive (436 MB)",
+      "Download the toolchain archive",
       "Extract: tar -xzf lfs-12.0-toolchain.tar.gz",
       "Download helper script: mount-lfs.ps1",
       "Run mount-lfs.ps1 from the extracted folder",
@@ -95,13 +98,12 @@ const downloads: DownloadCard[] = [
     description:
       "A lightweight bootable ISO image you can use to explore the LFS system in any virtual machine or burn to a USB drive.",
     icon: <HardDrive className="w-7 h-7" />,
-    size: "136 MB",
+    size: "latest build",
     format: ".iso",
     gradient: "from-emerald-600/20 via-green-600/20 to-lime-600/20",
     borderColor: "border-emerald-500/30",
     glowColor: "shadow-emerald-500/20",
-    downloadUrl:
-      "https://firebasestorage.googleapis.com/v0/b/alfs-bd1e0.firebasestorage.app/o/lfs-12.0-latest.iso?alt=media&token=ff0fb0a6-17c1-4a91-b885-08f42bf2b54e",
+    artifactKey: "iso",
     features: [
       "Linux Kernel 6.4.12",
       "GRUB 2.06 bootloader",
@@ -109,7 +111,7 @@ const downloads: DownloadCard[] = [
       "Works on VirtualBox, VMware, QEMU, bare metal",
     ],
     steps: [
-      "Download the ISO file (136 MB)",
+      "Download the ISO file",
       "Open VirtualBox / VMware / QEMU",
       "Create a new VM → attach ISO",
       "Boot from the ISO",
@@ -166,6 +168,39 @@ export default function DownloadsPage() {
   const [downloading, setDownloading] = useState(false);
   const [pulseIdx, setPulseIdx] = useState(0);
 
+  // Live signed artifact URLs + sizes for the canonical latest platform build.
+  // Keeps the static cards correct instead of hard-coding sizes/links that rot.
+  const [live, setLive] = useState<Record<string, { url: string; sizeMB: number }>>({});
+  const [lastBuild, setLastBuild] = useState<string>("—");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/downloads/latest");
+        if (!r.ok) return;
+        const j = await r.json();
+        if (cancelled || !j?.artifacts) return;
+        const map: Record<string, { url: string; sizeMB: number }> = {};
+        for (const a of j.artifacts as Array<{ key: string; url: string; sizeMB: number }>) {
+          map[a.key] = { url: a.url, sizeMB: a.sizeMB };
+        }
+        setLive(map);
+        if (j.updated) {
+          setLastBuild(new Date(j.updated).toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+          }));
+        }
+      } catch {
+        /* non-fatal: cards keep their fallback labels */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // Subtle animation: cycle glowing dot on the stats bar
   useEffect(() => {
     const t = setInterval(() => setPulseIdx((p) => (p + 1) % 4), 2500);
@@ -173,11 +208,14 @@ export default function DownloadsPage() {
   }, []);
 
   const activeCard = downloads.find((d) => d.id === selected)!;
+  const activeLive = activeCard.artifactKey ? live[activeCard.artifactKey] : undefined;
+  const activeUrl = activeCard.downloadUrl || activeLive?.url;
+  const activeSize = activeLive?.sizeMB ? `${activeLive.sizeMB} MB` : activeCard.size;
 
   const handleDownload = () => {
-    if (activeCard.downloadUrl) {
+    if (activeUrl) {
       setDownloading(true);
-      window.open(activeCard.downloadUrl, "_blank");
+      window.open(activeUrl, "_blank");
       setTimeout(() => setDownloading(false), 3000);
     }
   };
@@ -229,7 +267,7 @@ export default function DownloadsPage() {
             { icon: <Cpu className="w-5 h-5" />, label: "LFS Version", value: "12.0" },
             { icon: <Shield className="w-5 h-5" />, label: "Kernel", value: "6.4.12" },
             { icon: <Box className="w-5 h-5" />, label: "Packages", value: "17+" },
-            { icon: <Clock className="w-5 h-5" />, label: "Last Build", value: "Jun 21" },
+            { icon: <Clock className="w-5 h-5" />, label: "Last Build", value: lastBuild },
           ].map((s, i) => (
             <div
               key={s.label}
@@ -237,9 +275,9 @@ export default function DownloadsPage() {
                 pulseIdx === i ? "border-violet-500/40 bg-violet-500/[0.06]" : ""
               }`}
             >
-              <div className="text-gray-500">{s.icon}</div>
+              <div className="text-gray-400">{s.icon}</div>
               <div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider">{s.label}</div>
+                <div className="text-xs text-gray-400 uppercase tracking-wider">{s.label}</div>
                 <div className="text-lg font-bold">{s.value}</div>
               </div>
               {pulseIdx === i && (
@@ -288,25 +326,29 @@ export default function DownloadsPage() {
                       isActive ? "bg-white/10" : "bg-white/[0.04]"
                     }`}
                   >
-                    <span className={isActive ? "text-white" : "text-gray-500"}>
+                    <span className={isActive ? "text-white" : "text-gray-400"}>
                       {card.icon}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-bold mb-0.5">{card.title}</h3>
+                    <h2 className="text-lg font-bold mb-0.5">{card.title}</h2>
                     <p className="text-sm text-gray-400 mb-3">{card.subtitle}</p>
                     <div className="flex items-center gap-3 text-xs">
                       <span className="px-2 py-0.5 rounded bg-white/[0.06] text-gray-400 font-mono">
                         {card.format}
                       </span>
-                      <span className="text-gray-500">{card.size}</span>
+                      <span className="text-gray-400">
+                        {card.artifactKey && live[card.artifactKey]?.sizeMB
+                          ? `${live[card.artifactKey].sizeMB} MB`
+                          : card.size}
+                      </span>
                     </div>
                   </div>
                   <ArrowRight
                     className={`w-5 h-5 mt-1 transition-all ${
                       isActive
                         ? "text-white translate-x-0 opacity-100"
-                        : "text-gray-600 -translate-x-1 opacity-0 group-hover:opacity-60 group-hover:translate-x-0"
+                        : "text-gray-400 -translate-x-1 opacity-0 group-hover:opacity-60 group-hover:translate-x-0"
                     }`}
                   />
                 </div>
@@ -334,9 +376,9 @@ export default function DownloadsPage() {
                   <h2 className="text-2xl font-bold mb-2">{activeCard.title}</h2>
                   <p className="text-gray-400 mb-6">{activeCard.description}</p>
 
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-3">
                     What&apos;s included
-                  </h4>
+                  </h3>
                   <ul className="space-y-2.5 mb-8">
                     {activeCard.features.map((f, i) => (
                       <motion.li
@@ -355,7 +397,7 @@ export default function DownloadsPage() {
                   {/* Download button */}
                   <button
                     onClick={handleDownload}
-                    disabled={downloading || !activeCard.downloadUrl}
+                    disabled={downloading || !activeUrl}
                     className="w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 hover:shadow-lg hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {downloading ? (
@@ -366,17 +408,23 @@ export default function DownloadsPage() {
                     ) : (
                       <>
                         <Download className="w-5 h-5" />
-                        Download {activeCard.format.toUpperCase()} ({activeCard.size})
+                        Download {activeCard.format.toUpperCase()} ({activeSize})
                       </>
                     )}
                   </button>
+                  {!activeUrl && (
+                    <p className="mt-2 text-xs text-gray-400">
+                      No artifact published for this format yet — the link appears automatically once a
+                      build finishes packaging.
+                    </p>
+                  )}
                 </div>
 
                 {/* Right: steps */}
                 <div>
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">
                     Installation Steps
-                  </h4>
+                  </h3>
                   <ol className="space-y-4">
                     {activeCard.steps.map((step, i) => (
                       <motion.li
@@ -408,7 +456,7 @@ export default function DownloadsPage() {
                         <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-                        <span className="ml-2 text-gray-600 text-[10px]">PowerShell</span>
+                        <span className="ml-2 text-gray-400 text-[10px]">PowerShell</span>
                       </div>
                       <div className="space-y-1.5 text-gray-400">
                         <p>
@@ -471,13 +519,23 @@ export default function DownloadsPage() {
               <h3 className="font-semibold mb-2 group-hover:text-white transition-colors">
                 {r.title}
               </h3>
-              <p className="text-sm text-gray-500 mb-3">{r.desc}</p>
+              <p className="text-sm text-gray-400 mb-3">{r.desc}</p>
               <span className={`text-sm font-medium text-${r.color}-400 flex items-center gap-1`}>
                 Learn more
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </span>
             </Link>
           ))}
+        </motion.div>
+
+        {/* ──────── Canonical latest build (bucket-backed, signed links) ──────── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.65 }}
+          className="max-w-5xl mx-auto mt-10"
+        >
+          <LatestPlatformBuilds />
         </motion.div>
 
         {/* ──────── Per-artifact downloads from the user's own builds ──────── */}
@@ -488,6 +546,31 @@ export default function DownloadsPage() {
           className="max-w-5xl mx-auto mt-4"
         >
           <MyBuildsArtifacts />
+        </motion.div>
+
+        {/* ──────── Legal & usage notice ──────── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.75 }}
+          className="max-w-5xl mx-auto mt-6"
+        >
+          <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
+            <p className="text-xs sm:text-sm text-amber-200/80 leading-relaxed">
+              <span className="font-semibold text-amber-300">Authorized use only. </span>
+              Artifacts are provided “as is”, without warranty, for education and research. Any image
+              built with practice targets is intentionally vulnerable — isolate it and only test
+              systems you own or have written permission to assess. Redistribution must preserve the
+              upstream licences.{" "}
+              <Link href="/legal/acceptable-use" className="underline hover:text-amber-200">
+                Acceptable Use Policy
+              </Link>{" "}
+              ·{" "}
+              <Link href="/legal/security" className="underline hover:text-amber-200">
+                Report a vulnerability
+              </Link>
+            </p>
+          </div>
         </motion.div>
 
         {/* ──────── Checksum ──────── */}
@@ -505,9 +588,9 @@ export default function DownloadsPage() {
                 Always verify the integrity of downloaded files:
               </p>
               <div className="rounded-lg bg-black/40 p-3 font-mono text-xs text-gray-400 space-y-1">
-                <p className="text-gray-600"># Linux / Mac:</p>
+                <p className="text-gray-400"># Linux / Mac:</p>
                 <p className="text-emerald-400">sha256sum lfs-system.tar.gz</p>
-                <p className="text-gray-600 mt-2"># Windows (PowerShell):</p>
+                <p className="text-gray-400 mt-2"># Windows (PowerShell):</p>
                 <p className="text-emerald-400">
                   Get-FileHash lfs-system.tar.gz -Algorithm SHA256
                 </p>

@@ -243,7 +243,7 @@ export default function BuildProgressPage({
                 <button
                   onClick={() =>
                     window.open(
-                      `https://console.cloud.google.com/storage/browser/alfs-bd1e0-builds/${buildId}`,
+                      `https://console.cloud.google.com/storage/browser/linux-from-scratch-512419-builds/${buildId}`,
                       "_blank"
                     )
                   }

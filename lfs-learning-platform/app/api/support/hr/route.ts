@@ -124,7 +124,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SupportRe
       await addDoc(notificationsRef, {
         type: 'new_support_request',
         supportId: docRef.id,
-        userId,
+        userId: caller.uid,
         supportType: type,
         priority,
         message: message.substring(0, 200),
