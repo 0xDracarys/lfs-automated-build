@@ -174,16 +174,37 @@ export async function GET(
     // ── If no Firestore logs, try Cloud Logging ───────────────────────────────
     // The Cloud Run container logs go to Cloud Logging, not always to Firestore
     let cloudLogs: { timestamp: string; level: "info" | "error" | "success" | "warning"; message: string; phase: string }[] = [];
-    if (logs.length === 0 && data.cloudRunExecution?.name) {
+
+    // ── Resolve createdAt from Firestore submittedAt or startedAt ───────────
+    const createdAt =
+      data.submittedAt ||
+      data.createdAt ||
+      data.startedAt ||
+      new Date().toISOString();
+
+    // ── Cloud Run is the source of truth for whether the job ever ran ───────
+    const activeStatuses = ["INITIALIZING", "PENDING", "QUEUED", "RUNNING"];
+    const isActiveDoc = activeStatuses.includes(String(data.status || "").toUpperCase());
+
+    let execution: Awaited<ReturnType<typeof getExecutionState>> = null;
+    if (isActiveDoc || data.cloudRunExecution?.name) {
+      execution = await getExecutionState(token, projectId, createdAt);
+    }
+
+    // ── If Firestore has no logs, read the container's own output ───────────
+    // This is what makes a running build observable: the container writes to
+    // Cloud Logging, not to Firestore. Scope the query to this execution so the
+    // page never shows another build's output.
+    const executionName =
+      execution?.name || (data.cloudRunExecution?.name ? String(data.cloudRunExecution.name).split("/").pop() : "");
+    if (logs.length === 0 && executionName) {
       try {
-        // Derive the job execution name from the operation name
-        // Operations are like: projects/.../operations/{id}
-        // Executions are like: projects/.../locations/.../jobs/lfs-builder/executions/{name}
-        const execName = data.cloudRunExecution.name;
-        // Try to get Cloud Run logs from Cloud Logging
-        const loggingUrl = `https://logging.googleapis.com/v2/entries:list`;
-        const logFilter = `resource.type="cloud_run_job" AND resource.labels.job_name="lfs-builder" AND timestamp>="${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()}"`;
-        const logRes = await fetch(loggingUrl, {
+        const logFilter = [
+          'resource.type="cloud_run_job"',
+          'resource.labels.job_name="lfs-builder"',
+          `resource.labels.execution_name="${executionName}"`,
+        ].join(" AND ");
+        const logRes = await fetch("https://logging.googleapis.com/v2/entries:list", {
           method: "POST",
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -206,22 +227,6 @@ export async function GET(
       } catch (e) {
         console.warn("Cloud Logging fetch failed:", e);
       }
-    }
-
-    // ── Resolve createdAt from Firestore submittedAt or startedAt ───────────
-    const createdAt =
-      data.submittedAt ||
-      data.createdAt ||
-      data.startedAt ||
-      new Date().toISOString();
-
-    // ── Cloud Run is the source of truth for whether the job ever ran ───────
-    const activeStatuses = ["INITIALIZING", "PENDING", "QUEUED", "RUNNING"];
-    const isActiveDoc = activeStatuses.includes(String(data.status || "").toUpperCase());
-
-    let execution: Awaited<ReturnType<typeof getExecutionState>> = null;
-    if (isActiveDoc || data.cloudRunExecution?.name) {
-      execution = await getExecutionState(token, projectId, createdAt);
     }
 
     const executionFailed = execution?.state === "failed";
