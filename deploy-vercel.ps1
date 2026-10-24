@@ -132,7 +132,16 @@ $urlMatch = $output | Select-String -Pattern 'https://[A-Za-z0-9.\-]+\.vercel\.a
 if ($urlMatch) { $deploymentUrl = $urlMatch.Matches[0].Value }
 
 if (-not $KeepStaging) {
-    Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
+    # The CLI can still hold handles for a moment after it exits, so retry.
+    $removed = $false
+    for ($i = 1; $i -le 5; $i++) {
+        if (-not (Test-Path $stage)) { $removed = $true; break }
+        try { Remove-Item $stage -Recurse -Force -ErrorAction Stop; $removed = $true; break }
+        catch { Start-Sleep -Milliseconds 800 }
+    }
+    if (-not $removed) {
+        Write-Host "note: could not remove the staging copy, it is still at $stage" -ForegroundColor Yellow
+    }
 }
 
 Write-Host "`ndone." -ForegroundColor Green
