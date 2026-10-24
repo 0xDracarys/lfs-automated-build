@@ -34,6 +34,7 @@ export default function Navigation() {
     { href: "/docs", label: "Docs" },
     { href: "/downloads", label: "Downloads" },
     { href: "/vuln-hub", label: "Vuln Hub" },
+    { href: "/architecture", label: "Architecture" },
   ];
 
   return (
@@ -53,7 +54,7 @@ export default function Navigation() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+        <div className="hidden lg:flex items-center gap-4 xl:gap-6">
           {navLinks.map((item) => {
             const isActive = pathname === item.href;
             return (

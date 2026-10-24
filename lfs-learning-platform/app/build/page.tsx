@@ -111,7 +111,7 @@ export default function BuildPage() {
             <div className="flex items-center gap-3">
               <Clock className="h-6 w-6 text-blue-400" />
               <div>
-                <h4 className="text-white font-medium">Build Queue Active</h4>
+                <h2 className="text-white font-medium">Build Queue Active</h2>
                 <p className="text-sm text-blue-400">
                   {queueSize} build{queueSize === 1 ? '' : 's'} waiting to be processed by the cloud system
                 </p>
@@ -138,7 +138,7 @@ export default function BuildPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-xl font-bold text-white">Installation Wizard</h3>
+                    <h2 className="text-xl font-bold text-white">Installation Wizard</h2>
                     <span className="px-2 py-0.5 bg-purple-500/30 text-purple-300 text-xs rounded-full">New!</span>
                   </div>
                   <p className="text-gray-400">Step-by-step guided installation with progress tracking</p>

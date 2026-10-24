@@ -26,13 +26,26 @@ const allowedJsSource = [
   'https://lh3.googleusercontent.com', // Google sign-in avatar images
   'data:', // inline image placeholders used by canvas wall
   'https://firebasestorage.googleapis.com',
+  'https://apis.google.com', // gapi loader used by Firebase's Google provider
 ];
 const allowedConnect = [
   "'self'",
   'https://*.googleapis.com',
+  'https://apis.google.com', // gapi XHR paths (script tag is covered by script-src)
   'https://*.firebaseio.com',
   'https://firebasestorage.googleapis.com',
   'wss://*.firebaseio.com',
+];
+/** Firebase's Google sign-in renders hidden iframes from these origins. With
+ * no frame-src the browser fell back to default-src 'self' and blocked them,
+ * which surfaced as "Loading the script apis.google.com… violates CSP" and
+ * left the Google button dead. */
+const allowedFrame = [
+  "'self'",
+  'https://apis.google.com',
+  'https://accounts.google.com',
+  'https://*.google.com',
+  'https://*.firebaseapp.com',
 ];
 
 /** @type {import('next').NextConfig} */
@@ -58,6 +71,7 @@ const nextConfig = {
               `img-src ${allowedJsSource.join(' ')}`,
               `font-src 'self' data:`,
               `connect-src ${allowedConnect.join(' ')}`,
+              `frame-src ${allowedFrame.join(' ')}`,
               `frame-ancestors 'none'`,
               `base-uri 'self'`,
               `form-action 'self'`,

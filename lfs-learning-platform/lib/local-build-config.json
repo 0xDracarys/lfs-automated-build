@@ -1,0 +1,20 @@
+{
+  "_generated": true,
+  "_source": [
+    "lfs-vulnbox.sh",
+    "lfs-build.sh",
+    "installer/installer-manifest.json"
+  ],
+  "supportedTargets": [
+    "juice-shop",
+    "dvwa",
+    "webgoat"
+  ],
+  "defaultTargets": "juice-shop",
+  "installerDependencies": [
+    "WSL2",
+    "Ubuntu WSL"
+  ],
+  "lfsVersion": "12.0",
+  "linuxKernel": null
+}

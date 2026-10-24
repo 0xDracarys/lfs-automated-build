@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Terminal, Mail, Lock, User as UserIcon, Loader2 } from "lucide-react";
 import { DottedSurface } from "@/components/ui/dotted-surface";
+import { friendlyAuthError, isPopupCancel } from "@/lib/auth-errors";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -26,21 +27,7 @@ export default function SignupPage() {
       router.push("/dashboard");
     } catch (err: any) {
       console.error('Signup error:', err);
-      let errorMessage = "Failed to create account";
-      
-      if (err.code === 'auth/configuration-not-found') {
-        errorMessage = "Firebase Authentication not enabled. Please enable Email/Password authentication in Firebase Console.";
-      } else if (err.code === 'auth/email-already-in-use') {
-        errorMessage = "This email is already registered. Try logging in instead.";
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = "Invalid email address.";
-      } else if (err.code === 'auth/weak-password') {
-        errorMessage = "Password should be at least 6 characters.";
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      setError(errorMessage);
+      setError(friendlyAuthError(err, "Could not create the account. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -55,19 +42,8 @@ export default function SignupPage() {
       router.push("/dashboard");
     } catch (err: any) {
       console.error('Google signup error:', err);
-      let errorMessage = "Failed to sign up with Google";
-      
-      if (err.code === 'auth/configuration-not-found') {
-        errorMessage = "Google Sign-In not enabled. Please enable Google authentication in Firebase Console.";
-      } else if (err.code === 'auth/popup-closed-by-user') {
-        errorMessage = "Sign-in popup was closed. Please try again.";
-      } else if (err.code === 'auth/cancelled-popup-request') {
-        return; // User cancelled, don't show error
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      setError(errorMessage);
+      if (isPopupCancel(err)) return;
+      setError(friendlyAuthError(err, "Could not sign up with Google. Please try again."));
     } finally {
       setLoading(false);
     }

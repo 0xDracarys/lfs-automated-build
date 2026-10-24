@@ -9,6 +9,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 import { Disc, Package2, ArrowRight, Loader2 } from "lucide-react";
 
 interface Art {
@@ -26,6 +27,7 @@ interface Latest {
 export default function LatestBuildBand() {
   const [data, setData] = useState<Latest | null>(null);
   const [failed, setFailed] = useState(false);
+  const reduce = useReducedMotion() ?? false;
 
   useEffect(() => {
     let cancelled = false;
@@ -67,7 +69,13 @@ export default function LatestBuildBand() {
 
   return (
     <div className="relative z-10 border-b border-white/[0.06] bg-nav-button/20">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] font-mono uppercase tracking-widest">
+      {/* Single fade on resolve — 250 ms, once. No count-up, no typing, no loop. */}
+      <motion.div
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: reduce ? 0 : 0.25, ease: "easeOut" }}
+        className="max-w-6xl mx-auto px-5 sm:px-8 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] font-mono uppercase tracking-widest"
+      >
         <span className="text-emerald-400/90">Latest build</span>
         <span className="text-muted-foreground normal-case tracking-normal">{data.buildId}</span>
         <span className="text-muted-foreground/40">·</span>
@@ -88,7 +96,7 @@ export default function LatestBuildBand() {
         >
           Downloads <ArrowRight className="w-3 h-3" />
         </Link>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Disc, Package2, FileArchive, Wrench, Download, Loader2, BadgeCheck } from "lucide-react";
 
 interface Art {
@@ -36,6 +37,7 @@ const ICONS: Record<string, React.ReactNode> = {
 export default function LatestPlatformBuilds() {
   const [data, setData] = useState<Latest | null>(null);
   const [error, setError] = useState(false);
+  const reduce = useReducedMotion() ?? false;
 
   useEffect(() => {
     (async () => {
@@ -66,9 +68,14 @@ export default function LatestPlatformBuilds() {
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <h2 className="text-2xl font-bold">Latest platform build</h2>
         {data.complete && (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs border border-emerald-500/30 bg-emerald-500/10 text-emerald-300">
+          <motion.span
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: reduce ? 0 : 0.2, ease: "easeOut" }}
+            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs border border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+          >
             <BadgeCheck className="h-3.5 w-3.5" /> complete (ISO + labs)
-          </span>
+          </motion.span>
         )}
       </div>
       <p className="text-sm text-gray-400 mb-6">
@@ -84,12 +91,15 @@ export default function LatestPlatformBuilds() {
           </span>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {data.artifacts.map((a) => (
-            <a
+          {data.artifacts.map((a, i) => (
+            <motion.a
               key={a.key}
               href={a.url}
               target="_blank"
               rel="noopener noreferrer"
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduce ? 0 : 0.25, ease: "easeOut", delay: reduce ? 0 : i * 0.08 }}
               className="group flex items-start gap-3 rounded-lg border border-white/10 bg-black/30 p-3.5 hover:border-emerald-500/40 hover:bg-emerald-500/[0.06] transition-colors"
             >
               <span className="mt-0.5 text-emerald-400">{ICONS[a.key] || <Download className="h-4 w-4" />}</span>
@@ -101,7 +111,7 @@ export default function LatestPlatformBuilds() {
                   {a.sizeMB} MB · {a.hint}
                 </span>
               </span>
-            </a>
+            </motion.a>
           ))}
         </div>
         {data.artifacts.length === 0 && (

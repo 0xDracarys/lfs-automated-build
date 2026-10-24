@@ -15,7 +15,15 @@ import {
   User as UserIcon,
   Lock
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import Link from "next/link";
+
+/** Practice-target chips — accents mirror /vuln-hub exactly (never flattened to green). */
+const TARGET_CHIPS = [
+  { label: "Juice Shop", accent: "text-emerald-300 border-emerald-500/30 bg-emerald-500/10" },
+  { label: "DVWA", accent: "text-rose-300 border-rose-500/30 bg-rose-500/10" },
+  { label: "WebGoat", accent: "text-violet-300 border-violet-500/30 bg-violet-500/10" },
+];
 
 interface CloudBuildFormProps {
   user: User | null;
@@ -24,6 +32,7 @@ interface CloudBuildFormProps {
 
 export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const [loading, setLoading] = useState(false);
   const [hasActiveBuild, setHasActiveBuild] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
@@ -250,7 +259,7 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
             value={formData.projectName}
             onChange={(e) => setFormData({ ...formData, projectName: e.target.value })}
             placeholder="my-custom-linux"
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-neutral-400 focus:border-purple-500 focus:outline-none"
           />
         </div>
 
@@ -320,7 +329,15 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
             </div>
           </label>
 
-          <label className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-all">
+          <motion.label
+            className="flex items-center gap-3 p-4 bg-white/5 border rounded-lg cursor-pointer hover:bg-white/10 transition-colors"
+            animate={{
+              borderColor: formData.includeTargets
+                ? "rgba(34,197,94,0.55)"
+                : "rgba(255,255,255,0.10)",
+            }}
+            transition={{ duration: reduceMotion ? 0 : 0.2, ease: "easeOut" }}
+          >
             <input
               type="checkbox"
               checked={formData.includeTargets}
@@ -331,7 +348,36 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
               <div className="font-semibold">Include Practice Targets</div>
               <div className="text-sm text-gray-400">OWASP Juice Shop + DVWA + WebGoat (with MariaDB, launchers, tunnel helper)</div>
             </div>
-          </label>
+          </motion.label>
+
+          {/* Chips: the visible link between this build and /vuln-hub. Opacity only. */}
+          <AnimatePresence initial={false}>
+            {formData.includeTargets && (
+              <motion.div
+                key="target-chips"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2, ease: "easeOut" }}
+                className="pl-8 flex flex-wrap items-center gap-2"
+              >
+                {TARGET_CHIPS.map((t) => (
+                  <span
+                    key={t.label}
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full border text-[11px] font-medium ${t.accent}`}
+                  >
+                    {t.label}
+                  </span>
+                ))}
+                <Link
+                  href="/vuln-hub"
+                  className="text-[11px] text-gray-400 underline decoration-white/25 underline-offset-2 hover:text-white hover:decoration-white/60 transition-colors"
+                >
+                  See ports &amp; credentials →
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Additional Notes */}
@@ -342,7 +388,7 @@ export default function CloudBuildForm({ user, onLogin }: CloudBuildFormProps) {
             onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
             placeholder="What is this build for? e.g. 'OSCP prep box — practice targets + privesc' or 'clean LFS reference image'"
             rows={3}
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-neutral-400 focus:border-purple-500 focus:outline-none resize-none"
           />
           <p className="mt-2 text-xs text-gray-500">
             Stored with the build record so you can tell your images apart later. For per-target

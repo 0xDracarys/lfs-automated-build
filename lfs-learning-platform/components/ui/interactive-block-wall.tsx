@@ -15,6 +15,11 @@ export default function InteractiveBlockWall() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    // Professor Martas, 21 Oct: motion must never sit behind readable text
+    // while it animates. With reduced motion the wall is drawn exactly once —
+    // a static backdrop — and the cursor never moves it.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     // Mouse tracking with smooth lerp
     const targetMouse = { x: width * 0.7, y: height * 0.4 };
     const currentMouse = { x: width * 0.7, y: height * 0.4 };
@@ -33,9 +38,10 @@ export default function InteractiveBlockWall() {
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchmove", handleTouchMove);
-
+    if (!reduceMotion) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("touchmove", handleTouchMove);
+    }
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
@@ -111,7 +117,7 @@ export default function InteractiveBlockWall() {
         }
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      if (!reduceMotion) animationFrameId = requestAnimationFrame(render);
     };
 
     render();

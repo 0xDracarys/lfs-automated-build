@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Terminal, Mail, Lock, Loader2 } from "lucide-react";
 import { DottedSurface } from "@/components/ui/dotted-surface";
+import { friendlyAuthError, isPopupCancel } from "@/lib/auth-errors";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -25,23 +26,8 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: any) {
       console.error('Login error:', err);
-      let errorMessage = "Failed to log in";
-      
-      if (err.code === 'auth/configuration-not-found') {
-        errorMessage = "Firebase Authentication not enabled. Please enable Email/Password authentication in Firebase Console.";
-      } else if (err.code === 'auth/user-not-found') {
-        errorMessage = "No account found with this email. Please sign up first.";
-      } else if (err.code === 'auth/wrong-password') {
-        errorMessage = "Incorrect password. Please try again.";
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = "Invalid email address.";
-      } else if (err.code === 'auth/user-disabled') {
-        errorMessage = "This account has been disabled.";
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      setError(errorMessage);
+      if (isPopupCancel(err)) return;
+      setError(friendlyAuthError(err, "Could not sign in. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -56,19 +42,8 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: any) {
       console.error('Google login error:', err);
-      let errorMessage = "Failed to log in with Google";
-      
-      if (err.code === 'auth/configuration-not-found') {
-        errorMessage = "Google Sign-In not enabled. Please enable Google authentication in Firebase Console.";
-      } else if (err.code === 'auth/popup-closed-by-user') {
-        errorMessage = "Sign-in popup was closed. Please try again.";
-      } else if (err.code === 'auth/cancelled-popup-request') {
-        return; // User cancelled, do not show error
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      setError(errorMessage);
+      if (isPopupCancel(err)) return;
+      setError(friendlyAuthError(err, "Could not sign in with Google. Please try again."));
     } finally {
       setLoading(false);
     }

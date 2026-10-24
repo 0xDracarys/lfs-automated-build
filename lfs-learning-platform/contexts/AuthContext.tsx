@@ -88,9 +88,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
 
-      if (firebaseUser) {
+      if (!firebaseUser) {
+        setUserProfile(null);
+        setLoading(false);
+        return;
+      }
+
+      // A Firestore read/write here must never be able to blank the app: the
+      // provider gates children on `!loading`, so any throw or hang used to
+      // leave a signed-in user staring at an empty page. We fall back to a
+      // profile derived from the auth user and always clear `loading`.
+      try {
         const userDocRef = doc(db, 'users', firebaseUser.uid);
-        const userDoc = await getDoc(userDocRef);
+
+        const userDoc = await Promise.race([
+          getDoc(userDocRef),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('profile read timed out')), 6000),
+          ),
+        ]);
 
         // Determine role: stored in Firestore takes precedence, env-derived as fallback
         let storedRole: UserRole = 'user';
@@ -100,13 +116,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           storedRole = deriveRoleFromEmail(firebaseUser.email);
         }
 
-        const profile: UserProfile = {
+        setUserProfile({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           displayName: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
           role: storedRole,
-        };
+        });
 
         if (!userDoc.exists()) {
           await setDoc(userDocRef, {
@@ -128,13 +144,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           await setDoc(userDocRef, { lastLogin: serverTimestamp() }, { merge: true });
         }
-
-        setUserProfile(profile);
-      } else {
-        setUserProfile(null);
+      } catch (err) {
+        // Signed in, but the profile store is unavailable or denies access.
+        // Keep the session usable and say so in the console rather than
+        // hiding the failure behind a blank screen.
+        console.error('Signed in, but the user profile could not be loaded:', err);
+        setUserProfile({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          role: deriveRoleFromEmail(firebaseUser.email),
+        });
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return unsubscribe;
