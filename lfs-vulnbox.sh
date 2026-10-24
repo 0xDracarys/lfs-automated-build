@@ -410,20 +410,33 @@ fi
 
 if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
     mkdir -p /opt/mysql-data
-    if [ ! -d /opt/mysql-data/mysql ]; then
+    # A datadir without the sentinel is either empty or half-built. v3.6 left
+    # exactly that behind: the init below failed, but /opt/mysql-data/mysql
+    # existed, so the old guard skipped re-init forever and DVWA stayed dead.
+    if [ ! -f /opt/mysql-data/.lfs-initialized ]; then
         echo -e "${Y}… initializing MariaDB data directory (first boot, ~1 min)${R}"
+        rm -rf /opt/mysql-data/*
         # MariaDB init ≠ MySQL init: use mariadb-install-db when present.
-        # v3.4 lesson: this root runs as root — MariaDB refuses mysqld unless
-        # an explicit --user is given, so add --user=root to every call.
-        if [ -x /opt/mysql/bin/mariadb-install-db ]; then
-            /opt/mysql/bin/mariadb-install-db \
-                --user=root \
+        # v3.6 lesson: the 11.4 bintar ships it at /opt/mysql/scripts/, not
+        # /opt/mysql/bin/, so a bin-only check fell through to MySQL's
+        # --initialize-insecure — which MariaDB rejects as an unknown option.
+        # Look in both places, and never fall back to MySQL syntax.
+        MARIADB_INSTALL=""
+        for cand in /opt/mysql/bin/mariadb-install-db \
+                    /opt/mysql/scripts/mariadb-install-db \
+                    /opt/mysql/scripts/mysql_install_db; do
+            [ -x "$cand" ] && { MARIADB_INSTALL="$cand"; break; }
+        done
+        if [ -n "$MARIADB_INSTALL" ]; then
+            # v3.4 lesson: this root runs as root — MariaDB refuses mysqld
+            # unless an explicit --user is given.
+            "$MARIADB_INSTALL" --user=root \
                 --datadir=/opt/mysql-data --basedir=/opt/mysql \
                 --auth-root-authentication-method=normal --skip-test-db \
                 >> /root/.mysqld-init.log 2>&1
+            [ -d /opt/mysql-data/mysql ] && touch /opt/mysql-data/.lfs-initialized
         else
-            TERM=dumb /opt/mysql/bin/mysqld --initialize-insecure --user=root \
-                --datadir=/opt/mysql-data --basedir=/opt/mysql >> /root/.mysqld-init.log 2>&1
+            echo -e "${Y}⚠ no mariadb-install-db found — DVWA's database cannot be created${R}"
         fi
     fi
     # v3.4 WSL lesson: Windows' own MySQL frequently OWNS 127.0.0.1:3306 via
