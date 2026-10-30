@@ -109,6 +109,10 @@ jobs:
           done
           test -w /mnt/lfs || { echo "BLOCKER: /mnt/lfs not writable by the runner user."; exit 1; }
           echo "Prerequisites OK. Installing helper dependencies (firebase-admin)..."
+          # lfs-build.sh logs via tee to ./logs BEFORE init_directories runs,
+          # and set -eo pipefail kills it if ./logs does not exist. A fresh
+          # runner checkout has no logs/ or output/, so create them first.
+          mkdir -p logs output
           npm ci --prefix helpers
           echo "Running lfs-build.sh (this takes a long time; self-hosted jobs have no 6h cap)."
           echo "NOTE: GCS upload inside the script will fail without gsutil - that is expected and non-fatal; artifacts are uploaded to GitHub Releases in the next step."
