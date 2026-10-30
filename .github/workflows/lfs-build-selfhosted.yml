@@ -1,0 +1,103 @@
+name: LFS Build (self-hosted)
+
+# Phase 1 of the Cloud Run -> self-hosted swap.
+# Triggered by POST /api/cloud-build when BUILD_BACKEND=github,
+# or manually from the Actions tab (workflow_dispatch).
+#
+# mode=smoke (default, safe): proves dispatch -> runner -> env -> tools,
+# checks /mnt/lfs is writable, and FAILS FAST on the full-build blockers
+# instead of pretending a full build works.
+# mode=full (NOT ready yet): runs lfs-build.sh. It will fail at the chroot
+# stage until the runner has passwordless sudo / chroot setup, plus
+# Node + gh + a Firestore service-account secret. Do not use mode=full
+# for a real user build until those are set up and a smoke run passes
+# with mode=full on a test build_id.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: "Firestore build id, e.g. web-<docId>"
+        required: true
+        type: string
+      user_id:
+        description: "Firebase UID of the requester"
+        required: false
+        type: string
+      basic_tools:
+        description: "Include basic tools (git/curl/ssh)"
+        required: false
+        default: "true"
+        type: string
+      iso:
+        description: "Master a bootable ISO"
+        required: false
+        default: "true"
+        type: string
+      targets:
+        description: "Comma list, e.g. juice-shop,dvwa,webgoat, or none"
+        required: false
+        default: "none"
+        type: string
+      mode:
+        description: "smoke or full"
+        required: false
+        default: "smoke"
+        type: choice
+        options:
+          - smoke
+          - full
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show build inputs and runner specs
+        run: |
+          echo "build_id=${{ inputs.build_id }}"
+          echo "user_id=${{ inputs.user_id }}"
+          echo "basic_tools=${{ inputs.basic_tools }}"
+          echo "iso=${{ inputs.iso }}"
+          echo "targets=${{ inputs.targets }}"
+          echo "mode=${{ inputs.mode }}"
+          echo "--- runner ---"
+          whoami
+          hostname
+          uname -a
+          nproc
+          free -h
+          df -h .
+          ls -ld /mnt/lfs || echo "/mnt/lfs missing"
+          test -w /mnt/lfs && echo "/mnt/lfs writable" || echo "/mnt/lfs NOT writable"
+          echo "--- tools ---"
+          command -v gcc || echo "gcc missing"
+          command -v make || echo "make missing"
+          command -v node || echo "node missing (needed for Firestore helpers)"
+          command -v gh || echo "gh missing (needed for Release uploads)"
+          command -v sudo || echo "sudo missing"
+          sudo -n true 2>/dev/null && echo "passwordless sudo: yes" || echo "passwordless sudo: NO - full chroot build will fail"
+
+      - name: Full build (gated, not ready)
+        if: inputs.mode == 'full'
+        run: |
+          echo "Full build requested, checking prerequisites first."
+          if ! sudo -n true 2>/dev/null; then
+            echo "BLOCKER: runner user has no passwordless sudo, chroot build cannot run as non-root."
+            echo "Fix: grant passwordless sudo for the build commands on the runner host, or run the build in a privileged container, then retry."
+            exit 1
+          fi
+          if ! command -v node >/dev/null || ! command -v gh >/dev/null; then
+            echo "BLOCKER: node and/or gh missing on the runner. Install them in the runner host, then retry."
+            exit 1
+          fi
+          echo "Prerequisites look OK, running lfs-build.sh (this takes a long time, up to the 5-day self-hosted limit)."
+          echo "NOTE: artifact upload to GitHub Releases and Firestore status updates are still to be wired in Phase 2."
+          BUILD_ID="${{ inputs.build_id }}" \
+          ENABLE_BASIC_TOOLS="${{ inputs.basic_tools }}" \
+          ENABLE_ISO_BUILD="${{ inputs.iso }}" \
+          ENABLE_VULNBOX="${{ inputs.targets != 'none' }}" \
+          VULNBOX_PACKAGES="${{ inputs.targets }}" \
+          MAKEFLAGS="-j$(nproc)" \
+          bash ./lfs-build.sh

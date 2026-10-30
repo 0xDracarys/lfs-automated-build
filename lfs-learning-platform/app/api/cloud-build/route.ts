@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import admin, { adminDb } from "@/lib/firebase-admin";
 import { launchLfsJob, flagsFromRequest } from "@/lib/job-launch";
+import { launchGithubLfsJob } from "@/lib/github-dispatch";
 
 /**
  * POST /api/cloud-build
@@ -57,25 +58,46 @@ export async function POST(request: NextRequest) {
 
     // Launch only if the caller explicitly asked for a real cloud build
     // (wizard "do it for me" path). Plain config saves skip this.
+    // Backend switch: BUILD_BACKEND=github uses the self-hosted runner
+    // via workflow_dispatch; anything else (default) keeps Cloud Run.
+    // Cloud Run is NOT deleted — set the env back to flip back.
+    const backend = process.env.BUILD_BACKEND || "cloudrun";
     let launch: { launched: boolean; execution?: string; reason?: string } | null = null;
     if (body.launch !== false) {
-      launch = await launchLfsJob(flags);
-      if (launch.launched) {
-        await adminDb.collection("builds").doc(docRef.id).update({
-          buildId: jobId,
-          cloudRunExecution: launch.execution ? { name: launch.execution } : null,
-          status: "RUNNING",
-        });
-      } else if (launch.reason) {
-        await adminDb.collection("builds").doc(docRef.id).update({
-          launchError: launch.reason,
-        });
+      if (backend === "github") {
+        launch = await launchGithubLfsJob(flags, "smoke");
+        if (launch.launched) {
+          await adminDb.collection("builds").doc(docRef.id).update({
+            buildId: jobId,
+            backend: "github",
+            status: "RUNNING",
+          });
+        } else if (launch.reason) {
+          await adminDb.collection("builds").doc(docRef.id).update({
+            backend: "github",
+            launchError: launch.reason,
+          });
+        }
+      } else {
+        launch = await launchLfsJob(flags);
+        if (launch.launched) {
+          await adminDb.collection("builds").doc(docRef.id).update({
+            buildId: jobId,
+            cloudRunExecution: launch.execution ? { name: launch.execution } : null,
+            status: "RUNNING",
+          });
+        } else if (launch.reason) {
+          await adminDb.collection("builds").doc(docRef.id).update({
+            launchError: launch.reason,
+          });
+        }
       }
     }
 
     return NextResponse.json({
       success: true,
       buildId: docRef.id,
+      backend,
       ...(launch ? { launched: launch.launched, execution: launch.execution || null, launchError: launch.reason || null } : {}),
       message: "Build submitted successfully",
     });
