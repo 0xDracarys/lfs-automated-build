@@ -291,6 +291,7 @@ build_gcc_pass1() {
     rm -rf gcc-13.2.0
     
     echo "✅ GCC (Pass 1) completed"
+    mark_package_complete "gcc-pass1"
 }
 
 install_linux_headers() {
@@ -334,10 +335,11 @@ build_glibc() {
     local src_dir="${LFS_SRC}"
     cd "$src_dir"
     
-    # Extract glibc
-    if [ ! -d "glibc-2.38" ]; then
-        tar -xf glibc-2.38.tar.xz
-    fi
+    # Extract glibc fresh every time: reusing a stale tree (e.g. root-owned
+    # from an earlier local build) makes the FHS patch fail with permission
+    # errors and kills the build under set -e. The tarball is kept, so this is safe.
+    rm -rf glibc-2.38
+    tar -xf glibc-2.38.tar.xz
     cd glibc-2.38
     
     # Create necessary symlinks (for x86_64)
