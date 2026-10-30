@@ -1,0 +1,20 @@
+name: Test self-hosted runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello:
+    runs-on: self-hosted
+    steps:
+      - name: Hello from the self-hosted runner
+        run: |
+          echo "Hello from lfs-desktop-wsl"
+          whoami
+          hostname
+          uname -a
+          nproc
+          free -h
+          df -h /home/oxdracarys/actions-runner || df -h .
+          pwd
+          ls -la
