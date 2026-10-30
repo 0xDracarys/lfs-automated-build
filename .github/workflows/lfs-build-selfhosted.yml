@@ -1,17 +1,36 @@
 name: LFS Build (self-hosted)
 
-# Phase 1 of the Cloud Run -> self-hosted swap.
+# Phase 2 of the Cloud Run -> self-hosted swap.
 # Triggered by POST /api/cloud-build when BUILD_BACKEND=github,
 # or manually from the Actions tab (workflow_dispatch).
 #
 # mode=smoke (default, safe): proves dispatch -> runner -> env -> tools,
-# checks /mnt/lfs is writable, and FAILS FAST on the full-build blockers
-# instead of pretending a full build works.
-# mode=full (NOT ready yet): runs lfs-build.sh. It will fail at the chroot
-# stage until the runner has passwordless sudo / chroot setup, plus
-# Node + gh + a Firestore service-account secret. Do not use mode=full
-# for a real user build until those are set up and a smoke run passes
-# with mode=full on a test build_id.
+# checks /mnt/lfs is writable.
+# mode=full: runs lfs-build.sh on the runner host.
+#
+# Phase 2 audit corrections (2026-10-30, verified live on the runner host):
+# - NO sudo / real chroot is used: the scripts build files into /mnt/lfs,
+#   which the runner user already owns and can write. The Phase 1 sudo gate
+#   was wrong and is removed.
+# - Runner host (WSL Ubuntu 24.04) now has: node v20.20.2, jq 1.7, gh 2.45,
+#   plus gcc/g++/make/bison/flex/makeinfo/gawk/patch/diff (all of
+#   verify_build_tools' requirements).
+# - gcloud/gsutil are INTENTIONALLY not installed: Firestore logging goes
+#   through the node helper (helpers/firestore-logger.js, with
+#   SKIP_GCLOUD_CHECK=true), and artifacts go to GitHub Releases via gh,
+#   not GCS. A GCS upload failure inside lfs-build.sh is non-fatal by design.
+# - helpers/node_modules is NOT in git, so the full step runs `npm ci`
+#   in helpers/ first, or firebase-admin cannot be required.
+# - The Firebase service-account file is host-local, NOT in git:
+#   /mnt/c/Users/Chintu/Desktop/PROJECTS-LAPTOP/Bhasker/Projects/lfs-automated/functions/service-account.json
+#   If it is missing, Firestore logging degrades to warnings only; the
+#   build itself still runs. Never commit that file.
+# - Safety: this workflow is workflow_dispatch ONLY. Never add pull_request
+#   triggers while it runs on a self-hosted runner (fork risk).
+# - The web route still dispatches mode=smoke only (see
+#   lfs-learning-platform/app/api/cloud-build/route.ts). Switching the
+#   route to full is a separate, explicit step AFTER a manual mode=full
+#   test run passes on a test build_id.
 
 on:
   workflow_dispatch:
@@ -51,6 +70,8 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -72,32 +93,60 @@ jobs:
           ls -ld /mnt/lfs || echo "/mnt/lfs missing"
           test -w /mnt/lfs && echo "/mnt/lfs writable" || echo "/mnt/lfs NOT writable"
           echo "--- tools ---"
-          command -v gcc || echo "gcc missing"
-          command -v make || echo "make missing"
-          command -v node || echo "node missing (needed for Firestore helpers)"
-          command -v gh || echo "gh missing (needed for Release uploads)"
-          command -v sudo || echo "sudo missing"
-          sudo -n true 2>/dev/null && echo "passwordless sudo: yes" || echo "passwordless sudo: NO - full chroot build will fail"
+          for t in gcc g++ make bison flex makeinfo gawk patch diff jq node npm gh; do
+            command -v "$t" >/dev/null && echo "$t: $(command -v "$t")" || echo "$t MISSING"
+          done
+          echo "--- firebase credentials (existence only, never printed) ---"
+          SA="/mnt/c/Users/Chintu/Desktop/PROJECTS-LAPTOP/Bhasker/Projects/lfs-automated/functions/service-account.json"
+          test -f "$SA" && echo "service-account file: present on host" || echo "service-account file: MISSING on host (Firestore logging will warn only)"
 
-      - name: Full build (gated, not ready)
+      - name: Full build
         if: inputs.mode == 'full'
         run: |
           echo "Full build requested, checking prerequisites first."
-          if ! sudo -n true 2>/dev/null; then
-            echo "BLOCKER: runner user has no passwordless sudo, chroot build cannot run as non-root."
-            echo "Fix: grant passwordless sudo for the build commands on the runner host, or run the build in a privileged container, then retry."
-            exit 1
-          fi
-          if ! command -v node >/dev/null || ! command -v gh >/dev/null; then
-            echo "BLOCKER: node and/or gh missing on the runner. Install them in the runner host, then retry."
-            exit 1
-          fi
-          echo "Prerequisites look OK, running lfs-build.sh (this takes a long time, up to the 5-day self-hosted limit)."
-          echo "NOTE: artifact upload to GitHub Releases and Firestore status updates are still to be wired in Phase 2."
+          for t in gcc g++ make bison flex makeinfo gawk patch diff jq node gh; do
+            command -v "$t" >/dev/null || { echo "BLOCKER: $t missing on the runner. Install it on the runner host, then retry."; exit 1; }
+          done
+          test -w /mnt/lfs || { echo "BLOCKER: /mnt/lfs not writable by the runner user."; exit 1; }
+          echo "Prerequisites OK. Installing helper dependencies (firebase-admin)..."
+          npm ci --prefix helpers
+          echo "Running lfs-build.sh (this takes a long time; self-hosted jobs have no 6h cap)."
+          echo "NOTE: GCS upload inside the script will fail without gsutil - that is expected and non-fatal; artifacts are uploaded to GitHub Releases in the next step."
+          SA="/mnt/c/Users/Chintu/Desktop/PROJECTS-LAPTOP/Bhasker/Projects/lfs-automated/functions/service-account.json"
+          if [ -f "$SA" ]; then export GOOGLE_APPLICATION_CREDENTIALS="$SA"; else echo "WARNING: service-account file missing, Firestore logging will warn only."; fi
           BUILD_ID="${{ inputs.build_id }}" \
+          PROJECT_ID="alfs-bd1e0" \
+          SKIP_GCLOUD_CHECK="true" \
           ENABLE_BASIC_TOOLS="${{ inputs.basic_tools }}" \
           ENABLE_ISO_BUILD="${{ inputs.iso }}" \
           ENABLE_VULNBOX="${{ inputs.targets != 'none' }}" \
           VULNBOX_PACKAGES="${{ inputs.targets }}" \
           MAKEFLAGS="-j$(nproc)" \
           bash ./lfs-build.sh
+
+      - name: Upload artifacts to GitHub Release
+        if: inputs.mode == 'full' && success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Looking for packaged artifacts..."
+          if [ ! -f "./output/archive-path.txt" ]; then
+            echo "ERROR: ./output/archive-path.txt not found - the build did not package an archive."
+            ls -la ./output/ || echo "no ./output directory at all"
+            exit 1
+          fi
+          ARCHIVE="$(cat ./output/archive-path.txt)"
+          echo "Archive: $ARCHIVE"
+          test -f "$ARCHIVE" || { echo "ERROR: archive file does not exist: $ARCHIVE"; exit 1; }
+          TAG="build-${{ inputs.build_id }}"
+          echo "Creating Release $TAG and uploading artifacts..."
+          FILES="$ARCHIVE"
+          for iso in ./output/*.iso; do
+            [ -f "$iso" ] && FILES="$FILES $iso"
+          done
+          gh release create "$TAG" $FILES \
+            --title "LFS build ${{ inputs.build_id }}" \
+            --notes "Self-hosted LFS build. build_id=${{ inputs.build_id }}, user_id=${{ inputs.user_id }}, basic_tools=${{ inputs.basic_tools }}, iso=${{ inputs.iso }}, targets=${{ inputs.targets }}. Built on runner lfs-desktop-wsl." \
+            || gh release upload "$TAG" $FILES --clobber
+          echo "Release URL:"
+          gh release view "$TAG" --json url --jq .url
