@@ -122,3 +122,13 @@ guest + repo source + re-exported r2, now 5522145280 bytes):
 - Verified: fresh import 20/20, Test6 20/20 after cold cycle + restore.
 - New uncommitted file: `fix-guest-git.sh`, `fix-guest-php.sh` (repo also
   gained the `lfs-vulnbox.sh` DVWA fixes). Commit still awaiting explicit ask.
+
+## Late-night appendix (same day, ~23:00)
+
+- **mysqld double-start**: re-running `demo-up`/`vulnbox-start` spawned a
+  second mysqld that lingered portless on the same datadir. Guarded with
+  `port_open 3307 ||` (repo `lfs-vulnbox.sh` + live guest). Proven: double
+  `demo-up` → still 1 mysqld, 20/20.
+- r2 re-exported again (now 5522176000 bytes), 4th fresh-import test 20/20.
+- Pushed: `f3e97c6` (README refresh + all stabilization) and the mysqld-guard
+  follow-up — `main` is up to date on origin.

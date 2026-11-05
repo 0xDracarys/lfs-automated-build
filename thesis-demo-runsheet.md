@@ -176,7 +176,7 @@ In `lfs-output/goal-builds/goal-20261104-build1/` (sizes from `manifest.json`):
 |---|---|
 | `lfs-system-goal-20261104-build1.tar.gz` | 2176110894 |
 | `vuln-labs-goal-20261104-build1.tar.gz` | 2176110894 |
-| `lfs-system-goal-20261104-build1-r2.tar.gz` | 5522145280 |
+| `lfs-system-goal-20261104-build1-r2.tar.gz` | 5522176000 |
 | `lfs-bootable-goal-20261104-build1.iso` | 1677281280 |
 
 The `-r2` tarball is a re-export of the stabilized demo guest (same tree as

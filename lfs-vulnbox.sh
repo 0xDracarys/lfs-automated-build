@@ -530,7 +530,9 @@ if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
     fi
     # v3.4 WSL lesson: Windows' own MySQL frequently OWNS 127.0.0.1:3306 via
     # the WSL2 localhost relay — even from inside the distro. 3307 has no clash.
-    TERM=dumb setsid /opt/mysql/bin/mysqld --user=root --datadir=/opt/mysql-data --basedir=/opt/mysql \
+    # Idempotent: a second mysqld on the same datadir lingers instead of
+    # exiting, so never launch when the port already answers.
+    port_open 3307 || TERM=dumb setsid /opt/mysql/bin/mysqld --user=root --datadir=/opt/mysql-data --basedir=/opt/mysql \
         --port=3307 --bind-address=127.0.0.1 \
         </dev/null > /root/.mysqld.log 2>&1 &
     want 3307 "MariaDB" "127.0.0.1:3307 (db dvwa)"

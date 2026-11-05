@@ -516,7 +516,7 @@ Verify against the **alias** (`https://lfs-learning-platform.vercel.app`), not t
 
 All artifacts are hosted on **Google Cloud Storage** and **Firebase Storage**; `/downloads` always lists the newest manifest.
 
-The current verified demo image is `lfs-system-goal-20261104-build1-r2.tar.gz` (measured 5,522,145,280 bytes, 2026-11-05): a re-export of the stabilized guest — readline-linked bash keeping the `lfs` triplet, git with https, PHP with mysqli/pdo, seeded DVWA database, sshd host keys. Import it, run the post-import config, `demo-up`, and `Check-DemoHealth.ps1` scores 20/20 (verified on fresh imports). The older table sizes above predate this build.
+The current verified demo image is `lfs-system-goal-20261104-build1-r2.tar.gz` (measured 5,522,176,000 bytes, 2026-11-05): a re-export of the stabilized guest — readline-linked bash keeping the `lfs` triplet, git with https, PHP with mysqli/pdo, seeded DVWA database, sshd host keys. Import it, run the post-import config, `demo-up`, and `Check-DemoHealth.ps1` scores 20/20 (verified on fresh imports). The older table sizes above predate this build.
 
 ---
 
