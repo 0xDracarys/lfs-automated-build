@@ -47,7 +47,7 @@ proves `/proc` + `free` work — both were broken in October):
   GCC       13.2.0
   CPU       AMD Ryzen 5 5600X 6-Core Processor (6 cores)
   Memory    9379 MB free / 11964 MB total
-  Packages  289 (in /usr/bin)
+  Packages  326 (in /usr/bin)
 ```
 
 ## 2. Root inside the LFS userland ✅
