@@ -36,6 +36,7 @@
 - ☁️ An **automated Google Cloud Run pipeline** that compiles the full LFS system in staged jobs (measured 42–48 minutes on the last runs; you don't have to wait hours locally)
 - 📦 **Ready-to-use artifacts**: WSL tarball, bootable ISO, full toolchain, practice-labs image, and Windows installer
 - 🎯 **Practice lab targets** — OWASP Juice Shop, DVWA and WebGoat/WebWolf, pre-installed in the labs image with written walkthroughs
+- ✅ **Demo-verified system** — the WSL image passes 20/20 automated health checks (2026-11-05): toolchain, every target from guest and Windows browsers, real DVWA login flow
 - 🔐 **Firebase authentication** with per-user progress saved to Firestore
 
 > Built by [Shubham Bhasker](https://github.com/0xDracarys) as a capstone systems project — blending OS-level engineering with modern full-stack development.
@@ -73,7 +74,7 @@ The labs image ships three deliberately vulnerable applications, already configu
 | Target | Version | Port | Access |
 |---|---|---|---|
 | **OWASP Juice Shop** | 20.3.0 (Node 22.14.0) | `3000` | open the app, register a user |
-| **DVWA** | master (PHP 8.2.13 · MariaDB 11.4.5) | `80` | `admin` / `password` |
+| **DVWA** | master (PHP 8.2.13 + mysqli/pdo · MariaDB 11.4.5) | `80` | `admin` / `password` (DB pre-seeded; set Security → low) |
 | **WebGoat + WebWolf** | 8.2.2 (Java 17.0.21) | `8080` / `9090` | register a new user |
 
 MariaDB listens on `127.0.0.1:3307` (database `dvwa`, user `dvwa`) — deliberately not 3306, because Windows' own MySQL frequently owns that port inside WSL2.
@@ -85,6 +86,10 @@ vulnbox-tunnel 3000   # expose one through a throwaway public HTTPS URL (cloudfl
 ```
 
 `vulnbox-start` probes each target after launching it and reports `up` or `no response`, then prints every problem in a single **Warnings** block — it does not print a green line for a service that never came up.
+
+All targets answer identically from inside the guest and from Windows browsers at the same `127.0.0.1` URLs (verified 2026-11-05; WebGoat/WebWolf need `-Djava.net.preferIPv4Stack=true`, otherwise Java binds IPv6-mapped localhost which the WSL relay ignores).
+
+Demo helpers (inside the guest): `demo-up` cold-starts sshd plus all targets, `demo-status` shows ports and processes, `howto` prints the one-screen guide. From Windows, `.\Check-DemoHealth.ps1 -Guest <name>` runs the 20 automated checks against any import — fresh imports score 20/20.
 
 ### Walkthroughs
 
@@ -423,6 +428,12 @@ lfs-automated/
 ├── lfs-chapter5-real.sh            # Chapter 5: cross-toolchain
 ├── build-minimal-bootable.sh       # Minimal 17-package system
 ├── cloudbuild.yaml                 # Google Cloud Build config
+├── Check-DemoHealth.ps1            # 20 automated demo health checks (Windows side)
+├── harden-committee-box.sh         # Post-import guest config (run `config`)
+├── fix-guest-bash.sh               # Rebuild guest bash with readline, keep triplet
+├── fix-guest-git.sh                # Rebuild guest git with https support
+├── fix-guest-php.sh                # Rebuild guest PHP with mysqli + pdo
+├── thesis-demo-runsheet.md         # The 5-minute demo script, verbatim outputs
 └── README.md                       # This file
 ```
 
@@ -505,6 +516,8 @@ Verify against the **alias** (`https://lfs-learning-platform.vercel.app`), not t
 
 All artifacts are hosted on **Google Cloud Storage** and **Firebase Storage**; `/downloads` always lists the newest manifest.
 
+The current verified demo image is `lfs-system-goal-20261104-build1-r2.tar.gz` (measured 5,522,145,280 bytes, 2026-11-05): a re-export of the stabilized guest — readline-linked bash keeping the `lfs` triplet, git with https, PHP with mysqli/pdo, seeded DVWA database, sshd host keys. Import it, run the post-import config, `demo-up`, and `Check-DemoHealth.ps1` scores 20/20 (verified on fresh imports). The older table sizes above predate this build.
+
 ---
 
 ## 🔐 Authentication & Authorization
@@ -558,20 +571,31 @@ The Content-Security-Policy in `next.config.js` is an explicit allow-list, inclu
 
 Verified by booting the ISO in QEMU: kernel `6.4.12`, GCC `13.2.0`, 210 packages in `/usr/bin`, root shell.
 
+The WSL demo image is verified separately and continuously: 20/20 automated checks on 2026-11-05 (login banner, root shell, LFS triplets, compile/link/run, 8 tools + `C.UTF-8`, all 5 targets in-guest and from Windows, git-https, real DVWA login, WSL2 kernel) — on both the live guest and a fresh import.
+
 ---
 
 ## ⚠️ Known Limitations
 
-Honest status of the currently published artifacts — these are real, and the fixes are in the scripts but not yet in the binaries:
+Honest status, measured 2026-11-05. Every issue from the old table is now
+**resolved and verified in the running demo image** (not just fixed in scripts):
 
-| Issue | Affects | Status |
-|---|---|---|
-| No `/proc`, `/sys`, `/dev` on boot | published ISO | `mount` was never built (no util-linux). Fixed in `lfs-basic-tools.sh` + hardened `/init`; **needs a rebuild**. |
-| Login banner prints a literal `\033[0m` | published ISO and labs image | Caused by a backtick inside a double-quoted `echo -e`. Rewritten with `printf`; **needs a rebuild**. |
-| DVWA returns no page | published labs image | PHP was not installed, so there is no `php-cgi`. MariaDB init and the lighttpd config are fixed; **needs a rebuild**. |
-| `mount`, `ps`, `ss` missing | published labs image | Same missing util-linux / procps link. `ss`-based checks give false negatives — use `curl` probes. |
+| Issue | Resolution |
+|---|---|
+| No `/proc`, `/sys`, `/dev` on boot | Fixed; banner's live memory line proves `/proc` + `free` work |
+| Banner printed a literal `\033[0m` | Rewritten with `printf`; verified on every entry path |
+| DVWA returned no page | Fully working: PHP rebuilt with mysqli/pdo, `dvwa` DB user auto-created, database pre-seeded — setup → login → SQLi/XSS all exercised |
+| `mount`, `ps`, `ss` missing | Present and verified (`demo-status` uses `ss`; health check covers all 8 tools) |
+| WebGoat/WebWolf unreachable from Windows | Java forced to IPv4 (`preferIPv4Stack`); all targets answer from Windows browsers |
+| `git clone https://…` failed | Git rebuilt with curl support; verified by cloning + building toybox |
+| Bash had no line editing | Rebuilt against readline, `lfs` triplet kept; verified over a PTY |
 
-Everything in the table above is fixed on `main`; the downloadable artifacts simply predate those commits.
+What remains genuinely open:
+
+- The ISO has never been live-booted on this machine (no hypervisor); it is media-verified only. Bare-metal boot is future work.
+- Single root user, no passwords (WSL logs in as root directly) — by design for the demo.
+- No package manager — no LFS system has one; software is compiled from source.
+- DVWA opens at security level *impossible* (upstream default); switch to *low* for the classic demos.
 
 ---
 

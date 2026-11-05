@@ -242,6 +242,7 @@ if [ "$has_dvwa" = true ]; then
                 unset CPPFLAGS LDFLAGS PKG_CONFIG_PATH
                 ./configure --prefix=/usr --disable-all \
                     --enable-cli --enable-cgi --enable-session --enable-filter --enable-mysqli \
+                    --enable-pdo --with-pdo-mysql=mysqlnd \
                     --without-pcre-jit --without-libxml --without-pear \
                     >> "$BUILDLOG" 2>&1 \
                     && run make -j8 \
@@ -253,10 +254,14 @@ if [ "$has_dvwa" = true ]; then
                 CPPFLAGS="${_SAV_CPPFLAGS}"; LDFLAGS="${_SAV_LDFLAGS}"
                 PKG_CONFIG_PATH="${_SAV_PKGCFG}"
                 export CPPFLAGS LDFLAGS PKG_CONFIG_PATH
-                # php.ini for sessions/uploads (DVWA needs one to behave)
-                PHPINIDIR=$(find "$LFS/usr/lib/php" "$LFS/lib/php" -maxdepth 1 \
-                    -name 'php.ini-development' 2>/dev/null | head -1)
-                [ -n "$PHPINIDIR" ] && cp "$PHPINIDIR" "$LFS/usr/lib/php.ini" 2>>"$BUILDLOG"
+                # php.ini for sessions/uploads (DVWA needs one to behave).
+                # Production variant: warnings/errors go to the log, not into
+                # pages — displayed warnings break DVWA's header() redirects.
+                # (The file lives in the source tree; `make install` with
+                # --disable-all does not stage the templates anywhere.)
+                [ -f "$php_dir/php.ini-production" ] \
+                    && cp "$php_dir/php.ini-production" "$LFS/usr/lib/php.ini" 2>>"$BUILDLOG" \
+                    || warn "php.ini-production missing from source tree"
                 cd "$prev_dir"
             else
                 warn "php source dir missing (extract failed?)"
@@ -308,7 +313,7 @@ if [ "$has_dvwa" = true ]; then
         # DVWA config with local mysql creds (vulnbox boot creates the db)
         [ -f "$LFS/opt/dvwa/config/config.inc.php" ] || cp "$LFS/opt/dvwa/config/config.inc.php.dist" \
             "$LFS/opt/dvwa/config/config.inc.php" 2>>"$BUILDLOG" || true
-        sed -i "s/^\$_DVWA\[ 'db_server' \].*/\$_DVWA[ 'db_server' ] = '127.0.0.1';/; s/^\$_DVWA\[ 'db_port' \].*/\$_DVWA[ 'db_port' ] = '3307';/; s/^\$_DVWA\[ 'db_database' \].*/\$_DVWA[ 'db_database' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_user' \].*/\$_DVWA[ 'db_user' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_password' \].*/\$_DVWA[ 'db_password' ] = 'vulpass';/" \
+        sed -i "s/^\$_DVWA\[ 'db_server' \].*/\$_DVWA[ 'db_server' ] = '127.0.0.1';/; s/^\$_DVWA\[ 'db_port'\s*\].*/\$_DVWA[ 'db_port' ] = '3307';/; s/^\$_DVWA\[ 'db_database' \].*/\$_DVWA[ 'db_database' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_user' \].*/\$_DVWA[ 'db_user' ] = 'dvwa';/; s/^\$_DVWA\[ 'db_password' \].*/\$_DVWA[ 'db_password' ] = 'vulpass';/" \
             "$LFS/opt/dvwa/config/config.inc.php" 2>>"$BUILDLOG" || warn "dvwa config sed"
         # v3.4 lessons: lighttpd 1.4.x has NO mod_access (it is mod_accesslog),
         # and mod_fastcgi SPAWNS bin-path at startup — a missing php-cgi kills
@@ -529,6 +534,13 @@ if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
         --port=3307 --bind-address=127.0.0.1 \
         </dev/null > /root/.mysqld.log 2>&1 &
     want 3307 "MariaDB" "127.0.0.1:3307 (db dvwa)"
+    # DVWA logs in as user dvwa (see config.inc.php): make sure it exists.
+    # Idempotent: safe on every boot, first or fiftieth.
+    if [ -x /opt/mysql/bin/mariadb ]; then
+        /opt/mysql/bin/mariadb -h 127.0.0.1 -P 3307 -u root \
+            -e "CREATE USER IF NOT EXISTS 'dvwa'@'localhost' IDENTIFIED BY 'vulpass'; GRANT ALL PRIVILEGES ON *.* TO 'dvwa'@'localhost'; FLUSH PRIVILEGES;" \
+            >/dev/null 2>&1 || warn "could not ensure the dvwa database user"
+    fi
 
     # DVWA is a PHP application: without php-cgi there is nothing to serve, and
     # starting lighttpd anyway would only expose the raw .php sources.
@@ -549,7 +561,7 @@ if [ -f /opt/webgoat/webgoat-8.2.2.jar ]; then
     if [ -x /usr/local/jdk/bin/java ]; then
         (
             cd /opt/webgoat
-            setsid /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webgoat-8.2.2.jar --server.port=8080 </dev/null > /root/.webgoat.log 2>&1 &
+            setsid /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -jar webgoat-8.2.2.jar --server.port=8080 </dev/null > /root/.webgoat.log 2>&1 &
         )
         want 8080 "WebGoat" "http://localhost:8080/WebGoat"
         # WebWolf needs WebGoat's database: starting both at once makes
@@ -559,7 +571,7 @@ if [ -f /opt/webgoat/webgoat-8.2.2.jar ]; then
         if [ -f /opt/webgoat/webwolf-8.2.2.jar ]; then
             (
                 cd /opt/webgoat
-                setsid /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webwolf-8.2.2.jar --server.port=9090 </dev/null > /root/.webwolf.log 2>&1 &
+                setsid /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -jar webwolf-8.2.2.jar --server.port=9090 </dev/null > /root/.webwolf.log 2>&1 &
             )
             want 9090 "WebWolf" "http://localhost:9090/WebWolf"
         fi

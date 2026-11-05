@@ -136,10 +136,16 @@ webgoat:302
 webwolf:302
 mariadb:UP
 ```
-(DVWA login: `admin` / `password` — click "Create / Reset Database" on first
-visit. Juice Shop serves on 3000, WebGoat on 8080, WebWolf on 9090, MariaDB
-on 3307 — 3307, because Windows' own MySQL frequently owns 3306 through the
-WSL2 relay.)
+(DVWA login: `admin` / `password` — the database ships already seeded, so you
+can log straight in; "Create / Reset Database" still works to reset it.
+DVWA opens at security level *impossible* (upstream default) — switch it to
+*low* (DVWA Security page) for the classic demos. Juice Shop serves on 3000,
+WebGoat on 8080, WebWolf on 9090, MariaDB on 3307 — 3307, because Windows'
+own MySQL frequently owns 3306 through the WSL2 relay.)
+All five are also reachable from Windows itself (browser, `curl.exe`, TCP)
+at the same `127.0.0.1` URLs — verified from the Windows side, not just the
+guest. (WebGoat/WebWolf needed `-Djava.net.preferIPv4Stack=true`: without it
+Java binds IPv6-mapped localhost, which the WSL relay does not mirror.)
 
 Restart discipline, verified today: `vulnbox-stop` prints one `stopped …`
 line per target and every port goes `CLOSED`; `vulnbox-start` brings all five
@@ -170,7 +176,25 @@ In `lfs-output/goal-builds/goal-20261104-build1/` (sizes from `manifest.json`):
 |---|---|
 | `lfs-system-goal-20261104-build1.tar.gz` | 2176110894 |
 | `vuln-labs-goal-20261104-build1.tar.gz` | 2176110894 |
+| `lfs-system-goal-20261104-build1-r2.tar.gz` | 5522145280 |
 | `lfs-bootable-goal-20261104-build1.iso` | 1677281280 |
+
+The `-r2` tarball is a re-export of the stabilized demo guest (same tree as
+`Test6`: readline-linked bash keeping the `lfs` triplet, `sshd` host keys,
+`/etc/os-release` + services data, `demo-up`/`demo-status`/`howto` helpers).
+It is the recommended import source — verified 2026-11-05: fresh import,
+post-import config, `demo-up`, then all 12 automated checks green
+(`Check-DemoHealth.ps1`). The original tarball is kept untouched.
+
+Fresh import (spare box, or recovery if the demo guest is damaged) — run
+with no other LFS guest using the ports:
+```powershell
+wsl --import LFS-Goal-Test7 lfs-output/goal-wsl/LFS-Goal-Test7 lfs-output/goal-builds/goal-20261104-build1/lfs-system-goal-20261104-build1-r2.tar.gz --version 2
+wsl -d LFS-Goal-Test7 -u root --exec bash /mnt/c/<repo-path>/harden-committee-box.sh config
+wsl -d LFS-Goal-Test7 -u root --exec bash --login -c "demo-up"
+.\Check-DemoHealth.ps1 -Guest LFS-Goal-Test7
+```
+(`<repo-path>` = this repo with `C:\` as `/mnt/c/` and `\` as `/`.)
 
 ISO verification (measured, not assumed): El Torito boot record present,
 `xorriso -check_media` reads all 818,985 blocks as good, and the 1.6 GB
