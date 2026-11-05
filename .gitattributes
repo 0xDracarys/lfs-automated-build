@@ -1,0 +1,3 @@
+# Bash scripts must keep LF endings: a CRLF lfs-vulnbox.sh died at parse time
+# (`set: -\r: invalid option`) and silently skipped the entire labs layer.
+*.sh text eol=lf

@@ -12,6 +12,7 @@ set -u
 LFS="${LFS:-/mnt/lfs}"
 LFS_TGT="${LFS_TGT:-x86_64-lfs-linux-gnu}"
 SRC="$LFS/sources"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 mkdir -p "$SRC" "$LFS/build-logs"
 BUILDLOG="$LFS/build-logs/basic-tools-$(date +%Y%m%d-%H%M%S).log"
 
@@ -149,10 +150,37 @@ download net-tools-2.10.tar.xz \
     "https://downloads.sourceforge.net/project/net-tools/net-tools-2.10.tar.xz"
 extract net-tools-2.10.tar.xz net-tools-2.10
 cd "$SRC/net-tools-2.10"
-yes "" | make config >> "$BUILDLOG" 2>&1 || fatal "net-tools config"
-make >> "$BUILDLOG" 2>&1 || fatal "net-tools make"
-make BASEDIR="$LFS" install >> "$BUILDLOG" 2>&1 || fatal "net-tools install"
-log "✅ net-tools (ifconfig installed)"
+# v3.7 lesson (local goal build): a bare `make` uses the HOST cc/ld while
+# CPPFLAGS/LDFLAGS point at $LFS — the host ld then reads the LFS libc.so
+# linker script whose absolute /usr/lib paths don't exist on the host
+# ("cannot find /usr/lib/libc.so.6"). Use the cross toolchain like iputils.
+# config runs with the HOST cc (its probes compile AND run test programs —
+# cross-built probes can't execute); only the build itself is cross.
+# Non-fatal: ifconfig must never again abort procps/util-linux/ssh behind it.
+if yes "" | make config >> "$BUILDLOG" 2>&1 \
+   && make CC="${LFS_TGT}-gcc" AR="${LFS_TGT}-ar" >> "$BUILDLOG" 2>&1 \
+   && make BASEDIR="$LFS" CC="${LFS_TGT}-gcc" install >> "$BUILDLOG" 2>&1; then
+    log "✅ net-tools (ifconfig installed)"
+else
+    log "⚠  net-tools build failed — skipping ifconfig (see build log)"
+fi
+
+step 6b "iproute2-6.4.0 — ip, ss (modern net-tools replacements)"
+download iproute2-6.4.0.tar.xz \
+    "https://cdn.kernel.org/pub/linux/utils/net/iproute2/iproute2-6.4.0.tar.xz" \
+    "https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-6.4.0.tar.xz"
+extract iproute2-6.4.0.tar.xz iproute2-6.4.0
+cd "$SRC/iproute2-6.4.0"
+# PKG_CONFIG=false: configure would otherwise detect HOST libs (libelf for
+# the kernel build, etc.) and bake -lelf into a cross link that has no
+# libelf in $LFS. Disabled features (BPF obj loading) don't affect ip/ss.
+# misc/ holds ss (+ nstat/ifstat helpers); its arpd target is already
+# conditional on Berkeley DB, so plain SUBDIRS is safe. (A direct
+# `make -C misc ss` misses include flags — don't do that.)
+PKG_CONFIG=false ./configure >> "$BUILDLOG" 2>&1 || fatal "iproute2 configure"
+make CC="${LFS_TGT}-gcc" HOSTCC=gcc SUBDIRS="lib ip misc" -j12 >> "$BUILDLOG" 2>&1 || fatal "iproute2 make"
+make SUBDIRS="lib ip misc" DESTDIR="$LFS" SBINDIR=/usr/sbin install >> "$BUILDLOG" 2>&1 || fatal "iproute2 install"
+log "✅ iproute2 (ip, ss installed)"
 
 step 7 "iputils-s20160308 — ping, tracepath, arping"
 download iputils-s20160308.tar.gz \
@@ -160,12 +188,31 @@ download iputils-s20160308.tar.gz \
     "https://src.fedoraproject.org/repo/pkgs/iputils/iputils-s20160308.tar.gz"
 extract iputils-s20160308.tar.gz iputils-s20160308
 cd "$SRC/iputils-s20160308"
-make USE_CAP=no USE_IDN=no USE_SELINUX=no CC="${LFS_TGT}-gcc" ping tracepath arping \
+# USE_NETTLE=no: upstream defaults to nettle for ping6 crypto, whose headers
+# we don't ship — OpenSSL (built in step 2) provides md5 instead.
+make USE_CAP=no USE_IDN=no USE_SELINUX=no USE_NETTLE=no CC="${LFS_TGT}-gcc" ping tracepath arping \
     >> "$BUILDLOG" 2>&1 || fatal "iputils make"
 install -m 0755 ping      "$LFS/usr/bin/ping"
 install -m 0755 tracepath "$LFS/usr/bin/tracepath"
 install -m 0755 arping    "$LFS/usr/bin/arping"
 log "✅ iputils (ping installed)"
+
+step 7b "ncurses-6.4 — wide-char libs (procps/htop/less/nano need these)"
+download ncurses-6.4.tar.gz \
+    "https://invisible-mirror.net/archives/ncurses/ncurses-6.4.tar.gz" \
+    "https://ftp.gnu.org/gnu/ncurses/ncurses-6.4.tar.gz"
+extract ncurses-6.4.tar.gz ncurses-6.4
+cd "$SRC/ncurses-6.4"
+# Wide-char only: procps/htop/less/nano all accept ncursesw. When
+# cross-compiling, ncurses builds tic with the build compiler itself.
+./configure --host="$LFS_TGT" --prefix=/usr \
+    --with-shared --without-debug --without-normal --without-tests \
+    --with-cxx-shared --enable-pc-files --enable-widec \
+    --with-default-terminfo-dir=/usr/share/terminfo \
+    >> "$BUILDLOG" 2>&1 || fatal "ncurses configure"
+make -j12 >> "$BUILDLOG" 2>&1 || fatal "ncurses make"
+make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1 || fatal "ncurses install"
+log "✅ ncurses (widec shared libs + terminfo)"
 
 step 8 "procps-ng-4.0.3 — ps, free, top, uptime"
 download procps-ng-4.0.3.tar.xz \
@@ -192,7 +239,7 @@ log "✅ procps (free works now)"
 # `ps` and `top` all failed too, and the welcome banner printed blank memory.
 # Only the few binaries we actually need are enabled; a full util-linux build
 # is far heavier than this image warrants.
-step 8b "util-linux-2.39.3 — mount, umount, blkid, lsblk, dmesg"
+step 8b "util-linux-2.39.3 — mount, umount, blkid, kill, setsid"
 download util-linux-2.39.3.tar.xz \
     "https://cdn.kernel.org/pub/linux/utils/util-linux/v2.39/util-linux-2.39.3.tar.xz" \
     "https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.39/util-linux-2.39.3.tar.xz"
@@ -200,18 +247,33 @@ extract util-linux-2.39.3.tar.xz util-linux-2.39.3
 cd "$SRC/util-linux-2.39.3"
 # Non-fatal on purpose: a missing mount binary degrades the image (no /proc),
 # but it must not abort an otherwise complete build.
+# NOTE (goal build): --enable-umount/--enable-lsblk/--enable-dmesg/
+# --enable-setsid are NOT real flags in 2.39 (configure warns "unrecognized"
+# and silently skips them). umount ships with --enable-mount; lsblk/dmesg
+# stay out (libsmartcols + flag names this configure lacks). blkid needs
+# --enable-libuuid. setsid is compiled standalone below (libc-only).
 if ./configure --host="$LFS_TGT" --prefix=/usr \
         --disable-all-programs \
-        --enable-libmount --enable-mount --enable-umount \
-        --enable-libblkid --enable-blkid \
-        --enable-lsblk --enable-dmesg \
+        --enable-libmount --enable-mount \
+        --enable-libblkid --enable-blkid --enable-libuuid \
+        --enable-kill \
         --disable-nls --without-python --without-systemd --disable-bash-completion \
         >> "$BUILDLOG" 2>&1 \
    && make -j12 >> "$BUILDLOG" 2>&1 \
    && make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1; then
-    log "✅ util-linux (mount/umount/blkid/lsblk/dmesg)"
+    log "✅ util-linux (mount/umount/blkid/kill)"
 else
     log "⚠  util-linux build failed — /proc will not mount on boot (see build log)"
+fi
+# setsid (see helpers/setsid-minimal.c): 2.39's --disable-all-programs
+# build has no switch for it — compile the minimal tool directly. Separate
+# guard so a setsid failure can never take mount down with it.
+if "${LFS_TGT}-gcc" -O2 -o "$LFS/usr/bin/setsid" \
+        "$SCRIPT_DIR/helpers/setsid-minimal.c" >> "$BUILDLOG" 2>&1 \
+   && [ -x "$LFS/usr/bin/setsid" ]; then
+    log "✅ setsid (direct compile, for daemon detachment)"
+else
+    log "⚠  setsid compile failed — daemons cannot fully detach (see build log)"
 fi
 
 step 9 "which-2.21"
@@ -254,7 +316,11 @@ download openssh-9.6p1.tar.gz \
     "https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.6p1.tar.gz"
 extract openssh-9.6p1.tar.gz openssh-9.6p1
 cd "$SRC/openssh-9.6p1"
+# --with-ssl-dir pins OUR openssl (step 2): without it configure mixes host
+# headers with LFS libs and dies on "headers do not match". The header
+# check is then redundant but harmless to skip explicitly.
 ./configure --host="$LFS_TGT" --prefix=/usr --sysconfdir=/etc/ssh \
+    --with-ssl-dir="$LFS/usr" --without-openssl-header-check \
     --without-selinux-support >> "$BUILDLOG" 2>&1 || fatal "openssh configure"
 make  >> "$BUILDLOG" 2>&1 || fatal "openssh make"
 make DESTDIR="$LFS" install >> "$BUILDLOG" 2>&1 || fatal "openssh install"

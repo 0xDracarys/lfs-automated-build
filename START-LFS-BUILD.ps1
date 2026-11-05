@@ -12,8 +12,9 @@ Write-Host ""
 Write-Host "Starting build in WSL..." -ForegroundColor Cyan
 Write-Host ""
 
-$scriptPath = '/mnt/c/Users/Chintu/Documents/Dev Zone/Dev work web/lfs-automated/build-minimal-bootable.sh'
-wsl -d Athena bash -c "chmod +x '$scriptPath' && bash '$scriptPath'"
+$repoWsl = (wsl wslpath -a "$PSScriptRoot").Trim()
+$scriptPath = "$repoWsl/build-minimal-bootable.sh"
+wsl -d Ubuntu bash -c "chmod +x '$scriptPath' && bash '$scriptPath'"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""

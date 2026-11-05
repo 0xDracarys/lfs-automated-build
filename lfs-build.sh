@@ -1296,11 +1296,12 @@ if [ $? -eq 0 ]; then
     echo "  PACKAGING BUILD OUTPUTS"
     echo "=================================================="
     
-    # Call packaging script
+    # Call packaging script (create_output_archive cds into $LFS_MNT, so a
+    # relative ./ lookup fails — resolve against the script's own directory).
     if [ -f "/app/package-lfs-outputs.sh" ]; then
         bash /app/package-lfs-outputs.sh
-    elif [ -f "./package-lfs-outputs.sh" ]; then
-        bash ./package-lfs-outputs.sh
+    elif [ -f "${SCRIPT_DIR}/package-lfs-outputs.sh" ]; then
+        bash "${SCRIPT_DIR}/package-lfs-outputs.sh"
     else
         echo "⚠️ Warning: package-lfs-outputs.sh not found, skipping packaging"
     fi

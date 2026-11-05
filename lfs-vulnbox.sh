@@ -209,7 +209,10 @@ if [ "$has_dvwa" = true ]; then
         if download "php-8.2.13.tar.xz" \
             "https://www.php.net/distributions/php-8.2.13.tar.xz" \
             "https://github.com/php/php-src/archive/refs/tags/php-8.2.13.tar.gz"; then
-            [ -d "$SRC/php-8.2.13" ] || { [ -d "$SRC/php-src-php-8.2.13" ] || run tar -xf "$SRC/php-8.2.13.tar.xz" -C "$SRC"; }
+            # Always start from a clean tree: a failed attempt leaves a
+            # config.cache that poisons retries (same lesson as glibc).
+            rm -rf "$SRC/php-8.2.13" "$SRC/php-src-php-8.2.13"
+            run tar -xf "$SRC/php-8.2.13.tar.xz" -C "$SRC"
             # cd in the PARENT shell (a ( cd … ) test if would only move the
             # subshell — v3.1 lesson: ./configure then ran from the wrong cwd).
             prev_dir="$(pwd)"
@@ -230,12 +233,26 @@ if [ "$has_dvwa" = true ]; then
                 # libgcc_s.so.1 and friends into the root.
                 # --disable-all keeps it libc-only (no zlib/libxml on the host);
                 # mysqli/session/filter are bundled; sqlite/phar/pear off.
+                # PHP builds NATIVE with the host cc: the $LFS-pointing
+                # CPPFLAGS/LDFLAGS exported at the top would make the host
+                # linker read the LFS libc.so script ("C compiler cannot
+                # create executables"). Clear them for this build only.
+                _SAV_CPPFLAGS="${CPPFLAGS:-}"; _SAV_LDFLAGS="${LDFLAGS:-}"
+                _SAV_PKGCFG="${PKG_CONFIG_PATH:-}"
+                unset CPPFLAGS LDFLAGS PKG_CONFIG_PATH
                 ./configure --prefix=/usr --disable-all \
                     --enable-cli --enable-cgi --enable-session --enable-filter --enable-mysqli \
                     --without-pcre-jit --without-libxml --without-pear \
                     >> "$BUILDLOG" 2>&1 \
-                    && run make -j8 && run make DESTDIR="$LFS" install \
+                    && run make -j8 \
+                    && run make DESTDIR="$LFS" INSTALL_ROOT="$LFS" install \
                     || warn "php build/install failed"
+                # NOTE: PHP's build system ignores DESTDIR — it stages through
+                # INSTALL_ROOT instead. Without it, `make install` writes to the
+                # HOST's /usr/bin and the LFS tree gets nothing.
+                CPPFLAGS="${_SAV_CPPFLAGS}"; LDFLAGS="${_SAV_LDFLAGS}"
+                PKG_CONFIG_PATH="${_SAV_PKGCFG}"
+                export CPPFLAGS LDFLAGS PKG_CONFIG_PATH
                 # php.ini for sessions/uploads (DVWA needs one to behave)
                 PHPINIDIR=$(find "$LFS/usr/lib/php" "$LFS/lib/php" -maxdepth 1 \
                     -name 'php.ini-development' 2>/dev/null | head -1)
@@ -366,6 +383,31 @@ if [ "$has_wg" = true ]; then
     fi
 fi
 
+# ---- C.UTF-8 locale data (the launcher exports LC_ALL=C.UTF-8 for the
+# JVM — v3.4 lesson: without a UTF-8 locale the JVM warns and WebWolf
+# misbehaves). The minimal root ships no /usr/lib/locale at all, so every
+# setlocale call warned ("cannot change locale (C.UTF-8)"). Generate it at
+# build time with the TREE's own localedef via the tree loader (host
+# localedef output can mismatch the guest glibc), reading the C/UTF-8
+# sources that ship with every glibc (stable across versions; the tree
+# carries none of its own). Non-fatal: builders without i18n data keep
+# the old warning instead of failing the layer.
+if [ ! -d "$LFS/usr/lib/locale/C.UTF-8" ]; then
+    mkdir -p "$LFS/usr/lib/locale"
+    if [ -x "$LFS/usr/bin/localedef" ] && [ -f /usr/share/i18n/locales/C ]; then
+        if "$LFS/lib64/ld-linux-x86-64.so.2" --library-path "$LFS/lib:$LFS/usr/lib" \
+            "$LFS/usr/bin/localedef" --no-archive \
+            --inputfile=C --charmap=UTF-8 "$LFS/usr/lib/locale/C.UTF-8" \
+            >>"$BUILDLOG" 2>&1; then
+            log "✅ C.UTF-8 locale data"
+        else
+            warn "localedef C.UTF-8 failed — launcher will warn about locale"
+        fi
+    else
+        warn "no localedef input available — launcher will warn about locale"
+    fi
+fi
+
 # ==================================================== 4. /usr/bin launchers
 mkdir -p "$LFS/usr/bin"
 # A public one-command demo tunnel (cloudflared static binary) — lets the user
@@ -424,10 +466,16 @@ echo -e "${DIM}starting practice targets…${R}"
 # ── Juice Shop ───────────────────────────────────────────────────────────────
 if [ -d /opt/juice-shop ]; then
     if [ -x /usr/local/bin/node ]; then
+        # Start node DIRECTLY (never via npm): npm resets signal handling in
+        # its child, so a nohup'd npm does NOT protect node from the hangup
+        # WSL delivers when the starter session ends — node died within ~2
+        # min every time. setsid detaches each daemon into its own session
+        # so session teardown cannot touch it.
         ( cd /opt/juice-shop || exit 1
-          if [ -f app.js ]; then /usr/local/bin/node app.js > /root/.juice-shop.log 2>&1 &
-          elif [ -f app/index.js ]; then /usr/local/bin/node app/index.js > /root/.juice-shop.log 2>&1 &
-          else /usr/local/bin/npm start --silent > /root/.juice-shop.log 2>&1 &
+          if [ -f app.js ]; then setsid /usr/local/bin/node app.js </dev/null > /root/.juice-shop.log 2>&1 &
+          elif [ -f app/index.js ]; then setsid /usr/local/bin/node app/index.js </dev/null > /root/.juice-shop.log 2>&1 &
+          elif [ -f build/app.js ]; then setsid /usr/local/bin/node build/app </dev/null > /root/.juice-shop.log 2>&1 &
+          else setsid /usr/local/bin/npm start --silent </dev/null > /root/.juice-shop.log 2>&1 &
           fi )
         want 3000 "Juice Shop" "http://localhost:3000"
         STARTED=1
@@ -477,9 +525,9 @@ if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
     fi
     # v3.4 WSL lesson: Windows' own MySQL frequently OWNS 127.0.0.1:3306 via
     # the WSL2 localhost relay — even from inside the distro. 3307 has no clash.
-    TERM=dumb /opt/mysql/bin/mysqld --user=root --datadir=/opt/mysql-data --basedir=/opt/mysql \
+    TERM=dumb setsid /opt/mysql/bin/mysqld --user=root --datadir=/opt/mysql-data --basedir=/opt/mysql \
         --port=3307 --bind-address=127.0.0.1 \
-        > /root/.mysqld.log 2>&1 &
+        </dev/null > /root/.mysqld.log 2>&1 &
     want 3307 "MariaDB" "127.0.0.1:3307 (db dvwa)"
 
     # DVWA is a PHP application: without php-cgi there is nothing to serve, and
@@ -490,7 +538,7 @@ if [ -x /opt/mysql/bin/mysqld ] && [ -d /opt/dvwa ]; then
         warn "DVWA is installed but PHP is missing, so its pages cannot be rendered." \
              "the shipped image has no php-cgi; rebuild with ENABLE_VULNBOX=true"
     else
-        /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf > /root/.lighttpd.log 2>&1 &
+        setsid /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf </dev/null > /root/.lighttpd.log 2>&1 &
         want 80 "DVWA" "http://localhost/"
     fi
     STARTED=1
@@ -501,11 +549,20 @@ if [ -f /opt/webgoat/webgoat-8.2.2.jar ]; then
     if [ -x /usr/local/jdk/bin/java ]; then
         (
             cd /opt/webgoat
-            /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webgoat-8.2.2.jar --server.port=8080 > /root/.webgoat.log 2>&1 &
-            [ -f webwolf-8.2.2.jar ] && /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webwolf-8.2.2.jar --server.port=9090 > /root/.webwolf.log 2>&1 &
+            setsid /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webgoat-8.2.2.jar --server.port=8080 </dev/null > /root/.webgoat.log 2>&1 &
         )
         want 8080 "WebGoat" "http://localhost:8080/WebGoat"
-        [ -f /opt/webgoat/webwolf-8.2.2.jar ] && want 9090 "WebWolf" "http://localhost:9090/WebWolf"
+        # WebWolf needs WebGoat's database: starting both at once makes
+        # WebWolf exit with "required database is not running". Wait for
+        # WebGoat to answer first (up to 60 s), then start WebWolf.
+        _w=0; while [ $_w -lt 30 ]; do port_open 8080 && break; sleep 2; _w=$((_w+1)); done
+        if [ -f /opt/webgoat/webwolf-8.2.2.jar ]; then
+            (
+                cd /opt/webgoat
+                setsid /usr/local/jdk/bin/java -Dfile.encoding=UTF-8 -jar webwolf-8.2.2.jar --server.port=9090 </dev/null > /root/.webwolf.log 2>&1 &
+            )
+            want 9090 "WebWolf" "http://localhost:9090/WebWolf"
+        fi
         STARTED=1
     else
         warn "WebGoat is installed but Java is missing, so it cannot start." \
@@ -560,7 +617,9 @@ chmod +x "$LFS/usr/bin/vulnbox-start"
 cat > "$LFS/usr/bin/vulnbox-stop" << 'VBS_EOF'
 #!/bin/bash
 # Stops practice targets.  Run as:  vulnbox-stop
-pkill -f "node.*juice-shop" 2>/dev/null && echo "stopped Juice Shop"
+# Juice always runs as this exact node binary (started directly, never via
+# npm — see the launcher). A pidfile would go stale because setsid forks.
+pkill -f "/usr/local/bin/node " 2>/dev/null && echo "stopped Juice Shop"
 pkill -f "lighttpd"          2>/dev/null && echo "stopped lighttpd (DVWA)"
 pkill -f "mysqld"            2>/dev/null && echo "stopped MySQL"
 pkill -f "webgoat-8.2.2.jar" 2>/dev/null && echo "stopped WebGoat"
